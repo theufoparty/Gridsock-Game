@@ -18,6 +18,11 @@ io.on('connection', (socket) => {
     console.log('incoming chat', arg);
     io.emit('chat', arg);
   });
+
+  socket.on('newUser', (user) => {
+    console.log(user);
+    io.emit(user);
+  });
 });
 
 const PORT = process.env.PORT || 3000;
