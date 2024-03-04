@@ -1,0 +1,55 @@
+body {
+  font-family: var(--ff-sans-normal);
+}
+
+header {
+  @include sticky-header;
+  text-align: center;
+  padding: 2em;
+  text-transform: uppercase;
+  gap: 1em;
+}
+
+header p {
+  font-size: 1em;
+}
+
+h1 {
+  font-size: 2em;
+}
+
+main {
+  @include center-element;
+  @include debug-outline;
+  @include gap-column-1;
+  padding: 2em;
+  margin: 1em;
+}
+
+section {
+  @include center-element;
+  @include debug-outline;
+  @include gap-column-1;
+}
+
+ul {
+  @include debug-outline;
+}
+
+button {
+  background-color: $login-button-color;
+  color: white;
+  border: none;
+  padding: 1em 2em;
+  border-radius: 16px;
+  text-transform: uppercase;
+}
+
+section h2 {
+  font-size: 1.2em;
+  text-transform: uppercase;
+}
+
+section ul li {
+  @include gap-column-1;
+}

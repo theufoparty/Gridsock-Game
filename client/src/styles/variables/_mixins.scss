@@ -1,0 +1,32 @@
+@mixin center-element {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin sticky-header {
+  position: sticky;
+  display: flex;
+  flex-direction: column;
+  top: 0;
+  background-color: $sticky-header-bg;
+  z-index: 1000;
+}
+
+@mixin gap-column-1 {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+@mixin gap-row-1 {
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+}
+
+@mixin debug-outline {
+  @if $debugging {
+    outline: 1px solid hotpink;
+  }
+}
