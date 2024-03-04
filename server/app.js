@@ -19,7 +19,7 @@ io.on('connection', (socket) => {
     io.emit('chat', arg);
   });
 
-  socket.on('user', (user) => {
+  socket.on('newUser', (user) => {
     console.log(user);
     io.emit(user);
   });
