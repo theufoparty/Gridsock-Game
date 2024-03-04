@@ -131,4 +131,81 @@ q:after {
 table {
   border-collapse: collapse;
   border-spacing: 0;
+}
+
+:root {
+  --ff-serif: "Bellefair", serif;
+  --ff-sans-cond: "Barlow Condensed", sans-serif;
+  --ff-sans-normal: "Barlow", sans-serif;
+}
+
+body {
+  font-family: var(--ff-sans-normal);
+}
+
+header {
+  position: sticky;
+  display: flex;
+  flex-direction: column;
+  top: 0;
+  background-color: #ffffff;
+  z-index: 1000;
+  text-align: center;
+  padding: 2em;
+  text-transform: uppercase;
+  gap: 1em;
+}
+
+header p {
+  font-size: 1em;
+}
+
+h1 {
+  font-size: 2em;
+}
+
+main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: 1px solid hotpink;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  padding: 2em;
+  margin: 1em;
+}
+
+section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: 1px solid hotpink;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+ul {
+  outline: 1px solid hotpink;
+}
+
+button {
+  background-color: #2980b9;
+  color: white;
+  border: none;
+  padding: 1em 2em;
+  border-radius: 16px;
+  text-transform: uppercase;
+}
+
+section h2 {
+  font-size: 1.2em;
+  text-transform: uppercase;
+}
+
+section ul li {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
 }/*# sourceMappingURL=style.css.map */
