@@ -27,7 +27,7 @@ function handleLoginOnClick(input: Element | null, loginSection: Element | null)
     // we can change this later if we want to add a red text etc
     alert('you have to fill in input');
   } else {
-    socket.emit('user', { username: inputValue });
+    socket.emit('newUser', { username: inputValue });
     localStorage.setItem('user', inputValue);
     swapClassBetweenTwoElements(loginSection, gameLobbySection, 'hidden');
   }
