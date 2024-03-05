@@ -208,4 +208,8 @@ section ul li {
   display: flex;
   flex-direction: column;
   gap: 1em;
+}
+
+.hidden {
+  visibility: hidden;
 }/*# sourceMappingURL=style.css.map */

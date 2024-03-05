@@ -19,7 +19,7 @@ const gameLobbyList = document.getElementById('gameLobbySectionUl');
  * @param {Element | null} loginSection
  * @returns void
  */
-function handleLoginOnClick(input: Element | null, loginSection: Element | null) {
+function handleLoginOnClick(input: Element | null, loginSection: Element | null, gameLobbySection: Element | null) {
   if (!input || !loginSection) {
     return;
   }
@@ -40,7 +40,7 @@ function emitUserInfoToServer(username: string) {
 }
 
 loginButton?.addEventListener('click', () => {
-  handleLoginOnClick(usernameInput, loginSection);
+  handleLoginOnClick(usernameInput, loginSection, gameLobbySection);
 });
 
 /**
