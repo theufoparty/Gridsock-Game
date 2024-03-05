@@ -69,14 +69,50 @@ function checkNumberOfPlayers(player: HTMLElement) {
   if (gameLobbyList !== null) {
     let liElements = gameLobbyList.getElementsByTagName('li');
     var amountLiElements = liElements.length;
-    console.log("antal liElements", amountLiElements);
+    console.log('antal liElements', amountLiElements);
     if (amountLiElements >= 5) {
-      alert("Spelet är fullt!")
+      alert('Spelet är fullt!');
     } else {
       gameLobbyList.appendChild(player);
-    } 
+    }
   }
 }
+
+// Function to start a countdown timer
+function countdownTimer(duration: number, callback: (countdown: number) => void, doneCallback: () => void) {
+    let countdown = duration;
+
+    function handleTick() {
+        countdown--;
+
+        // Call the callback function with the current countdown value
+        callback(countdown);
+
+        if (countdown <= 0) {
+            // If countdown reaches 0 or less, stop the timer
+            clearInterval(intervalId);
+            // Call the doneCallback function (to show a message etc)
+            doneCallback();
+        }
+    }
+
+    // Start the timer
+    const intervalId = setInterval(handleTick, 1000);
+}
+
+// Example callback function to handle countdown updates
+function updateDisplay(countdown: number) {
+    // We can implement our display logic/functionality with the current countdown value here.
+    console.log(countdown);
+}
+
+// Function to handle the "done message"
+function doneMessage() {
+    console.log("Stop what you're doing! Time's up!");
+}
+
+// Start a countdown for 60 seconds
+countdownTimer(60, updateDisplay, doneMessage);
 
 /**
  * Initializes a listener for the 'updateUserList' event from the server. Upon receiving the event,
