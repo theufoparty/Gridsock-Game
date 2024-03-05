@@ -9,6 +9,7 @@ const loginButton = document.getElementById('loginButton');
 const loginSection = document.getElementById('loginSection');
 const gameLobbySection = document.getElementById('gameLobbySection');
 const gameLobbyList = document.getElementById('gameLobbySectionUl');
+const usernameDisplay = document.getElementById('usernameDisplay');
 
 /**
  * Handles login for user
@@ -30,6 +31,9 @@ function handleLoginOnClick(input: Element | null, loginSection: Element | null,
   } else {
     localStorage.setItem('user', inputValue);
     emitUserInfoToServer(inputValue);
+    if (usernameDisplay) {
+      usernameDisplay.textContent = inputValue;
+    }
     swapClassBetweenTwoElements(loginSection, gameLobbySection, 'hidden');
   }
 }
