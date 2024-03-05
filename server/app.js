@@ -22,11 +22,11 @@ io.on('connection', socket => {
     io.emit('chat', arg);
   });
 
-  // Triggar updateUserList för användaren som kopplar upp till servern
+  // Triggers updateUserList for the user that connects to the server.
   socket.emit('updateUserList', users);
 
   socket.on('newUser', user => {
-    const newUser = { username: user.username, id: socket.id };
+    const newUser = { username: user.username, color: user.color, id: socket.id };
     users.push(newUser);
     io.emit('updateUserList', users);
   });
