@@ -1,5 +1,6 @@
 import './styles/style.css';
 import { swapClassBetweenTwoElements } from './utils/helperfunctions';
+import { initializeUserList } from './utils/userList';
 import { io } from 'socket.io-client';
 
 const socket = io('http://localhost:3000/');
@@ -36,3 +37,5 @@ function handleLoginOnClick(input: Element | null, loginSection: Element | null)
 loginButton?.addEventListener('click', () => {
   handleLoginOnClick(usernameInput, loginSection);
 });
+
+initializeUserList();
