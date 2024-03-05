@@ -8,20 +8,27 @@ const io = require('socket.io')(server, {
   },
 });
 
+const users = [];
+
 app.get('/', (req, res) => {
   res.send('<h1>Welcome to our server!</h1>');
 });
 
-io.on('connection', (socket) => {
+io.on('connection', socket => {
+  // Behöver vi detta?
   socket.emit('chat', { message: 'Hello world!', user: 'BOT' });
-  socket.on('chat', (arg) => {
+  socket.on('chat', arg => {
     console.log('incoming chat', arg);
     io.emit('chat', arg);
   });
 
-  socket.on('newUser', (user) => {
-    console.log(user);
-    io.emit(user);
+  // Triggers updateUserList for the user that connects to the server.
+  socket.emit('updateUserList', users);
+
+  socket.on('newUser', user => {
+    const newUser = { username: user.username, color: user.color, id: socket.id };
+    users.push(newUser);
+    io.emit('updateUserList', users);
   });
 });
 
