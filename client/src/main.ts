@@ -8,7 +8,7 @@ const usernameInput = document.getElementById('loginInput');
 const loginButton = document.getElementById('loginButton');
 const loginSection = document.getElementById('loginSection');
 const gameLobbySection = document.getElementById('gameLobbySection');
-const gameLobbyList = document.querySelector('#gameLobbySection ul');
+const gameLobbyList = document.getElementById('gameLobbySectionUl');
 
 /**
  * Handles login for user
