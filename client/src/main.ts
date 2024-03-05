@@ -1,5 +1,5 @@
 import './styles/style.css';
-import { swapClassBetweenTwoElements } from './utils/helperfunctions';
+import { swapClassBetweenTwoElements, getRandomColor } from './utils/helperfunctions';
 import { io } from 'socket.io-client';
 
 const socket = io('http://localhost:3000/');
@@ -27,10 +27,15 @@ function handleLoginOnClick(input: Element | null, loginSection: Element | null)
     // we can change this later if we want to add a red text etc
     alert('you have to fill in input');
   } else {
-    socket.emit('newUser', { username: inputValue });
     localStorage.setItem('user', inputValue);
+    emitUserInfoToServer(inputValue);
     swapClassBetweenTwoElements(loginSection, gameLobbySection, 'hidden');
   }
+}
+
+function emitUserInfoToServer(username: string) {
+  const randomColor = getRandomColor();
+  socket.emit('newUser', { username: username, color: randomColor });
 }
 
 loginButton?.addEventListener('click', () => {
