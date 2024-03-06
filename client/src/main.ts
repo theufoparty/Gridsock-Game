@@ -125,6 +125,13 @@ function initializeUserList(gameLobbyList: Element | null): void {
   });
 }
 
+/**
+ * Recieves users info from server, user id and how many players are ready
+ * Sets userid in localstorage
+ * Updates UI for how many players are ready when logging in
+ * @param {Element | null} startGameButton
+ * @param {Element | null} playersReadyContainer
+ */
 function recieveSocketForNewUser(startGameButton: Element | null, playersReadyContainer: Element | null) {
   socket.on('newUser', usersInfo => {
     const { userId, playersReady } = usersInfo;
