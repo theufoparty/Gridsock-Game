@@ -170,11 +170,18 @@ function recieveSocketPlayersReady(startGameButton: Element | null, playersReady
   });
 }
 
+function displayRandomUser() {
+  socket.on('randomUser', user => {
+    console.log(user);
+  });
+}
+
 function initialFunctionsOnLoad() {
   initializeUserList(gameLobbyList);
   recieveSocketUserStatus(gameLobbyList);
   recieveSocketPlayersReady(startGameButton, playersReadyContainer);
   recieveSocketForNewUser(startGameButton, playersReadyContainer);
+  displayRandomUser();
 }
 
 document.addEventListener('DOMContentLoaded', initialFunctionsOnLoad);
@@ -182,3 +189,15 @@ document.addEventListener('DOMContentLoaded', initialFunctionsOnLoad);
 gameLobbyList?.addEventListener('click', e => {
   handleClickOnButtons(e);
 });
+
+function StartGame() {
+  // add functions here when starting game, when done move to proper place in our code
+}
+
+// this is only a placeholder for current game logic
+document.getElementById('click')?.addEventListener('click', () => {
+  // this will go in StartGame function later
+  socket.emit('startGame', true);
+});
+
+startGameButton?.addEventListener('click', StartGame);
