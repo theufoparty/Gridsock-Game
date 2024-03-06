@@ -11,6 +11,12 @@
     <header>
       <h1>Game Name</h1>
       <p id="usernameDisplay"></p>
+      <div>
+        <!-- Timer section-->
+        <div>
+          <p>Time remaining: <span></span>&nbsp;s</p>
+        </div>
+      </div>
     </header>
     <main>
       <section id="loginSection">
@@ -30,6 +36,45 @@
         <button id="startGameButton" class="hidden">Start Game</button>
       </section>
       <button id="click">click</button>
+      <section>
+        <!--Game section-->
+        <aside>
+          <!--Score container-->
+          <ul></ul>
+        </aside>
+        <article>
+          <div>
+            <!--Current "drawer"-->
+            <p>
+              Now drawing: <span>User <i></i></span>
+            </p>
+          </div>
+          <div>
+            <!--Drawing area-->
+            <canvas></canvas>
+          </div>
+          <div>
+            <!--Chosen word to draw-->
+            <p>Your word to draw is: <span></span></p>
+          </div>
+        </article>
+        <aside>
+          <!--Guessing container-->
+          <div>
+            <p>Please, remember to spell the word correctly when guessing.</p>
+          </div>
+          <div>
+            <ul></ul>
+            <!--Chat answers as viewed by user -->
+            <div>
+              <!--Chat input-->
+              <p>Chat:</p>
+              <input type="text" />
+              <button type="button" id="">Guess</button>
+            </div>
+          </div>
+        </aside>
+      </section>
     </main>
     <script type="module" src="src/main.ts"></script>
   </body>
