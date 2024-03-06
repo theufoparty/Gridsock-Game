@@ -9,6 +9,7 @@ const io = require('socket.io')(server, {
 });
 
 const users = [];
+let playersReady = 0;
 
 app.get('/', (req, res) => {
   res.send('<h1>Welcome to our server!</h1>');
@@ -26,8 +27,44 @@ io.on('connection', socket => {
   socket.emit('updateUserList', users);
 
   socket.on('newUser', user => {
-    const newUser = { username: user.username, color: user.color, id: socket.id };
+    const newUser = { username: user.username, color: user.color, id: socket.id, isReady: false };
     users.push(newUser);
+    io.emit('updateUserList', users);
+  });
+
+  // from the client ready / waiting status change the player status
+  socket.on('userStatus', status => {
+    // does user exist in users, if not exit function
+    const user = users.find(user => user.id === socket.id);
+    if (!user) return;
+
+    if (status.statusText === 'ready') {
+      if (!user.isReady) {
+        user.isReady = true;
+        playersReady += 1;
+      }
+    } else {
+      if (user.isReady) {
+        user.isReady = false;
+        playersReady -= 1;
+      }
+    }
+    io.emit('userStatus', status);
+    io.emit('playersReady', playersReady);
+  });
+
+  // on disconnect kick player from game
+  socket.on('disconnect', () => {
+    // find the userindex in the users array that corresponds to the disconnected socket.id
+    const userIndex = users.findIndex(user => user.id === socket.id);
+    if (userIndex === -1) return;
+    // if player was in ready move, remove their ready from the playersReady number
+    if (users[userIndex].isReady) {
+      playersReady -= 1;
+      io.emit('playersReady', playersReady);
+    }
+    // remove the user with splice
+    users.splice(userIndex, 1);
     io.emit('updateUserList', users);
   });
 });
