@@ -55,14 +55,14 @@ loginButton?.addEventListener('click', () => {
  * @param {string} user.id - The users socket-id.
  */
 
-function appendUserToList(user: { username: string; color: string; id: string }) {
+function appendUserToList(user: { username: string; color: string; id: string; isReady: boolean }) {
   if (!gameLobbyList) return;
   const userElement = document.createElement('div');
   userElement.innerText = user.username;
   userElement.style.color = user.color;
   const readyButton = document.createElement('button');
   readyButton.id = user.id;
-  readyButton.innerText = 'waiting';
+  readyButton.innerText = user.isReady ? 'ready' : 'waiting';
   userElement.appendChild(readyButton);
   const listItem = document.createElement('li');
   listItem.appendChild(userElement);
@@ -72,28 +72,13 @@ function appendUserToList(user: { username: string; color: string; id: string })
 function checkNumberOfPlayers(player: HTMLElement) {
   if (gameLobbyList !== null) {
     let liElements = gameLobbyList.getElementsByTagName('li');
-    var amountLiElements = liElements.length;
-    console.log("antal liElements", amountLiElements);
+    const amountLiElements = liElements.length;
     if (amountLiElements >= 5) {
-      alert("Spelet är fullt!")
+      alert('Spelet är fullt!');
     } else {
       gameLobbyList.appendChild(player);
-    } 
+    }
   }
-}
-
-/**
- * Initializes a listener for the 'updateUserList' event from the server. Upon receiving the event,
- * the user list in the interface is updated with the received list of users.
- * Each user is displayed as a list item with their name in the specified color and their socket ID.
- */
-
-function initializeUserList(gameLobbyList: Element | null): void {
-  socket.on('updateUserList', (users: Array<{ username: string; color: string; id: string }>) => {
-    if (!gameLobbyList) return;
-    gameLobbyList.innerHTML = '';
-    users.forEach(user => appendUserToList(user));
-  });
 }
 
 /**
@@ -104,9 +89,48 @@ function initializeUserList(gameLobbyList: Element | null): void {
  */
 function handleClickOnButtons(e: Event) {
   const target = e.target as HTMLElement;
-  if (target.tagName !== 'BUTTON') return;
+  const storedId = localStorage.getItem('userId');
+  if (target.tagName !== 'BUTTON' || target.id !== storedId) return;
   const currentStatus = target.textContent === 'waiting' ? 'ready' : 'waiting';
   socket.emit('userStatus', { statusText: currentStatus, statusId: target.id });
+}
+
+function updatePlayersReadyAndWhenFullDisplayStartGameButton(
+  startGameButton: Element | null,
+  playersReadyContainer: Element | null,
+  players: number
+) {
+  if (!playersReadyContainer) return;
+  playersReadyContainer.textContent = `${players}/5`;
+  if (players === 5) {
+    startGameButton?.classList.remove('hidden');
+  } else {
+    startGameButton?.classList.add('hidden');
+  }
+}
+
+// ---------------------- SOCKET FUNCTIONS ---------------------- //
+
+/**
+ * Initializes a listener for the 'updateUserList' event from the server. Upon receiving the event,
+ * the user list in the interface is updated with the received list of users.
+ * Each user is displayed as a list item with their name in the specified color and their socket ID.
+ */
+
+function initializeUserList(gameLobbyList: Element | null): void {
+  socket.on('updateUserList', (users: Array<{ username: string; color: string; id: string; isReady: boolean }>) => {
+    if (!gameLobbyList) return;
+    gameLobbyList.innerHTML = '';
+    users.forEach(user => appendUserToList(user));
+  });
+}
+
+function recieveSocketForNewUser(startGameButton: Element | null, playersReadyContainer: Element | null) {
+  socket.on('newUser', usersInfo => {
+    const { userId, playersReady } = usersInfo;
+    localStorage.setItem('userId', userId);
+    updatePlayersReadyAndWhenFullDisplayStartGameButton(startGameButton, playersReadyContainer, playersReady);
+  });
 }
 
 /**
@@ -130,13 +154,7 @@ function recieveSocketUserStatus(gameLobbyList: Element | null) {
  */
 function recieveSocketPlayersReady(startGameButton: Element | null, playersReadyContainer: Element | null) {
   socket.on('playersReady', players => {
-    if (!playersReadyContainer) return;
-    playersReadyContainer.textContent = `${players}/5`;
-    if (players === 5) {
-      startGameButton?.classList.remove('hidden');
-    } else {
-      startGameButton?.classList.add('hidden');
-    }
+    updatePlayersReadyAndWhenFullDisplayStartGameButton(startGameButton, playersReadyContainer, players);
   });
 }
 
@@ -144,6 +162,7 @@ function initialFunctionsOnLoad() {
   initializeUserList(gameLobbyList);
   recieveSocketUserStatus(gameLobbyList);
   recieveSocketPlayersReady(startGameButton, playersReadyContainer);
+  recieveSocketForNewUser(startGameButton, playersReadyContainer);
 }
 
 document.addEventListener('DOMContentLoaded', initialFunctionsOnLoad);
