@@ -10,6 +10,7 @@ const loginSection = document.getElementById('loginSection');
 const gameLobbySection = document.getElementById('gameLobbySection');
 const gameLobbyList = document.getElementById('gameLobbySectionUl');
 const playersReadyContainer = document.getElementById('playersReady');
+const startGameButton = document.getElementById('startGameButton');
 
 /**
  * Handles login for user
@@ -74,7 +75,7 @@ function appendUserToList(user: { username: string; color: string; id: string })
  * Each user is displayed as a list item with their name in the specified color and their socket ID.
  */
 
-function initializeUserList(): void {
+function initializeUserList(gameLobbyList: Element | null): void {
   socket.on('updateUserList', (users: Array<{ username: string; color: string; id: string }>) => {
     if (!gameLobbyList) return;
     gameLobbyList.innerHTML = '';
@@ -99,7 +100,7 @@ function handleClickOnButtons(e: Event) {
  * Socket on from which status the user has, catches io.emit
  * Changes the button text to the status
  */
-function recieveSocketUserStatus() {
+function recieveSocketUserStatus(gameLobbyList: Element | null) {
   socket.on('userStatus', status => {
     if (!gameLobbyList) return;
     const buttons = gameLobbyList.querySelectorAll('button');
@@ -114,17 +115,22 @@ function recieveSocketUserStatus() {
 /**
  * Updates how many players are currently ready
  */
-function recieveSocketPlayersReady() {
+function recieveSocketPlayersReady(startGameButton: Element | null, playersReadyContainer: Element | null) {
   socket.on('playersReady', players => {
     if (!playersReadyContainer) return;
     playersReadyContainer.textContent = `${players}/5`;
+    if (players === 5) {
+      startGameButton?.classList.remove('hidden');
+    } else {
+      startGameButton?.classList.add('hidden');
+    }
   });
 }
 
 function initialFunctionsOnLoad() {
-  initializeUserList();
-  recieveSocketUserStatus();
-  recieveSocketPlayersReady();
+  initializeUserList(gameLobbyList);
+  recieveSocketUserStatus(gameLobbyList);
+  recieveSocketPlayersReady(startGameButton, playersReadyContainer);
 }
 
 document.addEventListener('DOMContentLoaded', initialFunctionsOnLoad);
