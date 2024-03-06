@@ -5,34 +5,27 @@ export function initializeDrawing() {
     return;
   }
   const context = canvas.getContext('2d')!;
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+
+  canvas.width = 800;
+  canvas.height = 400;
 
   let painting = false;
 
   function startPosition(e: MouseEvent) {
     painting = true;
     context.beginPath();
-    context.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+    context.moveTo(e.clientX - canvas.offsetLeft + window.scrollX, e.clientY - canvas.offsetTop + window.scrollY);
     draw(e);
-  }
-
-  function endPosition() {
-    painting = false;
-    // This ensures the current path is closed when the mouse is lifted,
-    // so that a new path will start on the next mouse down.
-    context.closePath();
   }
 
   function draw(e: MouseEvent) {
     if (!painting) return;
-    context.lineTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
-    context.strokeStyle = 'black';
-    context.lineWidth = 5;
-    context.lineCap = 'round';
+    context.lineTo(e.clientX - canvas.offsetLeft + window.scrollX, e.clientY - canvas.offsetTop + window.scrollY);
     context.stroke();
-    context.beginPath();
-    context.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+  }
+
+  function endPosition() {
+    painting = false;
   }
 
   canvas.addEventListener('mousedown', startPosition);
