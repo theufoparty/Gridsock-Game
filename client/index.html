@@ -10,7 +10,7 @@
   <body>
     <header>
       <h1>Game Name</h1>
-      <p>User Name</p>
+      <p id="usernameDisplay"></p>
       <div><!-- Timer section-->
         <div><p> Time remaining: <span></span>&nbsp;s</p></div>
       </div>
@@ -21,7 +21,7 @@
         <input id="loginInput" type="text" />
         <button id="loginButton">Login</button>
       </section>
-      <section id="gameLobbySection">
+      <section id="gameLobbySection" class="hidden">
         <h2>Game Lobby</h2>
         <ul id="gameLobbySectionUl">
           <li>
@@ -29,8 +29,8 @@
             <button>waiting</button>
           </li>
         </ul>
-        <div>0/5</div>
-        <button>Start Game</button>
+        <div id="playersReady">0/5</div>
+        <button id="startGameButton" class="hidden">Start Game</button>
       </section>
       <section> <!--Game section-->
         <aside> <!--Score container-->
