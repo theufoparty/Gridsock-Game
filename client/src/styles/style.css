@@ -221,4 +221,10 @@ section ul li {
   clip: rect(0, 0, 0, 0) !important;
   white-space: nowrap !important;
   border: 0 !important;
+}
+
+.canvas {
+  border: 1px solid black;
+  display: block;
+  overflow: hidden;
 }/*# sourceMappingURL=style.css.map */

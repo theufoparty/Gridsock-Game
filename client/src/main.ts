@@ -1,6 +1,7 @@
 import './styles/style.css';
 import { swapClassBetweenTwoElements, getRandomColor } from './utils/helperfunctions';
 import { io } from 'socket.io-client';
+import { initializeDrawing } from './utils/drawing';
 
 const socket = io('http://localhost:3000/');
 
@@ -182,3 +183,7 @@ document.addEventListener('DOMContentLoaded', initialFunctionsOnLoad);
 gameLobbyList?.addEventListener('click', e => {
   handleClickOnButtons(e);
 });
+
+window.onload = () => {
+  initializeDrawing();
+};

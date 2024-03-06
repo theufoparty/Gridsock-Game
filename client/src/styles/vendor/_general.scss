@@ -10,3 +10,9 @@
   white-space: nowrap !important;
   border: 0 !important;
 }
+
+.canvas {
+  border: 1px solid black;
+  display: block;
+  overflow: hidden;
+}
