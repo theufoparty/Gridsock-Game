@@ -9,6 +9,9 @@ const loginButton = document.getElementById('loginButton');
 const loginSection = document.getElementById('loginSection');
 const gameLobbySection = document.getElementById('gameLobbySection');
 const gameLobbyList = document.getElementById('gameLobbySectionUl');
+const playersReadyContainer = document.getElementById('playersReady');
+const startGameButton = document.getElementById('startGameButton');
+const usernameDisplay = document.getElementById('usernameDisplay');
 
 /**
  * Handles login for user
@@ -19,7 +22,7 @@ const gameLobbyList = document.getElementById('gameLobbySectionUl');
  * @param {Element | null} loginSection
  * @returns void
  */
-function handleLoginOnClick(input: Element | null, loginSection: Element | null) {
+function handleLoginOnClick(input: Element | null, loginSection: Element | null, gameLobbySection: Element | null) {
   if (!input || !loginSection) {
     return;
   }
@@ -30,6 +33,9 @@ function handleLoginOnClick(input: Element | null, loginSection: Element | null)
   } else {
     localStorage.setItem('user', inputValue);
     emitUserInfoToServer(inputValue);
+    if (usernameDisplay) {
+      usernameDisplay.textContent = inputValue;
+    }
     swapClassBetweenTwoElements(loginSection, gameLobbySection, 'hidden');
   }
 }
@@ -40,25 +46,28 @@ function emitUserInfoToServer(username: string) {
 }
 
 loginButton?.addEventListener('click', () => {
-  handleLoginOnClick(usernameInput, loginSection);
+  handleLoginOnClick(usernameInput, loginSection, gameLobbySection);
 });
 
 /**
  * Adds a user to the lobby list with a ready button. Each user's name is displayed
  * with a specific color defined by the user's `color` property.
+ * sets button id to user id
  * @param {object} user - The user object that contains username, ID and color.
  * @param {string} user.username - The users name.
  * * @param {string} user.color - The CSS color code (as a string) for the user's name.
  * @param {string} user.id - The users socket-id.
  */
 
-function appendUserToList(user: { username: string; color: string; id: string }) {
+function appendUserToList(user: { username: string; color: string; id: string; isReady: boolean }) {
   if (!gameLobbyList) return;
+  const { username, color, id, isReady } = user;
   const userElement = document.createElement('div');
-  userElement.innerText = user.username;
-  userElement.style.color = user.color;
+  userElement.innerText = username;
+  userElement.style.color = color;
   const readyButton = document.createElement('button');
-  readyButton.innerText = 'Ready';
+  readyButton.id = id;
+  readyButton.innerText = isReady ? 'ready' : 'waiting';
   userElement.appendChild(readyButton);
   const listItem = document.createElement('li');
   listItem.appendChild(userElement);
@@ -68,8 +77,7 @@ function appendUserToList(user: { username: string; color: string; id: string })
 function checkNumberOfPlayers(player: HTMLElement) {
   if (gameLobbyList !== null) {
     let liElements = gameLobbyList.getElementsByTagName('li');
-    var amountLiElements = liElements.length;
-    console.log('antal liElements', amountLiElements);
+    const amountLiElements = liElements.length;
     if (amountLiElements >= 5) {
       alert('Spelet är fullt!');
     } else {
@@ -78,41 +86,35 @@ function checkNumberOfPlayers(player: HTMLElement) {
   }
 }
 
-// Function to start a countdown timer
-function countdownTimer(duration: number, callback: (countdown: number) => void, doneCallback: () => void) {
-    let countdown = duration;
-
-    function handleTick() {
-        countdown--;
-
-        // Call the callback function with the current countdown value
-        callback(countdown);
-
-        if (countdown <= 0) {
-            // If countdown reaches 0 or less, stop the timer
-            clearInterval(intervalId);
-            // Call the doneCallback function (to show a message etc)
-            doneCallback();
-        }
-    }
-
-    // Start the timer
-    const intervalId = setInterval(handleTick, 1000);
+/**
+ * With event delegation checks if target is button
+ * If target is button, change player status and send to server together with button id
+ * @param {Event} e - click event
+ * @returns void
+ */
+function handleClickOnButtons(e: Event) {
+  const target = e.target as HTMLElement;
+  const storedId = localStorage.getItem('userId');
+  if (target.tagName !== 'BUTTON' || target.id !== storedId) return;
+  const currentStatus = target.textContent === 'waiting' ? 'ready' : 'waiting';
+  socket.emit('userStatus', { statusText: currentStatus, statusId: target.id });
 }
 
-// Example callback function to handle countdown updates
-function updateDisplay(countdown: number) {
-    // We can implement our display logic/functionality with the current countdown value here.
-    console.log(countdown);
+function updatePlayersReadyAndWhenFullDisplayStartGameButton(
+  startGameButton: Element | null,
+  playersReadyContainer: Element | null,
+  players: number
+) {
+  if (!playersReadyContainer) return;
+  playersReadyContainer.textContent = `${players}/5`;
+  if (players === 5) {
+    startGameButton?.classList.remove('hidden');
+  } else {
+    startGameButton?.classList.add('hidden');
+  }
 }
 
-// Function to handle the "done message"
-function doneMessage() {
-    console.log("Stop what you're doing! Time's up!");
-}
-
-// Start a countdown for 60 seconds
-countdownTimer(60, updateDisplay, doneMessage);
+// ---------------------- SOCKET FUNCTIONS ---------------------- //
 
 /**
  * Initializes a listener for the 'updateUserList' event from the server. Upon receiving the event,
@@ -120,12 +122,63 @@ countdownTimer(60, updateDisplay, doneMessage);
  * Each user is displayed as a list item with their name in the specified color and their socket ID.
  */
 
-export function initializeUserList(): void {
-  socket.on('updateUserList', (users: Array<{ username: string; color: string; id: string }>) => {
+function initializeUserList(gameLobbyList: Element | null): void {
+  socket.on('updateUserList', (users: Array<{ username: string; color: string; id: string; isReady: boolean }>) => {
     if (!gameLobbyList) return;
     gameLobbyList.innerHTML = '';
     users.forEach(user => appendUserToList(user));
   });
 }
 
-initializeUserList();
+/**
+ * Recieves users info from server, user id and how many players are ready
+ * Sets userid in localstorage
+ * Updates UI for how many players are ready when logging in
+ * @param {Element | null} startGameButton
+ * @param {Element | null} playersReadyContainer
+ */
+function recieveSocketForNewUser(startGameButton: Element | null, playersReadyContainer: Element | null) {
+  socket.on('newUser', usersInfo => {
+    const { userId, playersReady } = usersInfo;
+    localStorage.setItem('userId', userId);
+    updatePlayersReadyAndWhenFullDisplayStartGameButton(startGameButton, playersReadyContainer, playersReady);
+  });
+}
+
+/**
+ * Socket on from which status the user has, catches io.emit
+ * Changes the button text to the status
+ */
+function recieveSocketUserStatus(gameLobbyList: Element | null) {
+  socket.on('userStatus', status => {
+    if (!gameLobbyList) return;
+    const buttons = gameLobbyList.querySelectorAll('button');
+    const { statusId, statusText } = status;
+    buttons.forEach(button => {
+      if (button.id !== statusId) return;
+      button.textContent = statusText;
+    });
+  });
+}
+
+/**
+ * Updates how many players are currently ready
+ */
+function recieveSocketPlayersReady(startGameButton: Element | null, playersReadyContainer: Element | null) {
+  socket.on('playersReady', players => {
+    updatePlayersReadyAndWhenFullDisplayStartGameButton(startGameButton, playersReadyContainer, players);
+  });
+}
+
+function initialFunctionsOnLoad() {
+  initializeUserList(gameLobbyList);
+  recieveSocketUserStatus(gameLobbyList);
+  recieveSocketPlayersReady(startGameButton, playersReadyContainer);
+  recieveSocketForNewUser(startGameButton, playersReadyContainer);
+}
+
+document.addEventListener('DOMContentLoaded', initialFunctionsOnLoad);
+
+gameLobbyList?.addEventListener('click', e => {
+  handleClickOnButtons(e);
+});
