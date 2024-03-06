@@ -66,7 +66,20 @@ function appendUserToList(user: { username: string; color: string; id: string })
   userElement.appendChild(readyButton);
   const listItem = document.createElement('li');
   listItem.appendChild(userElement);
-  gameLobbyList.appendChild(listItem);
+  checkNumberOfPlayers(listItem);
+}
+
+function checkNumberOfPlayers(player: HTMLElement) {
+  if (gameLobbyList !== null) {
+    let liElements = gameLobbyList.getElementsByTagName('li');
+    var amountLiElements = liElements.length;
+    console.log("antal liElements", amountLiElements);
+    if (amountLiElements >= 5) {
+      alert("Spelet är fullt!")
+    } else {
+      gameLobbyList.appendChild(player);
+    } 
+  }
 }
 
 /**
