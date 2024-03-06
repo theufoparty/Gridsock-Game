@@ -28,6 +28,7 @@ io.on('connection', socket => {
     const newUser = { username: user.username, color: user.color, id: socket.id, isReady: false };
     users.push(newUser);
     io.emit('updateUserList', users);
+    socket.emit('newUser', { userId: socket.id, playersReady });
   });
 
   // from the client ready / waiting status change the player status
