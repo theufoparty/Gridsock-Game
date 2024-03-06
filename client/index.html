@@ -12,7 +12,8 @@
       <h1>Game Name</h1>
       <p id="usernameDisplay"></p>
       <div><!-- Timer section-->
-        <div><p> Time remaining: <span></span>&nbsp;s</p></div>
+        <div><p> Time remaining: <span id="countdownValue">60</span>&nbsp;s</p></div>
+        <div id="countdownMessage"></div>
       </div>
     </header>
     <main>
@@ -20,6 +21,8 @@
         <label for="loginInput">Username:</label>
         <input id="loginInput" type="text" />
         <button id="loginButton">Login</button>
+        <!-- Test button to trigger countdown (temporary, remove in production) -->
+        <button id="testStartCountdownButton">Test Start Countdown</button>
       </section>
       <section id="gameLobbySection" class="hidden">
         <h2>Game Lobby</h2>
