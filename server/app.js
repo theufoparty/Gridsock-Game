@@ -16,8 +16,6 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', socket => {
-  // Behöver vi detta?
-  socket.emit('chat', { message: 'Hello world!', user: 'BOT' });
   socket.on('chat', arg => {
     console.log('incoming chat', arg);
     io.emit('chat', arg);
