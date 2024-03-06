@@ -11,6 +11,7 @@ const gameLobbySection = document.getElementById('gameLobbySection');
 const gameLobbyList = document.getElementById('gameLobbySectionUl');
 const playersReadyContainer = document.getElementById('playersReady');
 const startGameButton = document.getElementById('startGameButton');
+const usernameDisplay = document.getElementById('usernameDisplay');
 
 /**
  * Handles login for user
@@ -21,7 +22,7 @@ const startGameButton = document.getElementById('startGameButton');
  * @param {Element | null} loginSection
  * @returns void
  */
-function handleLoginOnClick(input: Element | null, loginSection: Element | null) {
+function handleLoginOnClick(input: Element | null, loginSection: Element | null, gameLobbySection: Element | null) {
   if (!input || !loginSection) {
     return;
   }
@@ -32,6 +33,9 @@ function handleLoginOnClick(input: Element | null, loginSection: Element | null)
   } else {
     localStorage.setItem('user', inputValue);
     emitUserInfoToServer(inputValue);
+    if (usernameDisplay) {
+      usernameDisplay.textContent = inputValue;
+    }
     swapClassBetweenTwoElements(loginSection, gameLobbySection, 'hidden');
   }
 }
@@ -42,7 +46,7 @@ function emitUserInfoToServer(username: string) {
 }
 
 loginButton?.addEventListener('click', () => {
-  handleLoginOnClick(usernameInput, loginSection);
+  handleLoginOnClick(usernameInput, loginSection, gameLobbySection);
 });
 
 /**
