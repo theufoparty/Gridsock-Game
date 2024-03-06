@@ -19,7 +19,7 @@ let usedIndexes = []; // keeps track of how many users have already drawn
  * @returns random string
  */
 function getRandomizedUserToDraw(users) {
-  let randomIndex = Math.floor(Math.random() * array.length);
+  let randomIndex = Math.floor(Math.random() * users.length);
   if (usedIndexes.length >= users.length) return;
   const hasPlayerAlreadyDrawn = usedIndexes.findIndex(index => index === randomIndex);
   if (hasPlayerAlreadyDrawn === -1) {
