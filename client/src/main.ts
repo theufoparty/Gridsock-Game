@@ -57,12 +57,13 @@ loginButton?.addEventListener('click', () => {
 
 function appendUserToList(user: { username: string; color: string; id: string; isReady: boolean }) {
   if (!gameLobbyList) return;
+  const { username, color, id, isReady } = user;
   const userElement = document.createElement('div');
-  userElement.innerText = user.username;
-  userElement.style.color = user.color;
+  userElement.innerText = username;
+  userElement.style.color = color;
   const readyButton = document.createElement('button');
-  readyButton.id = user.id;
-  readyButton.innerText = user.isReady ? 'ready' : 'waiting';
+  readyButton.id = id;
+  readyButton.innerText = isReady ? 'ready' : 'waiting';
   userElement.appendChild(readyButton);
   const listItem = document.createElement('li');
   listItem.appendChild(userElement);
@@ -84,7 +85,7 @@ function checkNumberOfPlayers(player: HTMLElement) {
 /**
  * With event delegation checks if target is button
  * If target is button, change player status and send to server together with button id
- * @param {Even} e - click event
+ * @param {Event} e - click event
  * @returns void
  */
 function handleClickOnButtons(e: Event) {
