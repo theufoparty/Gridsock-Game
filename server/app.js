@@ -46,17 +46,18 @@ io.on('connection', socket => {
     socket.broadcast.emit('drawing', data);
   });
 
-  // Handle 'startDrawing' event
   socket.on('startDrawing', data => {
     socket.broadcast.emit('startDrawing', data);
   });
 
-  // Handle 'endDrawing' event
   socket.on('endDrawing', () => {
     socket.broadcast.emit('endDrawing');
   });
 
-  // Triggers updateUserList for the user that connects to the server.
+  socket.on('clearCanvas', () => {
+    socket.broadcast.emit('clearCanvas');
+  });
+
   socket.emit('updateUserList', users);
 
   socket.on('newUser', user => {

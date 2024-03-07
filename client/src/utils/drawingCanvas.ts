@@ -1,6 +1,7 @@
 import { Socket } from 'socket.io-client';
 
 const drawingCanvas = document.getElementById('drawingCanvas') as HTMLCanvasElement;
+const clearCanvasButton = document.getElementById('clearCanvasButton');
 
 /**
  * Initializes drawing functionality on a canvas element, enabling real-time collaboration using web sockets.
@@ -47,22 +48,44 @@ function initializeDrawing(socket: Socket): void {
     context.beginPath();
   }
 
-  socket.on('startDrawing', data => {
+  function clearCanvas(): void {
+    context.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
+    socket.emit('clearCanvas');
+  }
+
+  function setupClearCanvasButton(): void {
+    if (clearCanvasButton !== null) {
+      clearCanvasButton.addEventListener('click', clearCanvas);
+    }
+  }
+
+  function handleStartDrawing(data: any): void {
     context.moveTo(data.x, data.y);
     context.beginPath();
-  });
+  }
 
-  socket.on('drawing', data => {
+  function handleDrawing(data: any): void {
     drawOnCanvas(data.x, data.y);
-  });
+  }
 
-  socket.on('endDrawing', () => {
+  function handleEndDrawing(): void {
     context.beginPath();
-  });
+  }
+
+  function handleClearCanvas(): void {
+    context.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
+  }
+
+  socket.on('startDrawing', handleStartDrawing);
+  socket.on('drawing', handleDrawing);
+  socket.on('endDrawing', handleEndDrawing);
+  socket.on('clearCanvas', handleClearCanvas);
 
   drawingCanvas.addEventListener('mousedown', startDrawingPosition);
   drawingCanvas.addEventListener('mouseup', endDrawingPosition);
   drawingCanvas.addEventListener('mousemove', draw);
+
+  setupClearCanvasButton();
 }
 
 export { initializeDrawing };
