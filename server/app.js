@@ -14,6 +14,54 @@ const users = [];
 let playersReady = 0;
 let usedIndexes = []; // keeps track of how many users have already drawn
 
+
+//let wordArray = [];
+//let gameArray = [];
+
+async function getWordArray() {
+  fs.readFile("../client/assets/data/words.json", (err, data) => { 
+  if (err) {
+    console.log(err);
+  }
+  const wordArray = JSON.parse(data);
+  console.log('i funktion', wordArray);
+  return wordArray;
+});
+}
+
+async function handleData() {
+const handleArray = await getWordArray();
+console.log('ny funktion', handleArray);
+}
+
+handleData();  
+
+/* function getRandomWord() {
+  fs.readFile("../client/assets/data/words.json", (err, data) => { 
+    if (err) {
+      console.log(err);
+    } 
+
+    wordArray = JSON.parse(data);
+
+    gameArray = wordArray;
+    
+    const randomWordId = Math.floor(Math.random() * gameArray.length);
+    let currentWord = gameArray[randomWordId];
+    gameArray.splice(randomWordId, 1);
+    console.log('currentWord', currentWord);
+    console.log('randomWordId', randomWordId);
+    console.log('gameArray', gameArray); 
+    return currentWord;
+  });
+}
+
+getRandomWord(); */
+
+app.get('/', (req, res) => {
+  res.send('<h1>Welcome to our server!</h1>');
+});
+
 /**
  * Returns random string from provided array of strings
  * Checks if user has already been picked
@@ -32,24 +80,6 @@ function getRandomizedUserToDraw(users) {
   }
 }
 
-app.get('/', (req, res) => {
-  //res.send('<h1>Welcome to our server!</h1>');
-
-  fs.readFile("../client/assets/data/words.json", (err, data) => { 
-    if (err) {
-      console.log(err);
-    } 
-
-    const wordArray = JSON.parse(data);
-    
-    const wordId = wordArray.id;
-    console.log(Math.floor(Math.random() * wordArray.length));
-
-    res.send(wordArray);
-    return;
-  });
-
-});
 
 io.on('connection', socket => {
   socket.on('chat', arg => {
@@ -72,6 +102,7 @@ io.on('connection', socket => {
     const nameOnlyUsers = users.map(user => user.username);
     const randomUser = getRandomizedUserToDraw(nameOnlyUsers);
     io.emit('randomUser', randomUser);
+    getRandomWord();
   });
 
   // from the client ready / waiting status change the player status
