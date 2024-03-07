@@ -124,7 +124,7 @@ blockquote:before,
 blockquote:after,
 q:before,
 q:after {
-  content: "";
+  content: '';
   content: none;
 }
 
@@ -134,9 +134,9 @@ table {
 }
 
 :root {
-  --ff-serif: "Bellefair", serif;
-  --ff-sans-cond: "Barlow Condensed", sans-serif;
-  --ff-sans-normal: "Barlow", sans-serif;
+  --ff-serif: 'Bellefair', serif;
+  --ff-sans-cond: 'Barlow Condensed', sans-serif;
+  --ff-sans-normal: 'Barlow', sans-serif;
 }
 
 body {
@@ -210,6 +210,36 @@ section ul li {
   gap: 1em;
 }
 
+#gameSection {
+  display: flex;
+  flex-direction: row;
+  background-color: #cef6ff;
+  padding: 20px;
+}
+
+#frame {
+  background-color: lightgray;
+  border: solid rgb(12, 12, 12) 2px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+#guessingContainer #guessInstruction {
+  color: rgb(148, 22, 22);
+}
+
+#gameChatContainer {
+  background-color: lightgray;
+  margin-top: 10px;
+  padding: 10px;
+}
+#gameChatContainer #chatList {
+  margin-bottom: 20px;
+}
+#gameChatContainer #gameChatInput {
+  border-radius: 20px;
+}
+
 .hidden {
   position: absolute;
   position: absolute !important;
@@ -227,4 +257,4 @@ section ul li {
   border: 1px solid black;
   display: block;
   overflow: hidden;
-}/*# sourceMappingURL=style.css.map */
+} /*# sourceMappingURL=style.css.map */
