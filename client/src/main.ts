@@ -14,6 +14,8 @@ const startGameButton = document.getElementById('startGameButton');
 const usernameDisplay = document.getElementById('usernameDisplay');
 const guessButton = document.getElementById('guessButton');
 const guessInput = document.getElementById('guessInput');
+const userThatIsDrawing = document.getElementById('user');
+const gameSection = document.getElementById('gameSection');
 
 /**
  * Handles login for user
@@ -172,11 +174,19 @@ function recieveSocketPlayersReady(startGameButton: Element | null, playersReady
   });
 }
 
+function displayRandomUser(userThatIsDrawing: Element | null) {
+  socket.on('randomUser', user => {
+    if (!userThatIsDrawing) return;
+    userThatIsDrawing.textContent = user;
+  });
+}
+
 function initialFunctionsOnLoad() {
   initializeUserList(gameLobbyList);
   recieveSocketUserStatus(gameLobbyList);
   recieveSocketPlayersReady(startGameButton, playersReadyContainer);
   recieveSocketForNewUser(startGameButton, playersReadyContainer);
+  displayRandomUser(userThatIsDrawing);
 }
 
 document.addEventListener('DOMContentLoaded', initialFunctionsOnLoad);
@@ -193,3 +203,17 @@ guessButton?.addEventListener('click', () => {
   
   
 })
+function StartGame() {
+  // add functions here when starting game, when done move to proper place in our code
+  // socket.emit('startGame', true); uncommenct later
+  // swapClassBetweenTwoElements(gameLobbySection, gameSection, 'hidden');
+}
+
+startGameButton?.addEventListener('click', StartGame);
+
+// this is only a placeholder for current game logic
+document.getElementById('click')?.addEventListener('click', () => {
+  // this will go in StartGame function later
+  socket.emit('startGame', true);
+  swapClassBetweenTwoElements(gameLobbySection, gameSection, 'hidden');
+});
