@@ -1,5 +1,30 @@
 const app = require('express')();
 const server = require('http').createServer(app);
+const MongoClient = require('mongodb').MongoClient;
+require('dotenv').config();
+const cors = require('cors');
+
+MongoClient.connect(process.env.DB_URL).then(client => {
+  console.log('We are connected to database');
+  const db = client.db('Game');
+  app.locals.db = db;
+});
+
+app.get('/', (req, res) => {
+  res.send('works');
+});
+
+app.get('/words', (req, res) => {
+  const db = req.app.locals.db;
+
+  db.collection('Words')
+    .find()
+    .toArray()
+    .then(data => {
+      console.log('words:', data);
+      res.json(data);
+    });
+});
 
 const io = require('socket.io')(server, {
   cors: {
@@ -93,6 +118,8 @@ io.on('connection', socket => {
     io.emit('updateUserList', users);
   });
 });
+
+app.use(cors());
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
