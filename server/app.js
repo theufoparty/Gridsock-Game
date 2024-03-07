@@ -36,6 +36,26 @@ const io = require('socket.io')(server, {
 const users = [];
 let playersReady = 0;
 let usedIndexes = []; // keeps track of how many users have already drawn
+let countdown = 60; // Initial countdown value in seconds
+
+/**
+ * Calculates in 5 seconds interval based on timeLeft how many points are recieved
+ * @param {number} timeLeft
+ * @returns {number} - points
+ */
+function getPointsAsNumberBasedOnTime(timeLeft) {
+  // if time left is greater than 5 seconds give player points
+  const pointsThreshold = 5;
+  const secsPerPointInterval = 5;
+  const pointsPerInterval = 100;
+  const minPointsAboveThreshold = 100; // min amount of points over 5 seconds
+  if (timeLeft >= pointsThreshold) {
+    const secsAboveThreshold = timeLeft - pointsThreshold;
+    return minPointsAboveThreshold + Math.floor(secsAboveThreshold / secsPerPointInterval) * pointsPerInterval;
+  }
+  // if player does not answer above the time threshold they get no points
+  return 0;
+}
 
 /**
  * Returns random string from provided array of strings
@@ -68,11 +88,23 @@ io.on('connection', socket => {
   // Triggers updateUserList for the user that connects to the server.
   socket.emit('updateUserList', users);
 
+  // if player logs in, add a new user with their information to the users
   socket.on('newUser', user => {
-    const newUser = { username: user.username, color: user.color, id: socket.id, isReady: false };
+    const newUser = { username: user.username, color: user.color, id: socket.id, isReady: false, points: 0 };
     users.push(newUser);
     io.emit('updateUserList', users);
     socket.emit('newUser', { userId: socket.id, playersReady });
+  });
+
+  // gets stored id from client, if user exists update user points based on time
+  // sending back all users with the updated points
+  socket.on('updatePoints', userId => {
+    const user = users.find(user => user.id === userId);
+    if (user) {
+      // placeholder right now
+      user.points += getPointsAsNumberBasedOnTime(countdown);
+      io.emit('updatedUserPoints', users);
+    }
   });
 
   socket.on('startGame', gameState => {
@@ -127,6 +159,8 @@ io.on('connection', socket => {
   socket.on('startGame', () => {
     let countdown = 60; // Initial countdown value in seconds
 
+  socket.on('startGame', () => {
+    countdown = 60;
     // An interval to update the countdown every second
     const countdownInterval = setInterval(() => {
       if (countdown <= 0) {
