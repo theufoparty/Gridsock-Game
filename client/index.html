@@ -11,8 +11,11 @@
     <header>
       <h1>Game Name</h1>
       <p id="usernameDisplay"></p>
-      <div><!-- Timer section-->
-        <div><p> Time remaining: <span></span>&nbsp;s</p></div>
+      <div>
+        <!-- Timer section-->
+        <div>
+          <p>Time remaining: <span></span>&nbsp;s</p>
+        </div>
       </div>
     </header>
     <main>
@@ -32,19 +35,24 @@
         <div id="playersReady">0/5</div>
         <button id="startGameButton" class="hidden">Start Game</button>
       </section>
+      <button id="click">click</button>
       <section id="gameSection"> <!--Game section-->
         <aside id="scoreList"> <!--Score container-->
           <p>Score:</p>
           <ul></ul>
         </aside>
         <article>
-          <div> <!--Current "drawer"-->  
-            <p>Now drawing: <span>User <i></i></span></p>
+          <div>
+            <!--Current "drawer"-->
+            <p>
+              Now drawing: <span id="user">User <i></i></span>
+            </p>
           </div>
           <div id="frame"> <!--Drawing area-->
             <canvas></canvas>
           </div>
-          <div> <!--Chosen word to draw-->
+          <div>
+            <!--Chosen word to draw-->
             <p>Your word to draw is: <span></span></p>
           </div>
         </article>
