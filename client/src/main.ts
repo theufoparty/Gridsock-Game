@@ -119,6 +119,51 @@ function updatePlayersReadyAndWhenFullDisplayStartGameButton(
   }
 }
 
+// ---------------------- COUNTDOWN FUNCTIONS ---------------------- //
+
+// Function to update the countdown display
+function updateCountdownDisplay(countdown: number) {
+  const countdownDisplay = document.querySelector('#countdownValue');
+  if (countdownDisplay) {
+    countdownDisplay.textContent = countdown.toString();
+  }
+}
+
+// Event listener for the Start Game button
+if (startGameButton) {
+  startGameButton.addEventListener('click', () => {
+    // Emit a startGame event to the server
+    socket.emit('startGame');
+  });
+}
+
+// Listen for countdown updates from the server
+socket.on('countdownUpdate', (countdown: number) => {
+  updateCountdownDisplay(countdown);
+});
+
+// Listen for countdown finished event from the server
+socket.on('countdownFinished', () => {
+  // Display a message when the countdown finishes
+  const countdownMessage = document.querySelector('#countdownMessage');
+  if (countdownMessage) {
+    countdownMessage.textContent = "Time's up!";
+  }
+});
+
+
+// Only temporary during development
+const testStartCountdownButton = document.getElementById('testStartCountdownButton');
+
+// Only temporary during development
+// Event listener for the test start countdown button
+if (testStartCountdownButton) {
+  testStartCountdownButton.addEventListener('click', () => {
+    // Emit a startGame event to the server
+    socket.emit('startGame');
+  });
+}
+
 // ---------------------- SOCKET FUNCTIONS ---------------------- //
 
 /**

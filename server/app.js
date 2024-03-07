@@ -1,5 +1,30 @@
 const app = require('express')();
 const server = require('http').createServer(app);
+const MongoClient = require('mongodb').MongoClient;
+require('dotenv').config();
+const cors = require('cors');
+
+MongoClient.connect(process.env.DB_URL).then(client => {
+  console.log('We are connected to database');
+  const db = client.db('Game');
+  app.locals.db = db;
+});
+
+app.get('/', (req, res) => {
+  res.send('works');
+});
+
+app.get('/words', (req, res) => {
+  const db = req.app.locals.db;
+
+  db.collection('Words')
+    .find()
+    .toArray()
+    .then(data => {
+      console.log('words:', data);
+      res.json(data);
+    });
+});
 
 const io = require('socket.io')(server, {
   cors: {
@@ -96,8 +121,28 @@ io.on('connection', socket => {
   socket.on('guess', (arg) => {
     console.log("incoming guess", arg);
     io.emit('guess', arg)
-  })
+  });
+  
+  // Listen for the "startGame" event from the server
+  socket.on('startGame', () => {
+    let countdown = 60; // Initial countdown value in seconds
+
+    // An interval to update the countdown every second
+    const countdownInterval = setInterval(() => {
+      if (countdown <= 0) {
+        // If countdown reaches zero, clear the interval and emit a "countdownFinished" event
+        clearInterval(countdownInterval);
+        io.emit('countdownFinished'); // Notify clients that the countdown has finished
+      } else {
+        // Update the countdown value and emit a "countdownUpdate" event to all connected clients
+        io.emit('countdownUpdate', countdown); // Send the updated countdown value to clients
+        countdown--; // Decrement the countdown value by 1 second
+      }
+    }, 1000); // Run the interval every 1000 milliseconds (1 second)
+  });
 });
+
+app.use(cors());
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
