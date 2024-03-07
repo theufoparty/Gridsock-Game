@@ -12,6 +12,8 @@ const gameLobbyList = document.getElementById('gameLobbySectionUl');
 const playersReadyContainer = document.getElementById('playersReady');
 const startGameButton = document.getElementById('startGameButton');
 const usernameDisplay = document.getElementById('usernameDisplay');
+const guessButton = document.getElementById('guessButton');
+const guessInput = document.getElementById('guessInput');
 
 /**
  * Handles login for user
@@ -182,3 +184,12 @@ document.addEventListener('DOMContentLoaded', initialFunctionsOnLoad);
 gameLobbyList?.addEventListener('click', e => {
   handleClickOnButtons(e);
 });
+
+guessButton?.addEventListener('click', () => {
+  if (guessInput !== null) {
+    console.log('guess', guessInput.value);
+
+  }
+  
+  
+})
