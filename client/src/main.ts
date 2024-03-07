@@ -12,6 +12,8 @@ const gameLobbyList = document.getElementById('gameLobbySectionUl');
 const playersReadyContainer = document.getElementById('playersReady');
 const startGameButton = document.getElementById('startGameButton');
 const usernameDisplay = document.getElementById('usernameDisplay');
+const userThatIsDrawing = document.getElementById('user');
+const gameSection = document.getElementById('gameSection');
 
 /**
  * Handles login for user
@@ -215,15 +217,38 @@ function recieveSocketPlayersReady(startGameButton: Element | null, playersReady
   });
 }
 
+function displayRandomUser(userThatIsDrawing: Element | null) {
+  socket.on('randomUser', user => {
+    if (!userThatIsDrawing) return;
+    userThatIsDrawing.textContent = user;
+  });
+}
+
 function initialFunctionsOnLoad() {
   initializeUserList(gameLobbyList);
   recieveSocketUserStatus(gameLobbyList);
   recieveSocketPlayersReady(startGameButton, playersReadyContainer);
   recieveSocketForNewUser(startGameButton, playersReadyContainer);
+  displayRandomUser(userThatIsDrawing);
 }
 
 document.addEventListener('DOMContentLoaded', initialFunctionsOnLoad);
 
 gameLobbyList?.addEventListener('click', e => {
   handleClickOnButtons(e);
+});
+
+function StartGame() {
+  // add functions here when starting game, when done move to proper place in our code
+  // socket.emit('startGame', true); uncommenct later
+  // swapClassBetweenTwoElements(gameLobbySection, gameSection, 'hidden');
+}
+
+startGameButton?.addEventListener('click', StartGame);
+
+// this is only a placeholder for current game logic
+document.getElementById('click')?.addEventListener('click', () => {
+  // this will go in StartGame function later
+  socket.emit('startGame', true);
+  swapClassBetweenTwoElements(gameLobbySection, gameSection, 'hidden');
 });
