@@ -273,7 +273,6 @@ gameLobbyList?.addEventListener('click', e => {
   handleClickOnButtons(e);
 });
 
-
 function StartGame() {
   // add functions here when starting game, when done move to proper place in our code
   // socket.emit('startGame', true); uncommenct later
@@ -297,35 +296,34 @@ document.getElementById('click')?.addEventListener('click', () => {
   swapClassBetweenTwoElements(gameLobbySection, gameSection, 'hidden');
 });
 
-
 /**
  * Sends user guess to the server
  */
 guessButton?.addEventListener('click', () => {
   if (guessInput !== null) {
-
+    const input = guessInput as HTMLInputElement;
     const guessUser = localStorage.getItem('user');
 
     socket.emit('guess', {
-      message: guessInput.value,
+      message: input.value,
       user: guessUser,
     });
   }
 });
 
-socket.on("guess", (arg) => {
-  console.log("guess!", arg); 
+socket.on('guess', arg => {
+  console.log('guess!', arg);
   updateGuessChat(arg);
-})
+});
 
 /**
  * Updates the chat where users write their guesses
  */
 function updateGuessChat(guess: { user: string; message: string }) {
-  let li = document.createElement("li");
-  li.innerText = guess.user + ": " + guess.message;
+  let li = document.createElement('li');
+  li.innerText = guess.user + ': ' + guess.message;
   console.log(li);
-  
+
   if (chatList !== null) {
     chatList.appendChild(li);
     chatList.scrollTop = chatList.scrollHeight;
