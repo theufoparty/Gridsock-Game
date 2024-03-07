@@ -12,6 +12,9 @@ const gameLobbyList = document.getElementById('gameLobbySectionUl');
 const playersReadyContainer = document.getElementById('playersReady');
 const startGameButton = document.getElementById('startGameButton');
 const usernameDisplay = document.getElementById('usernameDisplay');
+const guessButton = document.getElementById('guessButton');
+const guessInput = document.getElementById('guessInput');
+let chatList = document.getElementById('chatList');
 const userThatIsDrawing = document.getElementById('user');
 const gameSection = document.getElementById('gameSection');
 
@@ -116,6 +119,51 @@ function updatePlayersReadyAndWhenFullDisplayStartGameButton(
   }
 }
 
+// ---------------------- COUNTDOWN FUNCTIONS ---------------------- //
+
+// Function to update the countdown display
+function updateCountdownDisplay(countdown: number) {
+  const countdownDisplay = document.querySelector('#countdownValue');
+  if (countdownDisplay) {
+    countdownDisplay.textContent = countdown.toString();
+  }
+}
+
+// Event listener for the Start Game button
+if (startGameButton) {
+  startGameButton.addEventListener('click', () => {
+    // Emit a startGame event to the server
+    socket.emit('startGame');
+  });
+}
+
+// Listen for countdown updates from the server
+socket.on('countdownUpdate', (countdown: number) => {
+  updateCountdownDisplay(countdown);
+});
+
+// Listen for countdown finished event from the server
+socket.on('countdownFinished', () => {
+  // Display a message when the countdown finishes
+  const countdownMessage = document.querySelector('#countdownMessage');
+  if (countdownMessage) {
+    countdownMessage.textContent = "Time's up!";
+  }
+});
+
+
+// Only temporary during development
+const testStartCountdownButton = document.getElementById('testStartCountdownButton');
+
+// Only temporary during development
+// Event listener for the test start countdown button
+if (testStartCountdownButton) {
+  testStartCountdownButton.addEventListener('click', () => {
+    // Emit a startGame event to the server
+    socket.emit('startGame');
+  });
+}
+
 // ---------------------- SOCKET FUNCTIONS ---------------------- //
 
 /**
@@ -172,6 +220,13 @@ function recieveSocketPlayersReady(startGameButton: Element | null, playersReady
   });
 }
 
+function recieveSocketForUpdatedUserPoints() {
+  socket.on('updatedUserPoints', users => {
+    console.log('users', users);
+    // here implement user points visually in HTML
+  });
+}
+
 function displayRandomUser(userThatIsDrawing: Element | null) {
   socket.on('randomUser', user => {
     if (!userThatIsDrawing) return;
@@ -185,6 +240,7 @@ function initialFunctionsOnLoad() {
   recieveSocketPlayersReady(startGameButton, playersReadyContainer);
   recieveSocketForNewUser(startGameButton, playersReadyContainer);
   displayRandomUser(userThatIsDrawing);
+  recieveSocketForUpdatedUserPoints();
 }
 
 document.addEventListener('DOMContentLoaded', initialFunctionsOnLoad);
@@ -193,11 +249,20 @@ gameLobbyList?.addEventListener('click', e => {
   handleClickOnButtons(e);
 });
 
+
 function StartGame() {
   // add functions here when starting game, when done move to proper place in our code
   // socket.emit('startGame', true); uncommenct later
   // swapClassBetweenTwoElements(gameLobbySection, gameSection, 'hidden');
 }
+
+function guessedRightAnswer() {
+  const userId = localStorage.getItem('userId');
+  socket.emit('updatePoints', userId);
+}
+
+// placeholder for point logic when guessing the right answer
+document.getElementById('right')?.addEventListener('click', guessedRightAnswer);
 
 startGameButton?.addEventListener('click', StartGame);
 
@@ -207,3 +272,38 @@ document.getElementById('click')?.addEventListener('click', () => {
   socket.emit('startGame', true);
   swapClassBetweenTwoElements(gameLobbySection, gameSection, 'hidden');
 });
+
+
+/**
+ * Sends user guess to the server
+ */
+guessButton?.addEventListener('click', () => {
+  if (guessInput !== null) {
+
+    const guessUser = localStorage.getItem('user');
+
+    socket.emit('guess', {
+      message: guessInput.value,
+      user: guessUser,
+    });
+  }
+});
+
+socket.on("guess", (arg) => {
+  console.log("guess!", arg); 
+  updateGuessChat(arg);
+})
+
+/**
+ * Updates the chat where users write their guesses
+ */
+function updateGuessChat(guess: { user: string; message: string }) {
+  let li = document.createElement("li");
+  li.innerText = guess.user + ": " + guess.message;
+  console.log(li);
+  
+  if (chatList !== null) {
+    chatList.appendChild(li);
+    chatList.scrollTop = chatList.scrollHeight;
+  }
+}

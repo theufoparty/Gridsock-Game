@@ -24,6 +24,8 @@
         <input id="loginInput" type="text" />
         <button id="loginButton">Login</button>
       </section>
+      <!-- Test button to trigger countdown (temporary, remove in production) -->
+      <button id="testStartCountdownButton">Test Start Countdown</button>
       <section id="gameLobbySection" class="hidden">
         <h2>Game Lobby</h2>
         <ul id="gameLobbySectionUl">
@@ -35,9 +37,12 @@
         <div id="playersReady">0/5</div>
         <button id="startGameButton" class="hidden">Start Game</button>
       </section>
+      <button id="right">Guessed right answer</button>
       <button id="click">click</button>
-      <section id="gameSection"> <!--Game section-->
-        <aside id="scoreList"> <!--Score container-->
+      <section id="gameSection">
+        <!--Game section-->
+        <aside id="scoreList">
+          <!--Score container-->
           <p>Score:</p>
           <ul></ul>
         </aside>
@@ -48,7 +53,8 @@
               Now drawing: <span id="user">User <i></i></span>
             </p>
           </div>
-          <div id="frame"> <!--Drawing area-->
+          <div id="frame">
+            <!--Drawing area-->
             <canvas></canvas>
           </div>
           <div>
@@ -56,16 +62,17 @@
             <p>Your word to draw is: <span></span></p>
           </div>
         </article>
-        <aside id="guessingContainer"> <!--Guessing container-->
+        <aside id="guessingContainer">
+          <!--Guessing container-->
           <div>
             <p id="guessInstruction">Please, remember to spell the word correctly when guessing.</p>
           </div>
           <div id="gameChatContainer">
             <ul id="chatList"></ul> <!--Chat answers as viewed by user -->
             <div> <!--Chat input-->
-              <p>Chat:</p>
-              <input id="gameChatInput" type="text">
-              <button type="button" id="">Guess</button>
+              <p>Write your guess here:</p>
+              <input type="text" id="guessInput">
+              <button type="button" id="guessButton">Guess</button>
             </div>
           </div>
         </aside>
