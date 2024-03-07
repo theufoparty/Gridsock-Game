@@ -1,6 +1,8 @@
 const app = require('express')();
 const server = require('http').createServer(app);
 
+const fs = require('fs');
+
 const io = require('socket.io')(server, {
   cors: {
     origin: '*',
@@ -12,7 +14,22 @@ const users = [];
 let playersReady = 0;
 
 app.get('/', (req, res) => {
-  res.send('<h1>Welcome to our server!</h1>');
+  //res.send('<h1>Welcome to our server!</h1>');
+
+  fs.readFile("../client/assets/data/words.json", (err, data) => { 
+    if (err) {
+      console.log(err);
+    } 
+
+    const wordArray = JSON.parse(data);
+    
+    const wordId = wordArray.id;
+    console.log(Math.floor(Math.random() * wordArray.length));
+
+    res.send(wordArray);
+    return;
+  });
+
 });
 
 io.on('connection', socket => {
