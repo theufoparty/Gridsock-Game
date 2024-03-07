@@ -196,37 +196,6 @@ gameLobbyList?.addEventListener('click', e => {
   handleClickOnButtons(e);
 });
 
-guessButton?.addEventListener('click', () => {
-  if (guessInput !== null) {
-    console.log('guess', guessInput.value);
-
-    const guessUser = localStorage.getItem('user');
-    console.log('vem chattar', guessUser);
-
-    socket.emit('guess', {
-      message: guessInput.value,
-      user: guessUser,
-    });
-  }
-});
-
-
-socket.on("guess", (arg) => {
-  console.log("guess!", arg); // argumentet / eventet som vi fångar in
-  updateGuessChat(arg);
-})
-
-function updateGuessChat(guess) {
-  let li = document.createElement("li");
-  li.innerText = guess.user + ": " + guess.message;
-  console.log(li);
-  
-  if (chatList !== null) {
-    chatList.appendChild(li);
-  }
-}
-
-
 
 function StartGame() {
   // add functions here when starting game, when done move to proper place in our code
@@ -242,3 +211,38 @@ document.getElementById('click')?.addEventListener('click', () => {
   socket.emit('startGame', true);
   swapClassBetweenTwoElements(gameLobbySection, gameSection, 'hidden');
 });
+
+
+/**
+ * Sends user guess to the server
+ */
+guessButton?.addEventListener('click', () => {
+  if (guessInput !== null) {
+
+    const guessUser = localStorage.getItem('user');
+
+    socket.emit('guess', {
+      message: guessInput.value,
+      user: guessUser,
+    });
+  }
+});
+
+socket.on("guess", (arg) => {
+  console.log("guess!", arg); 
+  updateGuessChat(arg);
+})
+
+/**
+ * Updates the chat where users write their guesses
+ */
+function updateGuessChat(guess: { user: string; message: string }) {
+  let li = document.createElement("li");
+  li.innerText = guess.user + ": " + guess.message;
+  console.log(li);
+  
+  if (chatList !== null) {
+    chatList.appendChild(li);
+    chatList.scrollTop = chatList.scrollHeight;
+  }
+}
