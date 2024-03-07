@@ -10,6 +10,25 @@ const io = require('socket.io')(server, {
 
 const users = [];
 let playersReady = 0;
+let usedIndexes = []; // keeps track of how many users have already drawn
+
+/**
+ * Returns random string from provided array of strings
+ * Checks if user has already been picked
+ * @param {string[]} array
+ * @returns random string
+ */
+function getRandomizedUserToDraw(users) {
+  let randomIndex = Math.floor(Math.random() * users.length);
+  if (usedIndexes.length >= users.length) return;
+  const hasPlayerAlreadyDrawn = usedIndexes.findIndex(index => index === randomIndex);
+  if (hasPlayerAlreadyDrawn === -1) {
+    usedIndexes.push(randomIndex);
+    return users[randomIndex];
+  } else {
+    return getRandomizedUserToDraw(users);
+  }
+}
 
 app.get('/', (req, res) => {
   res.send('<h1>Welcome to our server!</h1>');
@@ -29,6 +48,13 @@ io.on('connection', socket => {
     users.push(newUser);
     io.emit('updateUserList', users);
     socket.emit('newUser', { userId: socket.id, playersReady });
+  });
+
+  socket.on('startGame', gameState => {
+    if (!gameState) return;
+    const nameOnlyUsers = users.map(user => user.username);
+    const randomUser = getRandomizedUserToDraw(nameOnlyUsers);
+    io.emit('randomUser', randomUser);
   });
 
   // from the client ready / waiting status change the player status
