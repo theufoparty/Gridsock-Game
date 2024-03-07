@@ -150,6 +150,15 @@ io.on('connection', socket => {
     io.emit('updateUserList', users);
   });
 
+  socket.on('guess', (arg) => {
+    console.log("incoming guess", arg);
+    io.emit('guess', arg)
+  });
+  
+  // Listen for the "startGame" event from the server
+  socket.on('startGame', () => {
+    let countdown = 60; // Initial countdown value in seconds
+
   socket.on('startGame', () => {
     countdown = 60;
     // An interval to update the countdown every second
