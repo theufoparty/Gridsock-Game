@@ -185,5 +185,5 @@ gameLobbyList?.addEventListener('click', e => {
 });
 
 window.onload = () => {
-  initializeDrawing();
+  initializeDrawing(socket);
 };

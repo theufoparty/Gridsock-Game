@@ -21,6 +21,22 @@ io.on('connection', socket => {
     io.emit('chat', arg);
   });
 
+  // DRAWING
+
+  socket.on('drawing', data => {
+    socket.broadcast.emit('drawing', data);
+  });
+
+  // Handle 'startDrawing' event
+  socket.on('startDrawing', data => {
+    socket.broadcast.emit('startDrawing', data);
+  });
+
+  // Handle 'endDrawing' event
+  socket.on('endDrawing', () => {
+    socket.broadcast.emit('endDrawing');
+  });
+
   // Triggers updateUserList for the user that connects to the server.
   socket.emit('updateUserList', users);
 
