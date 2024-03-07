@@ -92,6 +92,11 @@ io.on('connection', socket => {
     users.splice(userIndex, 1);
     io.emit('updateUserList', users);
   });
+
+  socket.on('guess', (arg) => {
+    console.log("incoming guess", arg);
+    io.emit('guess', arg)
+  })
 });
 
 const PORT = process.env.PORT || 3000;
