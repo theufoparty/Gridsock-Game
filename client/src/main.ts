@@ -217,6 +217,13 @@ function recieveSocketPlayersReady(startGameButton: Element | null, playersReady
   });
 }
 
+function recieveSocketForUpdatedUserPoints() {
+  socket.on('updatedUserPoints', users => {
+    console.log('users', users);
+    // here implement user points visually in HTML
+  });
+}
+
 function displayRandomUser(userThatIsDrawing: Element | null) {
   socket.on('randomUser', user => {
     if (!userThatIsDrawing) return;
@@ -230,6 +237,7 @@ function initialFunctionsOnLoad() {
   recieveSocketPlayersReady(startGameButton, playersReadyContainer);
   recieveSocketForNewUser(startGameButton, playersReadyContainer);
   displayRandomUser(userThatIsDrawing);
+  recieveSocketForUpdatedUserPoints();
 }
 
 document.addEventListener('DOMContentLoaded', initialFunctionsOnLoad);
@@ -243,6 +251,14 @@ function StartGame() {
   // socket.emit('startGame', true); uncommenct later
   // swapClassBetweenTwoElements(gameLobbySection, gameSection, 'hidden');
 }
+
+function guessedRightAnswer() {
+  const userId = localStorage.getItem('userId');
+  socket.emit('updatePoints', userId);
+}
+
+// placeholder for point logic when guessing the right answer
+document.getElementById('right')?.addEventListener('click', guessedRightAnswer);
 
 startGameButton?.addEventListener('click', StartGame);
 
