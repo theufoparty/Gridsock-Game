@@ -1,7 +1,7 @@
 import './styles/style.css';
 import { swapClassBetweenTwoElements, getRandomColor } from './utils/helperfunctions';
 import { io } from 'socket.io-client';
-import { initializeDrawing } from './utils/drawing';
+import { initializeDrawing } from './utils/drawingCanvas';
 
 const socket = io('http://localhost:3000/');
 
