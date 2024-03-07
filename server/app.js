@@ -13,6 +13,25 @@ let playersReady = 0;
 let usedIndexes = []; // keeps track of how many users have already drawn
 
 /**
+ * Calculates in 5 seconds interval based on timeLeft how many points are recieved
+ * @param {number} timeLeft
+ * @returns {number} - points
+ */
+function getPointsAsNumberBasedOnTime(timeLeft) {
+  // if time left is greater than 5 seconds give player points
+  const pointsThreshold = 5;
+  const secsPerPointInterval = 5;
+  const pointsPerInterval = 100;
+  const minPointsAboveThreshold = 100; // min amount of points over 5 seconds
+  if (timeLeft >= pointsThreshold) {
+    const secsAboveThreshold = timeLeft - pointsThreshold;
+    return minPointsAboveThreshold + Math.floor(secsAboveThreshold / secsPerPointInterval) * pointsPerInterval;
+  }
+  // if player does not answer above the time threshold they get no points
+  return 0;
+}
+
+/**
  * Returns random string from provided array of strings
  * Checks if user has already been picked
  * @param {string[]} array
@@ -44,10 +63,21 @@ io.on('connection', socket => {
   socket.emit('updateUserList', users);
 
   socket.on('newUser', user => {
-    const newUser = { username: user.username, color: user.color, id: socket.id, isReady: false };
+    const newUser = { username: user.username, color: user.color, id: socket.id, isReady: false, points: 0 };
     users.push(newUser);
     io.emit('updateUserList', users);
     socket.emit('newUser', { userId: socket.id, playersReady });
+  });
+
+  // gets stored id from client, if user exists update user points based on time
+  // sending back all users with the updated points
+  socket.on('updatePoints', userId => {
+    const user = users.find(user => user.id === userId);
+    if (user) {
+      // placeholder right now
+      user.points += getPointsAsNumberBasedOnTime(50);
+      io.emit('updatedUserPoints', users);
+    }
   });
 
   socket.on('startGame', gameState => {
