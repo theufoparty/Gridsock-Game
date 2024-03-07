@@ -1,4 +1,5 @@
 import './styles/style.css';
+import { IUserType } from './utils/types';
 import { swapClassBetweenTwoElements, getRandomColor } from './utils/helperfunctions';
 import { io } from 'socket.io-client';
 
@@ -17,6 +18,7 @@ const guessInput = document.getElementById('guessInput');
 let chatList = document.getElementById('chatList');
 const userThatIsDrawing = document.getElementById('user');
 const gameSection = document.getElementById('gameSection');
+const playerHighscoreList = document.getElementById('playerHighscore');
 
 /**
  * Handles login for user
@@ -151,7 +153,6 @@ socket.on('countdownFinished', () => {
   }
 });
 
-
 // Only temporary during development
 const testStartCountdownButton = document.getElementById('testStartCountdownButton');
 
@@ -173,10 +174,11 @@ if (testStartCountdownButton) {
  */
 
 function initializeUserList(gameLobbyList: Element | null): void {
-  socket.on('updateUserList', (users: Array<{ username: string; color: string; id: string; isReady: boolean }>) => {
+  socket.on('updateUserList', (users: IUserType[]) => {
     if (!gameLobbyList) return;
     gameLobbyList.innerHTML = '';
     users.forEach(user => appendUserToList(user));
+    generatePlayerHighscore(users, playerHighscoreList);
   });
 }
 
@@ -220,10 +222,32 @@ function recieveSocketPlayersReady(startGameButton: Element | null, playersReady
   });
 }
 
+/**
+ * Generates player highscore based on usernames and current points
+ * @param {IUserType[]} users
+ * @param {Element | null} playerHighscoreList
+ * @returns void
+ */
+function generatePlayerHighscore(users: IUserType[], playerHighscoreList: Element | null) {
+  if (!playerHighscoreList) return;
+  playerHighscoreList.innerHTML = '';
+  users.forEach(user => {
+    const { username, points } = user;
+    const li = document.createElement('li');
+    const p = document.createElement('p');
+    const div = document.createElement('div');
+    p.textContent = username;
+    div.textContent = points.toString();
+    li.append(div, p);
+    playerHighscoreList.append(li);
+  });
+}
+
 function recieveSocketForUpdatedUserPoints() {
   socket.on('updatedUserPoints', users => {
     console.log('users', users);
-    // here implement user points visually in HTML
+    // here implement some kind of
+    generatePlayerHighscore(users, playerHighscoreList);
   });
 }
 
@@ -249,7 +273,6 @@ gameLobbyList?.addEventListener('click', e => {
   handleClickOnButtons(e);
 });
 
-
 function StartGame() {
   // add functions here when starting game, when done move to proper place in our code
   // socket.emit('startGame', true); uncommenct later
@@ -273,35 +296,34 @@ document.getElementById('click')?.addEventListener('click', () => {
   swapClassBetweenTwoElements(gameLobbySection, gameSection, 'hidden');
 });
 
-
 /**
  * Sends user guess to the server
  */
 guessButton?.addEventListener('click', () => {
   if (guessInput !== null) {
-
+    const input = guessInput as HTMLInputElement;
     const guessUser = localStorage.getItem('user');
 
     socket.emit('guess', {
-      message: guessInput.value,
+      message: input.value,
       user: guessUser,
     });
   }
 });
 
-socket.on("guess", (arg) => {
-  console.log("guess!", arg); 
+socket.on('guess', arg => {
+  console.log('guess!', arg);
   updateGuessChat(arg);
-})
+});
 
 /**
  * Updates the chat where users write their guesses
  */
 function updateGuessChat(guess: { user: string; message: string }) {
-  let li = document.createElement("li");
-  li.innerText = guess.user + ": " + guess.message;
+  let li = document.createElement('li');
+  li.innerText = guess.user + ': ' + guess.message;
   console.log(li);
-  
+
   if (chatList !== null) {
     chatList.appendChild(li);
     chatList.scrollTop = chatList.scrollHeight;

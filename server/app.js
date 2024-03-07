@@ -198,14 +198,10 @@ io.on('connection', socket => {
     io.emit('updateUserList', users);
   });
 
-  socket.on('guess', (arg) => {
-    console.log("incoming guess", arg);
-    io.emit('guess', arg)
+  socket.on('guess', arg => {
+    console.log('incoming guess', arg);
+    io.emit('guess', arg);
   });
-  
-  // Listen for the "startGame" event from the server
-  socket.on('startGame', () => {
-    let countdown = 60; // Initial countdown value in seconds
 
   socket.on('startGame', () => {
     countdown = 60;
@@ -229,5 +225,4 @@ app.use(cors());
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-})
-})
+});
