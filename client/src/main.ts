@@ -12,6 +12,9 @@ const gameLobbyList = document.getElementById('gameLobbySectionUl');
 const playersReadyContainer = document.getElementById('playersReady');
 const startGameButton = document.getElementById('startGameButton');
 const usernameDisplay = document.getElementById('usernameDisplay');
+const guessButton = document.getElementById('guessButton');
+const guessInput = document.getElementById('guessInput');
+let chatList = document.getElementById('chatList');
 const userThatIsDrawing = document.getElementById('user');
 const gameSection = document.getElementById('gameSection');
 
@@ -246,6 +249,7 @@ gameLobbyList?.addEventListener('click', e => {
   handleClickOnButtons(e);
 });
 
+
 function StartGame() {
   // add functions here when starting game, when done move to proper place in our code
   // socket.emit('startGame', true); uncommenct later
@@ -268,3 +272,38 @@ document.getElementById('click')?.addEventListener('click', () => {
   socket.emit('startGame', true);
   swapClassBetweenTwoElements(gameLobbySection, gameSection, 'hidden');
 });
+
+
+/**
+ * Sends user guess to the server
+ */
+guessButton?.addEventListener('click', () => {
+  if (guessInput !== null) {
+
+    const guessUser = localStorage.getItem('user');
+
+    socket.emit('guess', {
+      message: guessInput.value,
+      user: guessUser,
+    });
+  }
+});
+
+socket.on("guess", (arg) => {
+  console.log("guess!", arg); 
+  updateGuessChat(arg);
+})
+
+/**
+ * Updates the chat where users write their guesses
+ */
+function updateGuessChat(guess: { user: string; message: string }) {
+  let li = document.createElement("li");
+  li.innerText = guess.user + ": " + guess.message;
+  console.log(li);
+  
+  if (chatList !== null) {
+    chatList.appendChild(li);
+    chatList.scrollTop = chatList.scrollHeight;
+  }
+}
