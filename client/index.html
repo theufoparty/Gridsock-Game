@@ -36,10 +36,9 @@
         <button id="startGameButton" class="hidden">Start Game</button>
       </section>
       <button id="click">click</button>
-      <section id="gameSection">
-        <!--Game section-->
-        <aside>
-          <!--Score container-->
+      <section id="gameSection"> <!--Game section-->
+        <aside id="scoreList"> <!--Score container-->
+          <p>Score:</p>
           <ul></ul>
         </aside>
         <article>
@@ -49,8 +48,7 @@
               Now drawing: <span id="user">User <i></i></span>
             </p>
           </div>
-          <div>
-            <!--Drawing area-->
+          <div id="frame"> <!--Drawing area-->
             <canvas></canvas>
           </div>
           <div>
@@ -58,18 +56,15 @@
             <p>Your word to draw is: <span></span></p>
           </div>
         </article>
-        <aside>
-          <!--Guessing container-->
+        <aside id="guessingContainer"> <!--Guessing container-->
           <div>
-            <p>Please, remember to spell the word correctly when guessing.</p>
+            <p id="guessInstruction">Please, remember to spell the word correctly when guessing.</p>
           </div>
-          <div>
-            <ul></ul>
-            <!--Chat answers as viewed by user -->
-            <div>
-              <!--Chat input-->
+          <div id="gameChatContainer">
+            <ul id="chatList"></ul> <!--Chat answers as viewed by user -->
+            <div> <!--Chat input-->
               <p>Chat:</p>
-              <input type="text" />
+              <input id="gameChatInput" type="text">
               <button type="button" id="">Guess</button>
             </div>
           </div>

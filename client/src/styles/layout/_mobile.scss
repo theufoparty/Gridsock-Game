@@ -53,3 +53,35 @@ section h2 {
 section ul li {
   @include gap-column-1;
 }
+
+#gameSection {
+  display: flex;
+  flex-direction: row;
+  background-color: $game-bg;
+  padding: 20px;
+}
+
+#frame {
+  background-color: $light-gray;
+  border: solid $canvas-border 2px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+#guessingContainer {
+  #guessInstruction {
+    color: $alert-text;
+  }
+}
+
+#gameChatContainer{
+  background-color: $light-gray;
+  margin-top: 10px;
+  padding: 10px;
+  #chatList{
+    margin-bottom: 20px;
+  }
+  #gameChatInput {
+    border-radius: 20px;
+  }
+}
