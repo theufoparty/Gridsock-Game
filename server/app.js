@@ -26,7 +26,7 @@ app.get('/words', (req, res) => {
     });
 });
 
-const fs = require('fs');
+//const fs = require('fs');
 
 const io = require('socket.io')(server, {
   cors: {
@@ -63,7 +63,7 @@ function getPointsAsNumberBasedOnTime(timeLeft) {
 //let wordArray = [];
 //let gameArray = [];
 
-async function getWordArray() {
+/* async function getWordArray() {
   fs.readFile("../client/assets/data/words.json", (err, data) => { 
   if (err) {
     console.log(err);
@@ -79,7 +79,7 @@ const handleArray = await getWordArray();
 console.log('ny funktion', handleArray);
 }
 
-handleData();  
+handleData();   */
 
 /* function getRandomWord() {
   fs.readFile("../client/assets/data/words.json", (err, data) => { 
@@ -229,4 +229,5 @@ app.use(cors());
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-});
+})
+})
