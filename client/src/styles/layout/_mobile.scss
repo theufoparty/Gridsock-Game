@@ -57,25 +57,25 @@ section ul li {
 #gameSection {
   display: flex;
   flex-direction: row;
-  background-color: #CEF6FF;
+  background-color: $game-bg;
   padding: 20px;
 }
 
 #frame {
-  background-color: lightgrey;
-  border: solid black 2px;
+  background-color: $light-gray;
+  border: solid $canvas-border 2px;
   margin-top: 20px;
   margin-bottom: 20px;
 }
 
 #guessingContainer {
   #guessInstruction {
-    color: red;
+    color: $alert-text;
   }
 }
 
 #gameChatContainer{
-  background-color: lightgray;
+  background-color: $light-gray;
   margin-top: 10px;
   padding: 10px;
   #chatList{
