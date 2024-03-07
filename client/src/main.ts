@@ -1,4 +1,5 @@
 import './styles/style.css';
+import { IUserType } from './utils/types';
 import { swapClassBetweenTwoElements, getRandomColor } from './utils/helperfunctions';
 import { io } from 'socket.io-client';
 import { initializeDrawing } from './utils/drawingCanvas';
@@ -13,8 +14,12 @@ const gameLobbyList = document.getElementById('gameLobbySectionUl');
 const playersReadyContainer = document.getElementById('playersReady');
 const startGameButton = document.getElementById('startGameButton');
 const usernameDisplay = document.getElementById('usernameDisplay');
+const guessButton = document.getElementById('guessButton');
+const guessInput = document.getElementById('guessInput');
+let chatList = document.getElementById('chatList');
 const userThatIsDrawing = document.getElementById('user');
 const gameSection = document.getElementById('gameSection');
+const playerHighscoreList = document.getElementById('playerHighscore');
 
 /**
  * Handles login for user
@@ -117,6 +122,50 @@ function updatePlayersReadyAndWhenFullDisplayStartGameButton(
   }
 }
 
+// ---------------------- COUNTDOWN FUNCTIONS ---------------------- //
+
+// Function to update the countdown display
+function updateCountdownDisplay(countdown: number) {
+  const countdownDisplay = document.querySelector('#countdownValue');
+  if (countdownDisplay) {
+    countdownDisplay.textContent = countdown.toString();
+  }
+}
+
+// Event listener for the Start Game button
+if (startGameButton) {
+  startGameButton.addEventListener('click', () => {
+    // Emit a startGame event to the server
+    socket.emit('startGame');
+  });
+}
+
+// Listen for countdown updates from the server
+socket.on('countdownUpdate', (countdown: number) => {
+  updateCountdownDisplay(countdown);
+});
+
+// Listen for countdown finished event from the server
+socket.on('countdownFinished', () => {
+  // Display a message when the countdown finishes
+  const countdownMessage = document.querySelector('#countdownMessage');
+  if (countdownMessage) {
+    countdownMessage.textContent = "Time's up!";
+  }
+});
+
+// Only temporary during development
+const testStartCountdownButton = document.getElementById('testStartCountdownButton');
+
+// Only temporary during development
+// Event listener for the test start countdown button
+if (testStartCountdownButton) {
+  testStartCountdownButton.addEventListener('click', () => {
+    // Emit a startGame event to the server
+    socket.emit('startGame');
+  });
+}
+
 // ---------------------- SOCKET FUNCTIONS ---------------------- //
 
 /**
@@ -126,10 +175,11 @@ function updatePlayersReadyAndWhenFullDisplayStartGameButton(
  */
 
 function initializeUserList(gameLobbyList: Element | null): void {
-  socket.on('updateUserList', (users: Array<{ username: string; color: string; id: string; isReady: boolean }>) => {
+  socket.on('updateUserList', (users: IUserType[]) => {
     if (!gameLobbyList) return;
     gameLobbyList.innerHTML = '';
     users.forEach(user => appendUserToList(user));
+    generatePlayerHighscore(users, playerHighscoreList);
   });
 }
 
@@ -173,6 +223,35 @@ function recieveSocketPlayersReady(startGameButton: Element | null, playersReady
   });
 }
 
+/**
+ * Generates player highscore based on usernames and current points
+ * @param {IUserType[]} users
+ * @param {Element | null} playerHighscoreList
+ * @returns void
+ */
+function generatePlayerHighscore(users: IUserType[], playerHighscoreList: Element | null) {
+  if (!playerHighscoreList) return;
+  playerHighscoreList.innerHTML = '';
+  users.forEach(user => {
+    const { username, points } = user;
+    const li = document.createElement('li');
+    const p = document.createElement('p');
+    const div = document.createElement('div');
+    p.textContent = username;
+    div.textContent = points.toString();
+    li.append(div, p);
+    playerHighscoreList.append(li);
+  });
+}
+
+function recieveSocketForUpdatedUserPoints() {
+  socket.on('updatedUserPoints', users => {
+    console.log('users', users);
+    // here implement some kind of
+    generatePlayerHighscore(users, playerHighscoreList);
+  });
+}
+
 function displayRandomUser(userThatIsDrawing: Element | null) {
   socket.on('randomUser', user => {
     if (!userThatIsDrawing) return;
@@ -186,6 +265,7 @@ function initialFunctionsOnLoad() {
   recieveSocketPlayersReady(startGameButton, playersReadyContainer);
   recieveSocketForNewUser(startGameButton, playersReadyContainer);
   displayRandomUser(userThatIsDrawing);
+  recieveSocketForUpdatedUserPoints();
 }
 
 document.addEventListener('DOMContentLoaded', initialFunctionsOnLoad);
@@ -200,6 +280,14 @@ function StartGame() {
   // swapClassBetweenTwoElements(gameLobbySection, gameSection, 'hidden');
 }
 
+function guessedRightAnswer() {
+  const userId = localStorage.getItem('userId');
+  socket.emit('updatePoints', userId);
+}
+
+// placeholder for point logic when guessing the right answer
+document.getElementById('right')?.addEventListener('click', guessedRightAnswer);
+
 startGameButton?.addEventListener('click', StartGame);
 
 // this is only a placeholder for current game logic
@@ -208,6 +296,40 @@ document.getElementById('click')?.addEventListener('click', () => {
   socket.emit('startGame', true);
   swapClassBetweenTwoElements(gameLobbySection, gameSection, 'hidden');
 });
+
+/**
+ * Sends user guess to the server
+ */
+guessButton?.addEventListener('click', () => {
+  if (guessInput !== null) {
+    const input = guessInput as HTMLInputElement;
+    const guessUser = localStorage.getItem('user');
+
+    socket.emit('guess', {
+      message: input.value,
+      user: guessUser,
+    });
+  }
+});
+
+socket.on('guess', arg => {
+  console.log('guess!', arg);
+  updateGuessChat(arg);
+});
+
+/**
+ * Updates the chat where users write their guesses
+ */
+function updateGuessChat(guess: { user: string; message: string }) {
+  let li = document.createElement('li');
+  li.innerText = guess.user + ': ' + guess.message;
+  console.log(li);
+
+  if (chatList !== null) {
+    chatList.appendChild(li);
+    chatList.scrollTop = chatList.scrollHeight;
+  }
+}
 
 window.onload = () => {
   initializeDrawing(socket);

@@ -1,5 +1,30 @@
 const app = require('express')();
 const server = require('http').createServer(app);
+const MongoClient = require('mongodb').MongoClient;
+require('dotenv').config();
+const cors = require('cors');
+
+MongoClient.connect(process.env.DB_URL).then(client => {
+  console.log('We are connected to database');
+  const db = client.db('Game');
+  app.locals.db = db;
+});
+
+app.get('/', (req, res) => {
+  res.send('works');
+});
+
+app.get('/words', (req, res) => {
+  const db = req.app.locals.db;
+
+  db.collection('Words')
+    .find()
+    .toArray()
+    .then(data => {
+      console.log('words:', data);
+      res.json(data);
+    });
+});
 
 const io = require('socket.io')(server, {
   cors: {
@@ -11,6 +36,26 @@ const io = require('socket.io')(server, {
 const users = [];
 let playersReady = 0;
 let usedIndexes = []; // keeps track of how many users have already drawn
+let countdown = 60; // Initial countdown value in seconds
+
+/**
+ * Calculates in 5 seconds interval based on timeLeft how many points are recieved
+ * @param {number} timeLeft
+ * @returns {number} - points
+ */
+function getPointsAsNumberBasedOnTime(timeLeft) {
+  // if time left is greater than 5 seconds give player points
+  const pointsThreshold = 5;
+  const secsPerPointInterval = 5;
+  const pointsPerInterval = 100;
+  const minPointsAboveThreshold = 100; // min amount of points over 5 seconds
+  if (timeLeft >= pointsThreshold) {
+    const secsAboveThreshold = timeLeft - pointsThreshold;
+    return minPointsAboveThreshold + Math.floor(secsAboveThreshold / secsPerPointInterval) * pointsPerInterval;
+  }
+  // if player does not answer above the time threshold they get no points
+  return 0;
+}
 
 /**
  * Returns random string from provided array of strings
@@ -60,11 +105,23 @@ io.on('connection', socket => {
 
   socket.emit('updateUserList', users);
 
+  // if player logs in, add a new user with their information to the users
   socket.on('newUser', user => {
-    const newUser = { username: user.username, color: user.color, id: socket.id, isReady: false };
+    const newUser = { username: user.username, color: user.color, id: socket.id, isReady: false, points: 0 };
     users.push(newUser);
     io.emit('updateUserList', users);
     socket.emit('newUser', { userId: socket.id, playersReady });
+  });
+
+  // gets stored id from client, if user exists update user points based on time
+  // sending back all users with the updated points
+  socket.on('updatePoints', userId => {
+    const user = users.find(user => user.id === userId);
+    if (user) {
+      // placeholder right now
+      user.points += getPointsAsNumberBasedOnTime(countdown);
+      io.emit('updatedUserPoints', users);
+    }
   });
 
   socket.on('startGame', gameState => {
@@ -109,7 +166,30 @@ io.on('connection', socket => {
     users.splice(userIndex, 1);
     io.emit('updateUserList', users);
   });
+
+  socket.on('guess', arg => {
+    console.log('incoming guess', arg);
+    io.emit('guess', arg);
+  });
+
+  socket.on('startGame', () => {
+    countdown = 60;
+    // An interval to update the countdown every second
+    const countdownInterval = setInterval(() => {
+      if (countdown <= 0) {
+        // If countdown reaches zero, clear the interval and emit a "countdownFinished" event
+        clearInterval(countdownInterval);
+        io.emit('countdownFinished'); // Notify clients that the countdown has finished
+      } else {
+        // Update the countdown value and emit a "countdownUpdate" event to all connected clients
+        io.emit('countdownUpdate', countdown); // Send the updated countdown value to clients
+        countdown--; // Decrement the countdown value by 1 second
+      }
+    }, 1000); // Run the interval every 1000 milliseconds (1 second)
+  });
 });
+
+app.use(cors());
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {

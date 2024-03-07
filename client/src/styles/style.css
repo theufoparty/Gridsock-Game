@@ -235,9 +235,19 @@ section ul li {
 }
 #gameChatContainer #chatList {
   margin-bottom: 20px;
+  max-height: 200px;
+  overflow-y: auto;
 }
-#gameChatContainer #gameChatInput {
-  border-radius: 20px;
+#gameChatContainer #chatList li {
+  background-color: rgb(175, 173, 173);
+  margin: 10px;
+  height: 1.5rem;
+  border-radius: 10px;
+  padding: 5px;
+}
+#gameChatContainer #guessInput {
+  border-radius: 10px;
+  height: 1.5rem;
 }
 
 .hidden {
