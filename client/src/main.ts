@@ -20,6 +20,7 @@ let chatList = document.getElementById('chatList');
 const userThatIsDrawing = document.getElementById('user');
 const gameSection = document.getElementById('gameSection');
 const playerHighscoreList = document.getElementById('playerHighscore');
+let theWord = document.getElementById('theWord');
 
 /**
  * Handles login for user
@@ -324,11 +325,21 @@ function updateGuessChat(guess: { user: string; message: string }) {
   let li = document.createElement('li');
   li.innerText = guess.user + ': ' + guess.message;
   console.log(li);
+  let liCorrect = document.createElement('li')
+  liCorrect.innerText = 'Correct!';
 
   if (chatList !== null) {
-    chatList.appendChild(li);
-    chatList.scrollTop = chatList.scrollHeight;
+    if (theWord !== null) {
+      if (guess.message !== theWord.innerHTML) {
+        chatList.appendChild(li);
+        chatList.scrollTop = chatList.scrollHeight;
+      } else {
+        chatList.appendChild(liCorrect);
+        chatList.scrollTop = chatList.scrollHeight;
+      } 
+    }
   }
+
 }
 
 window.onload = () => {

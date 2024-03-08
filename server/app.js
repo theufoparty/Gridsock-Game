@@ -167,6 +167,7 @@ io.on('connection', socket => {
     io.emit('updateUserList', users);
   });
 
+  // receive guess from client and sends back to all clients
   socket.on('guess', arg => {
     console.log('incoming guess', arg);
     io.emit('guess', arg);
