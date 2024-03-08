@@ -324,22 +324,22 @@ socket.on('guess', arg => {
 function updateGuessChat(guess: { user: string; message: string }) {
   let li = document.createElement('li');
   li.innerText = guess.user + ': ' + guess.message;
-  console.log(li);
+  
   let liCorrect = document.createElement('li')
   liCorrect.innerText = 'Correct!';
 
+  let theGuess = guess.message;
+
   if (chatList !== null) {
     if (theWord !== null) {
-      if (guess.message !== theWord.innerHTML) {
-        chatList.appendChild(li);
-        chatList.scrollTop = chatList.scrollHeight;
-      } else {
+      if (theGuess.includes(theWord.innerHTML)) {
         chatList.appendChild(liCorrect);
-        chatList.scrollTop = chatList.scrollHeight;
-      } 
+      } else {
+        chatList.appendChild(li);
+      }
+      chatList.scrollTop = chatList.scrollHeight;
     }
   }
-
 }
 
 window.onload = () => {
