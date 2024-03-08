@@ -85,7 +85,24 @@ io.on('connection', socket => {
     io.emit('chat', arg);
   });
 
-  // Triggers updateUserList for the user that connects to the server.
+  // DRAWING
+
+  socket.on('drawing', data => {
+    socket.broadcast.emit('drawing', data);
+  });
+
+  socket.on('startDrawing', data => {
+    socket.broadcast.emit('startDrawing', data);
+  });
+
+  socket.on('endDrawing', () => {
+    socket.broadcast.emit('endDrawing');
+  });
+
+  socket.on('clearCanvas', () => {
+    socket.broadcast.emit('clearCanvas');
+  });
+
   socket.emit('updateUserList', users);
 
   // if player logs in, add a new user with their information to the users

@@ -124,7 +124,7 @@ blockquote:before,
 blockquote:after,
 q:before,
 q:after {
-  content: "";
+  content: '';
   content: none;
 }
 
@@ -134,9 +134,9 @@ table {
 }
 
 :root {
-  --ff-serif: "Bellefair", serif;
-  --ff-sans-cond: "Barlow Condensed", sans-serif;
-  --ff-sans-normal: "Barlow", sans-serif;
+  --ff-serif: 'Bellefair', serif;
+  --ff-sans-cond: 'Barlow Condensed', sans-serif;
+  --ff-sans-normal: 'Barlow', sans-serif;
 }
 
 body {
@@ -213,7 +213,7 @@ section ul li {
 #gameSection {
   display: flex;
   flex-direction: row;
-  background-color: #CEF6FF;
+  background-color: #cef6ff;
   padding: 20px;
 }
 
@@ -262,3 +262,9 @@ section ul li {
   white-space: nowrap !important;
   border: 0 !important;
 }
+
+.canvas {
+  border: 1px solid black;
+  display: block;
+  overflow: hidden;
+} /*# sourceMappingURL=style.css.map */
