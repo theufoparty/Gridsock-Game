@@ -115,7 +115,7 @@ function updatePlayersReadyAndWhenFullDisplayStartGameButton(
 ) {
   if (!playersReadyContainer) return;
   playersReadyContainer.textContent = `${players}/5`;
-  if (players === 5) {
+  if (players === 2) {
     startGameButton?.classList.remove('hidden');
   } else {
     startGameButton?.classList.add('hidden');
@@ -268,16 +268,22 @@ function initialFunctionsOnLoad() {
   recieveSocketForUpdatedUserPoints();
 }
 
-document.addEventListener('DOMContentLoaded', initialFunctionsOnLoad);
-
 gameLobbyList?.addEventListener('click', e => {
   handleClickOnButtons(e);
 });
 
+if (startGameButton) {
+  startGameButton.addEventListener('click', StartGame);
+} else {
+  console.error('StartGame button not found!');
+}
+
 function StartGame() {
-  // add functions here when starting game, when done move to proper place in our code
-  // socket.emit('startGame', true); uncommenct later
-  // swapClassBetweenTwoElements(gameLobbySection, gameSection, 'hidden');
+  console.log('Do I even run?');
+  if (gameSection && gameLobbySection) {
+    gameLobbySection.classList.add('hidden');
+    gameSection.classList.remove('hidden');
+  }
 }
 
 function guessedRightAnswer() {
@@ -287,8 +293,6 @@ function guessedRightAnswer() {
 
 // placeholder for point logic when guessing the right answer
 document.getElementById('right')?.addEventListener('click', guessedRightAnswer);
-
-startGameButton?.addEventListener('click', StartGame);
 
 // this is only a placeholder for current game logic
 document.getElementById('click')?.addEventListener('click', () => {
@@ -331,6 +335,7 @@ function updateGuessChat(guess: { user: string; message: string }) {
   }
 }
 
+document.addEventListener('DOMContentLoaded', initialFunctionsOnLoad);
 window.onload = () => {
   initializeDrawing(socket);
 };
