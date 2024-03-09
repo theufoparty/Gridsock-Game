@@ -273,6 +273,8 @@ function initialFunctionsOnLoad() {
   startNewGame(gameSection, gameLobbySection);
 }
 
+document.addEventListener('DOMContentLoaded', initialFunctionsOnLoad);
+
 gameLobbyList?.addEventListener('click', e => {
   handleClickOnButtons(e);
 });
@@ -330,7 +332,6 @@ function updateGuessChat(guess: { user: string; message: string }) {
   }
 }
 
-document.addEventListener('DOMContentLoaded', initialFunctionsOnLoad);
 window.onload = () => {
   initializeDrawing(socket);
 };
