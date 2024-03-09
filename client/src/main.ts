@@ -115,7 +115,7 @@ function updatePlayersReadyAndWhenFullDisplayStartGameButton(
 ) {
   if (!playersReadyContainer) return;
   playersReadyContainer.textContent = `${players}/5`;
-  if (players === 2) {
+  if (players === 5) {
     startGameButton?.classList.remove('hidden');
   } else {
     startGameButton?.classList.add('hidden');
@@ -130,14 +130,6 @@ function updateCountdownDisplay(countdown: number) {
   if (countdownDisplay) {
     countdownDisplay.textContent = countdown.toString();
   }
-}
-
-// Event listener for the Start Game button
-if (startGameButton) {
-  startGameButton.addEventListener('click', () => {
-    // Emit a startGame event to the server
-    socket.emit('startGame');
-  });
 }
 
 // Listen for countdown updates from the server
@@ -252,10 +244,22 @@ function recieveSocketForUpdatedUserPoints() {
   });
 }
 
-function displayRandomUser(userThatIsDrawing: Element | null) {
-  socket.on('randomUser', user => {
-    if (!userThatIsDrawing) return;
-    userThatIsDrawing.textContent = user;
+function startNewRound(userThatIsDrawing: Element | null) {
+  socket.on('newRound', (nextUserName: string) => {
+    if (userThatIsDrawing) {
+      userThatIsDrawing.textContent = nextUserName;
+    }
+    // TODO: Add logic to ensure enable or disable the canvas
+    // depending on whether we're the new player or not
+  });
+}
+
+function startNewGame(gameSection: Element | null, gameLobbySection: Element | null) {
+  socket.on('startGame', () => {
+    if (gameSection && gameLobbySection) {
+      gameLobbySection.classList.add('hidden');
+      gameSection.classList.remove('hidden');
+    }
   });
 }
 
@@ -264,27 +268,18 @@ function initialFunctionsOnLoad() {
   recieveSocketUserStatus(gameLobbyList);
   recieveSocketPlayersReady(startGameButton, playersReadyContainer);
   recieveSocketForNewUser(startGameButton, playersReadyContainer);
-  displayRandomUser(userThatIsDrawing);
+  startNewRound(userThatIsDrawing);
   recieveSocketForUpdatedUserPoints();
+  startNewGame(gameSection, gameLobbySection);
 }
 
 gameLobbyList?.addEventListener('click', e => {
   handleClickOnButtons(e);
 });
 
-if (startGameButton) {
-  startGameButton.addEventListener('click', StartGame);
-} else {
-  console.error('StartGame button not found!');
-}
-
-function StartGame() {
-  console.log('Do I even run?');
-  if (gameSection && gameLobbySection) {
-    gameLobbySection.classList.add('hidden');
-    gameSection.classList.remove('hidden');
-  }
-}
+startGameButton?.addEventListener('click', () => {
+  socket.emit('startGame');
+});
 
 function guessedRightAnswer() {
   const userId = localStorage.getItem('userId');

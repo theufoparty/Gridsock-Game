@@ -33,10 +33,12 @@ const io = require('socket.io')(server, {
   },
 });
 
-const users = [];
+let users = [];
 let playersReady = 0;
 let usedIndexes = []; // keeps track of how many users have already drawn
 let countdown = 60; // Initial countdown value in seconds
+let currentUser = '';
+let countdownInterval = null;
 
 /**
  * Calculates in 5 seconds interval based on timeLeft how many points are recieved
@@ -105,6 +107,7 @@ io.on('connection', socket => {
 
   socket.emit('updateUserList', users);
 
+  // NEW USER
   // if player logs in, add a new user with their information to the users
   socket.on('newUser', user => {
     const newUser = { username: user.username, color: user.color, id: socket.id, isReady: false, points: 0 };
@@ -122,13 +125,6 @@ io.on('connection', socket => {
       user.points += getPointsAsNumberBasedOnTime(countdown);
       io.emit('updatedUserPoints', users);
     }
-  });
-
-  socket.on('startGame', gameState => {
-    if (!gameState) return;
-    const nameOnlyUsers = users.map(user => user.username);
-    const randomUser = getRandomizedUserToDraw(nameOnlyUsers);
-    io.emit('randomUser', randomUser);
   });
 
   // from the client ready / waiting status change the player status
@@ -172,20 +168,52 @@ io.on('connection', socket => {
     io.emit('guess', arg);
   });
 
-  socket.on('startGame', () => {
+  // NEW ROUND
+  function resetClock() {
     countdown = 60;
-    // An interval to update the countdown every second
-    const countdownInterval = setInterval(() => {
-      if (countdown <= 0) {
-        // If countdown reaches zero, clear the interval and emit a "countdownFinished" event
-        clearInterval(countdownInterval);
-        io.emit('countdownFinished'); // Notify clients that the countdown has finished
-      } else {
-        // Update the countdown value and emit a "countdownUpdate" event to all connected clients
-        io.emit('countdownUpdate', countdown); // Send the updated countdown value to clients
-        countdown--; // Decrement the countdown value by 1 second
-      }
-    }, 1000); // Run the interval every 1000 milliseconds (1 second)
+  }
+
+  function tick() {
+    if (countdown < 0) {
+      // If countdown reaches zero, clear the interval and emit a "countdownFinished" event
+      clearInterval(countdownInterval);
+      io.emit('countdownFinished'); // Notify clients that the countdown has finished
+    } else {
+      // Update the countdown value and emit a "countdownUpdate" event to all connected clients
+      io.emit('countdownUpdate', countdown); // Send the updated countdown value to clients
+      countdown--; // Decrement the countdown value by 1 second
+    }
+  }
+
+  function newRound(nextUserName) {
+    currentUser = nextUserName;
+    resetClock();
+    countdownInterval = setInterval(tick, 1000);
+    io.emit('newRound', nextUserName);
+  }
+
+  // START GAME
+
+  function selectNextUser() {
+    const nameOnlyUsers = users.map(user => user.username);
+    const randomUser = getRandomizedUserToDraw(nameOnlyUsers);
+    return randomUser;
+  }
+
+  function resetGameState() {
+    usedIndexes = [];
+    users = users.map(user => ({
+      ...user,
+      points: 0,
+    }));
+    socket.emit('updateUserList', users);
+  }
+
+  socket.on('startGame', () => {
+    resetGameState();
+    const nextUserName = selectNextUser();
+    io.emit('startGame');
+    newRound(nextUserName);
   });
 });
 
