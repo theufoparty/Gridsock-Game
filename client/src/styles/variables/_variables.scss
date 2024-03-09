@@ -1,8 +1,36 @@
-$sticky-header-bg: #ffffff;
-$login-button-color: #2980b9;
-$debugging: true;
-$game-bg: #CEF6FF;
+// variable that should be true in dev mode to visually see containers
+
+$debugging: false;
+
+// Colors
+
+$game-bg: #cef6ff;
 $alert-text: rgb(148, 22, 22);
 $light-gray: lightgray;
 $guess-bg: rgb(175, 173, 173);
 $canvas-border: rgb(12, 12, 12);
+$icon-hover: #f1eeee;
+$turquoise: #12b7b6;
+$secondary-background: #f9f9f9;
+$primary-background: #f3f3f3;
+$gray-color: #545454;
+$darker-turquoise: #1edede;
+
+// Box shadows
+
+$lobby-shadow: -10px 5px 50px 0px #d2d2d2, -20px -20px 50px 0px #fff;
+$lobby-list-shadow: 20px 20px 50px 0px #d2d2d2, -20px -20px 50px 0px #fff;
+$input-shadow: 10px 10px 20px 0px rgba(0, 0, 0, 0.08) inset, -10px -10px 20px 0px #fff inset;
+$small-container-shadow: 10px 10px 20px 0px rgba(0, 0, 0, 0.09), -10px -10px 20px 0px #fff;
+$icon-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.08), -5px -5px 20px 0px #fff;
+$user-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.08), -10px -10px 20px 0px #fff;
+$button-shadow: 5px 5px 20px 0px rgba(0, 0, 0, 0.09), -10px -10px 20px 0px #fff;
+$dot-container: inset 4px 4px 8px #e0e0e0, inset -4px -4px 8px #ffffff;
+$dot-panel: 3px 3px 6px #d0d0d0, -3px -3px 6px #ffffff;
+
+// Fonts
+
+$main-font: 'Montserrat', sans-serif;
+
+$ready-hover: #1bdcdc;
+$chat-color: #dedcdc;
