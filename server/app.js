@@ -18,12 +18,12 @@ const io = require('socket.io')(server, {
 });
 
 app.get('/', (req, res) => {
-  res.send('works');
+  res.send('<h1>Welcome to our server!</h1>');
 });
 
-//getWordArray();
-
-let gameArray = [];
+/**
+ * Endpoint for words-array fetched from client
+ */
 
 app.get('/words', (req, res) => {
   const db = req.app.locals.db;
@@ -32,46 +32,10 @@ app.get('/words', (req, res) => {
     .find()
     .toArray()
     .then(data => {
-      //console.log('words:', data[0].words);
-      //res.json(data[0].words);
-      const wordArray = data[0].words;
-      //console.log(data);
-      //return words;
-      //getWordArray(wordArray);
       io.emit('words', data);
       res.json(data);
-
     });
 });
-
-/* function getWordArray(wordArray) {
-  console.table(wordArray);
-  return wordArray;
-}
-
-gameArray === getWordArray();
-console.log('gameArray01', gameArray);
-
-function getRandomWord(wordArray) {
-  //gameArray = wordArray;
-
-  //const wordArray = await getWordArray();
-  console.log('gameArray2', gameArray);
-
-  const randomWordId = Math.floor(Math.random() * gameArray.length);
-  let currentWord = gameArray[randomWordId];
-  gameArray.splice(randomWordId, 1);
-  console.log('currentWord', currentWord);
-  //console.log('randomWordId', randomWordId);
-  console.log('gameArray3', gameArray);
-  //return currentWord;
-}
-
-//const fs = require('fs');
- */
-/********************************/
-
-
 
 const users = [];
 let playersReady = 0;
@@ -96,53 +60,6 @@ function getPointsAsNumberBasedOnTime(timeLeft) {
   // if player does not answer above the time threshold they get no points
   return 0;
 }
-
-//let wordArray = [];
-//let gameArray = [];
-
-/* async function getWordArray() {
-  fs.readFile("../client/assets/data/words.json", (err, data) => { 
-  if (err) {
-    console.log(err);
-  }
-  const wordArray = JSON.parse(data);
-  console.log('i funktion', wordArray);
-  return wordArray;
-});
-}
-
-async function handleData() {
-const handleArray = await getWordArray();
-console.log('ny funktion', handleArray);
-}
-
-handleData();   */
-
-/* function getRandomWord() {
-  fs.readFile("../client/assets/data/words.json", (err, data) => { 
-    if (err) {
-      console.log(err);
-    } 
-
-    wordArray = JSON.parse(data);
-
-    gameArray = wordArray;
-    
-    const randomWordId = Math.floor(Math.random() * gameArray.length);
-    let currentWord = gameArray[randomWordId];
-    gameArray.splice(randomWordId, 1);
-    console.log('currentWord', currentWord);
-    console.log('randomWordId', randomWordId);
-    console.log('gameArray', gameArray); 
-    return currentWord;
-  });
-}
-
-getRandomWord(); */
-
-app.get('/', (req, res) => {
-  res.send('<h1>Welcome to our server!</h1>');
-});
 
 /**
  * Returns random string from provided array of strings

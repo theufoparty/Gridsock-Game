@@ -19,33 +19,32 @@ let chatList = document.getElementById('chatList');
 const userThatIsDrawing = document.getElementById('user');
 const gameSection = document.getElementById('gameSection');
 const playerHighscoreList = document.getElementById('playerHighscore');
+const wordToDraw: HTMLElement | null = document.getElementById('wordToDraw');
 
 /**
  * Fetch endpoint for wordarray
  */
 
-function fetchDataFromServer() {
-  fetch("http://localhost:3000/words") 
-  .then(res => res.json())
-  .then(data => {
-    console.log(data);
-  })
-  .catch(err => console.log('error', err))
+function fetchWordsFromServer() {
+  fetch('http://localhost:3000/words')
+    .then(res => res.json())
+    .then(data => {
+      console.log(data);
+    })
+
+    .catch(err => console.log('error', err));
 }
 
-fetchDataFromServer();
+//fetchWordsFromServer();
 
 socket.on('words', words => {
-
-  const wordToDraw: any = document.getElementById('wordToDraw');
-
+  if (!wordToDraw) return;
   const wordArray = words[0].words;
   const randomWordId = Math.floor(Math.random() * wordArray.length);
   let currentWord = wordArray[randomWordId];
   console.log(currentWord.word);
   wordToDraw.innerText = currentWord.word;
-
- })
+});
 
 /**
  * Handles login for user
@@ -189,6 +188,7 @@ if (testStartCountdownButton) {
   testStartCountdownButton.addEventListener('click', () => {
     // Emit a startGame event to the server
     socket.emit('startGame');
+    fetchWordsFromServer(); //
   });
 }
 
