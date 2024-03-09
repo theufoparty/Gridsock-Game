@@ -21,6 +21,33 @@ const gameSection = document.getElementById('gameSection');
 const playerHighscoreList = document.getElementById('playerHighscore');
 
 /**
+ * Fetch endpoint for wordarray
+ */
+
+function fetchDataFromServer() {
+  fetch("http://localhost:3000/words") 
+  .then(res => res.json())
+  .then(data => {
+    console.log(data);
+  })
+  .catch(err => console.log('error', err))
+}
+
+fetchDataFromServer();
+
+socket.on('words', words => {
+
+  const wordToDraw: any = document.getElementById('wordToDraw');
+
+  const wordArray = words[0].words;
+  const randomWordId = Math.floor(Math.random() * wordArray.length);
+  let currentWord = wordArray[randomWordId];
+  console.log(currentWord.word);
+  wordToDraw.innerText = currentWord.word;
+
+ })
+
+/**
  * Handles login for user
  * Picket username is set in localstorage
  * Displays error message if input is not filled

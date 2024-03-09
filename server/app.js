@@ -10,9 +10,20 @@ MongoClient.connect(process.env.DB_URL).then(client => {
   app.locals.db = db;
 });
 
+const io = require('socket.io')(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST'],
+  },
+});
+
 app.get('/', (req, res) => {
   res.send('works');
 });
+
+//getWordArray();
+
+let gameArray = [];
 
 app.get('/words', (req, res) => {
   const db = req.app.locals.db;
@@ -21,19 +32,46 @@ app.get('/words', (req, res) => {
     .find()
     .toArray()
     .then(data => {
-      console.log('words:', data);
+      //console.log('words:', data[0].words);
+      //res.json(data[0].words);
+      const wordArray = data[0].words;
+      //console.log(data);
+      //return words;
+      //getWordArray(wordArray);
+      io.emit('words', data);
       res.json(data);
+
     });
 });
 
-//const fs = require('fs');
+/* function getWordArray(wordArray) {
+  console.table(wordArray);
+  return wordArray;
+}
 
-const io = require('socket.io')(server, {
-  cors: {
-    origin: '*',
-    methods: ['GET', 'POST'],
-  },
-});
+gameArray === getWordArray();
+console.log('gameArray01', gameArray);
+
+function getRandomWord(wordArray) {
+  //gameArray = wordArray;
+
+  //const wordArray = await getWordArray();
+  console.log('gameArray2', gameArray);
+
+  const randomWordId = Math.floor(Math.random() * gameArray.length);
+  let currentWord = gameArray[randomWordId];
+  gameArray.splice(randomWordId, 1);
+  console.log('currentWord', currentWord);
+  //console.log('randomWordId', randomWordId);
+  console.log('gameArray3', gameArray);
+  //return currentWord;
+}
+
+//const fs = require('fs');
+ */
+/********************************/
+
+
 
 const users = [];
 let playersReady = 0;
@@ -58,7 +96,6 @@ function getPointsAsNumberBasedOnTime(timeLeft) {
   // if player does not answer above the time threshold they get no points
   return 0;
 }
-
 
 //let wordArray = [];
 //let gameArray = [];
@@ -125,7 +162,6 @@ function getRandomizedUserToDraw(users) {
   }
 }
 
-
 io.on('connection', socket => {
   socket.on('chat', arg => {
     console.log('incoming chat', arg);
@@ -159,7 +195,7 @@ io.on('connection', socket => {
     const nameOnlyUsers = users.map(user => user.username);
     const randomUser = getRandomizedUserToDraw(nameOnlyUsers);
     io.emit('randomUser', randomUser);
-    getRandomWord();
+    //getRandomWord();
   });
 
   // from the client ready / waiting status change the player status
