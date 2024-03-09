@@ -2,6 +2,7 @@ import './styles/style.css';
 import { IUserType } from './utils/types';
 import { swapClassBetweenTwoElements, getRandomColor } from './utils/helperfunctions';
 import { io } from 'socket.io-client';
+import { initializeDrawing } from './utils/drawingCanvas';
 
 const socket = io('http://localhost:3000/');
 
@@ -356,3 +357,7 @@ function updateGuessChat(guess: { user: string; message: string }) {
     chatList.scrollTop = chatList.scrollHeight;
   }
 }
+
+window.onload = () => {
+  initializeDrawing(socket);
+};

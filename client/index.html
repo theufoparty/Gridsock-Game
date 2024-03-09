@@ -54,7 +54,8 @@
           </div>
           <div id="frame">
             <!--Drawing area-->
-            <canvas></canvas>
+            <canvas class="canvas" id="drawingCanvas"></canvas>
+            <button id="clearCanvasButton">Clear Canvas</button>
           </div>
           <div>
             <!--Chosen word to draw-->
@@ -67,16 +68,19 @@
             <p id="guessInstruction">Please, remember to spell the word correctly when guessing.</p>
           </div>
           <div id="gameChatContainer">
-            <ul id="chatList"></ul> <!--Chat answers as viewed by user -->
-            <div> <!--Chat input-->
+            <ul id="chatList"></ul>
+            <!--Chat answers as viewed by user -->
+            <div>
+              <!--Chat input-->
               <p>Write your guess here:</p>
-              <input type="text" id="guessInput">
+              <input type="text" id="guessInput" />
               <button type="button" id="guessButton">Guess</button>
             </div>
           </div>
         </aside>
       </section>
     </main>
+
     <script type="module" src="src/main.ts"></script>
   </body>
 </html>
