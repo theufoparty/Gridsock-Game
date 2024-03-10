@@ -4,7 +4,7 @@ import { swapClassBetweenTwoElements, getRandomColor } from './utils/helperfunct
 import { io } from 'socket.io-client';
 import { initializeDrawing } from './utils/drawingCanvas';
 
-const socket = io('http://localhost:3000/');
+const socket = io('https://gridsock-game-uodix.ondigitalocean.app/');
 
 const usernameInput = document.getElementById('loginInput');
 const loginButton = document.getElementById('loginButton');
