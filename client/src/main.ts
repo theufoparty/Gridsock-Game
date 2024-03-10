@@ -20,6 +20,7 @@ let chatList = document.getElementById('chatList');
 const userThatIsDrawing = document.getElementById('user');
 const gameSection = document.getElementById('gameSection');
 const playerHighscoreList = document.getElementById('playerHighscore');
+const userIcon = document.getElementById('userIcon');
 
 /**
  * Handles login for user
@@ -44,6 +45,7 @@ function handleLoginOnClick(input: Element | null, loginSection: Element | null,
     if (usernameDisplay) {
       usernameDisplay.textContent = inputValue;
     }
+    userIcon?.classList.remove('hidden');
     swapClassBetweenTwoElements(loginSection, gameLobbySection, 'hidden');
   }
 }
@@ -71,12 +73,26 @@ function appendUserToList(user: { username: string; color: string; id: string; i
   if (!gameLobbyList) return;
   const { username, color, id, isReady } = user;
   const userElement = document.createElement('div');
-  userElement.innerText = username;
+  const userPanel = document.createElement('div');
+  const userText = document.createElement('p');
+  const userIconContainer = document.createElement('div');
+  const dotContainer = document.createElement('div');
+  dotContainer.classList.add('dot-panel');
+  const userIcon = document.createElement('div');
+  userIconContainer.id = 'dot-container';
+  dotContainer.append(userIcon);
+  userIconContainer.append(dotContainer);
+  userPanel.classList.add('player-panel');
+  userPanel.append(userIconContainer, userText);
+  userIcon.classList.add('list-dot');
+  userIcon.style.backgroundColor = color;
+  userText.innerText = username;
   userElement.style.color = color;
   const readyButton = document.createElement('button');
   readyButton.id = id;
   readyButton.innerText = isReady ? 'ready' : 'waiting';
-  userElement.appendChild(readyButton);
+  isReady ? readyButton.classList.add('ready') : readyButton.classList.add('waiting');
+  userElement.append(userPanel, readyButton);
   const listItem = document.createElement('li');
   listItem.appendChild(userElement);
   checkNumberOfPlayers(listItem);
@@ -105,7 +121,8 @@ function handleClickOnButtons(e: Event) {
   const storedId = localStorage.getItem('userId');
   if (target.tagName !== 'BUTTON' || target.id !== storedId) return;
   const currentStatus = target.textContent === 'waiting' ? 'ready' : 'waiting';
-  socket.emit('userStatus', { statusText: currentStatus, statusId: target.id });
+  const statusClass = target.textContent === 'waiting' ? 'ready' : 'waiting';
+  socket.emit('userStatus', { statusText: currentStatus, statusId: target.id, statusClass: statusClass });
 }
 
 function updatePlayersReadyAndWhenFullDisplayStartGameButton(
@@ -116,9 +133,9 @@ function updatePlayersReadyAndWhenFullDisplayStartGameButton(
   if (!playersReadyContainer) return;
   playersReadyContainer.textContent = `${players}/5`;
   if (players === 5) {
-    startGameButton?.classList.remove('hidden');
+    startGameButton?.removeAttribute('disabled');
   } else {
-    startGameButton?.classList.add('hidden');
+    /*  startGameButton?.setAttribute('disabled', 'true'); */
   }
 }
 
@@ -137,6 +154,7 @@ if (startGameButton) {
   startGameButton.addEventListener('click', () => {
     // Emit a startGame event to the server
     socket.emit('startGame');
+    swapClassBetweenTwoElements(gameLobbySection, gameSection, 'hidden');
   });
 }
 
@@ -206,10 +224,13 @@ function recieveSocketUserStatus(gameLobbyList: Element | null) {
   socket.on('userStatus', status => {
     if (!gameLobbyList) return;
     const buttons = gameLobbyList.querySelectorAll('button');
-    const { statusId, statusText } = status;
+    const { statusId, statusText, statusClass } = status;
+    console.log(statusClass);
     buttons.forEach(button => {
       if (button.id !== statusId) return;
       button.textContent = statusText;
+      button.className = '';
+      button.classList.add(statusClass);
     });
   });
 }
