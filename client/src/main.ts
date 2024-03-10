@@ -20,6 +20,32 @@ let chatList = document.getElementById('chatList');
 const userThatIsDrawing = document.getElementById('user');
 const gameSection = document.getElementById('gameSection');
 const playerHighscoreList = document.getElementById('playerHighscore');
+const wordToDraw: HTMLElement | null = document.getElementById('wordToDraw');
+
+/**
+ * Fetch endpoint for wordarray
+ */
+
+function fetchWordsFromServer() {
+  fetch('http://localhost:3000/words')
+    .then(res => res.json())
+    .then(data => {
+      console.log(data);
+    })
+
+    .catch(err => console.log('error', err));
+}
+
+//fetchWordsFromServer();
+
+socket.on('words', words => {
+  if (!wordToDraw) return;
+  const wordArray = words[0].words;
+  const randomWordId = Math.floor(Math.random() * wordArray.length);
+  let currentWord = wordArray[randomWordId];
+  console.log(currentWord.word);
+  wordToDraw.innerText = currentWord.word;
+});
 
 /**
  * Handles login for user
@@ -115,7 +141,7 @@ function updatePlayersReadyAndWhenFullDisplayStartGameButton(
 ) {
   if (!playersReadyContainer) return;
   playersReadyContainer.textContent = `${players}/5`;
-  if (players === 5) {
+  if (players === 1) {
     startGameButton?.classList.remove('hidden');
   } else {
     startGameButton?.classList.add('hidden');
@@ -154,6 +180,7 @@ const testStartCountdownButton = document.getElementById('testStartCountdownButt
 if (testStartCountdownButton) {
   testStartCountdownButton.addEventListener('click', () => {
     // Emit a startGame event to the server
+    fetchWordsFromServer(); // Random word
     socket.emit('startGame');
   });
 }

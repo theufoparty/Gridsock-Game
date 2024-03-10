@@ -10,9 +10,22 @@ MongoClient.connect(process.env.DB_URL).then(client => {
   app.locals.db = db;
 });
 
-app.get('/', (req, res) => {
-  res.send('works');
+const io = require('socket.io')(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST'],
+  },
 });
+
+app.use(cors());
+
+app.get('/', (req, res) => {
+  res.send('<h1>Welcome to our server!</h1>');
+});
+
+/**
+ * Endpoint for words-array fetched from client
+ */
 
 app.get('/words', (req, res) => {
   const db = req.app.locals.db;
@@ -21,16 +34,9 @@ app.get('/words', (req, res) => {
     .find()
     .toArray()
     .then(data => {
-      console.log('words:', data);
+      io.emit('words', data);
       res.json(data);
     });
-});
-
-const io = require('socket.io')(server, {
-  cors: {
-    origin: '*',
-    methods: ['GET', 'POST'],
-  },
 });
 
 let users = [];
@@ -76,10 +82,6 @@ function getRandomizedUserToDraw(users) {
     return getRandomizedUserToDraw(users);
   }
 }
-
-app.get('/', (req, res) => {
-  res.send('<h1>Welcome to our server!</h1>');
-});
 
 io.on('connection', socket => {
   socket.on('chat', arg => {
@@ -190,6 +192,7 @@ io.on('connection', socket => {
     resetClock();
     countdownInterval = setInterval(tick, 1000);
     io.emit('newRound', nextUserName);
+    //getRandomWord();
   }
 
   // START GAME
@@ -216,8 +219,6 @@ io.on('connection', socket => {
     newRound(nextUserName);
   });
 });
-
-app.use(cors());
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
