@@ -171,10 +171,18 @@ io.on('connection', socket => {
   });
 
   // NEW ROUND
+  /**
+   * Resets the game's countdown timer to its starting value.
+   */
   function resetClock() {
     countdown = 60;
   }
 
+  /**
+   * Decreases the countdown timer every second. If the countdown reaches 0, it stops the timer
+   * and emits a "countdownFinished" event. Otherwise, it updates the countdown value and emits
+   * a "countdownUpdate" event to all connected clients.
+   */
   function tick() {
     if (countdown < 0) {
       // If countdown reaches zero, clear the interval and emit a "countdownFinished" event
@@ -187,6 +195,11 @@ io.on('connection', socket => {
     }
   }
 
+  /**
+   * Starts a new round with the specified user, resets the countdown timer, and schedules the tick function
+   * to be called every second. Emits a "newRound" event with the next user's name.
+   * @param {string} nextUserName - The username of the next user for the round.
+   */
   function newRound(nextUserName) {
     currentUser = nextUserName;
     resetClock();
@@ -196,13 +209,21 @@ io.on('connection', socket => {
   }
 
   // START GAME
-
+  /**
+   * Selects the next user to draw randomly from the list of users. It filters to use only the usernames
+   * for the selection process.
+   * @returns {string} The username of the selected next user.
+   */
   function selectNextUser() {
     const nameOnlyUsers = users.map(user => user.username);
     const randomUser = getRandomizedUserToDraw(nameOnlyUsers);
     return randomUser;
   }
 
+  /**
+   * Resets the game state for a new game. This includes resetting all users' points to 0 and clearing
+   * any used indexes. It emits an "updateUserList" event with the updated list of users.
+   */
   function resetGameState() {
     usedIndexes = [];
     users = users.map(user => ({

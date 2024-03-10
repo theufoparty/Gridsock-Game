@@ -141,7 +141,7 @@ function updatePlayersReadyAndWhenFullDisplayStartGameButton(
 ) {
   if (!playersReadyContainer) return;
   playersReadyContainer.textContent = `${players}/5`;
-  if (players === 1) {
+  if (players === 5) {
     startGameButton?.classList.remove('hidden');
   } else {
     startGameButton?.classList.add('hidden');
@@ -271,6 +271,12 @@ function recieveSocketForUpdatedUserPoints() {
   });
 }
 
+/**
+ * Sets up a listener for the "newRound" event. Updates the user interface with the name
+ * of the user that is drawing in the new round. It also includes a TODO for adding logic to
+ * enable or disable drawing capabilities based on the current user's role.
+ * @param {Element | null} userThatIsDrawing - The DOM element where the current drawing user's name is displayed.
+ */
 function startNewRound(userThatIsDrawing: Element | null) {
   socket.on('newRound', (nextUserName: string) => {
     if (userThatIsDrawing) {
@@ -281,6 +287,14 @@ function startNewRound(userThatIsDrawing: Element | null) {
   });
 }
 
+/**
+ * Sets up a listener for the "startGame" event. When a game starts, it changes the visibility of the
+ * game section and lobby section by toggling their classes, effectively showing the game section and
+ * hiding the game lobby section. This function is used to transition the user interface from the lobby
+ * to the active game state.
+ * @param {Element | null} gameSection - The DOM element representing the main game area, to be shown when the game starts.
+ * @param {Element | null} gameLobbySection - The DOM element representing the game lobby, to be hidden when the game starts.
+ */
 function startNewGame(gameSection: Element | null, gameLobbySection: Element | null) {
   socket.on('startGame', () => {
     if (gameSection && gameLobbySection) {
