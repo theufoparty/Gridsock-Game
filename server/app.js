@@ -17,6 +17,9 @@ const io = require('socket.io')(server, {
   },
 });
 
+app.use(cors());
+
+
 app.get('/', (req, res) => {
   res.send('<h1>Welcome to our server!</h1>');
 });
@@ -189,8 +192,6 @@ io.on('connection', socket => {
     }, 1000); // Run the interval every 1000 milliseconds (1 second)
   });
 });
-
-app.use(cors());
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {

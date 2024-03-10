@@ -188,8 +188,8 @@ const testStartCountdownButton = document.getElementById('testStartCountdownButt
 if (testStartCountdownButton) {
   testStartCountdownButton.addEventListener('click', () => {
     // Emit a startGame event to the server
+    fetchWordsFromServer(); // Random word
     socket.emit('startGame');
-    fetchWordsFromServer(); //
   });
 }
 
