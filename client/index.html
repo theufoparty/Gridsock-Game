@@ -63,11 +63,11 @@
               </div>
               <h3>Team chat</h3>
             </div>
-            <div class="chat-container"></div>
+            <ul id="lobbyChatList" class="lobby-chat-container"></ul>
             <div class="chat-input-panel">
-              <input type="text" placeholder="message" />
+              <input type="text" id="lobbyChatInput" placeholder="message" />
               <button class="icon-container icon-hover">
-                <img src="./assets/icons/send.svg" alt="send button" width="30" height="30" />
+                <img src="./assets/icons/send.svg" id="lobbyChatButton" alt="send button" width="30" height="30" />
               </button>
             </div>
           </div>
@@ -169,10 +169,10 @@
       </section>
 
       <!--End page section-->
-      <section id="endSection" class="end-section ">
+      <section id="endSection" class="end-section">
         <div id="scoreBoard">
           <h3>Player Scores:</h3>
-            <!--Player scores will be populated in the list below from TS. TS-Developer might remove the 5 x li's if he/she so chooses-->
+          <!--Player scores will be populated in the list below from TS. TS-Developer might remove the 5 x li's if he/she so chooses-->
           <ul>
             <li></li>
             <li></li>
@@ -183,15 +183,15 @@
         </div>
         <button id="backToLobbyBtn">Back To Lobby</button>
         <div id="imageAndWordContainers">
-            <h3>From recent session:</h3>
-            <div id="imagesContainer">
-              <p>Image 1:</p>
-              <!--Images will be populated from TS-->
-            </div>
-            <div id="wordsContainer">
-              <p>Word 1:</p>
-              <!--Words will be populated from TS-->
-            </div>
+          <h3>From recent session:</h3>
+          <div id="imagesContainer">
+            <p>Image 1:</p>
+            <!--Images will be populated from TS-->
+          </div>
+          <div id="wordsContainer">
+            <p>Word 1:</p>
+            <!--Words will be populated from TS-->
+          </div>
         </div>
       </section>
     </main>
