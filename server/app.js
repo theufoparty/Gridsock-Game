@@ -19,7 +19,6 @@ const io = require('socket.io')(server, {
 
 app.use(cors());
 
-
 app.get('/', (req, res) => {
   res.send('<h1>Welcome to our server!</h1>');
 });
@@ -127,7 +126,7 @@ io.on('connection', socket => {
     }
   });
 
-  socket.on('startGame', gameState => {
+  socket.on('displayUser', gameState => {
     if (!gameState) return;
     const nameOnlyUsers = users.map(user => user.username);
     const randomUser = getRandomizedUserToDraw(nameOnlyUsers);
@@ -179,6 +178,7 @@ io.on('connection', socket => {
   });
 
   socket.on('startGame', () => {
+    console.log('nu startar spelet och countdown');
     countdown = 60;
     // An interval to update the countdown every second
     const countdownInterval = setInterval(() => {
