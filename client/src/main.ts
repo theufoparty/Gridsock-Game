@@ -222,21 +222,19 @@ function updateGuessChat(guess: IUserMessageType) {
   messageContainer.textContent = guess.message;
   li.append(userContainer, messageContainer);
   
-  if (chatList !== null) {
-    chatList.appendChild(li);
-    chatList.scrollTop = chatList.scrollHeight;
-  }
-  
   const liCorrect = document.createElement('li')
   liCorrect.innerText = 'Correct!';
 
-  const theGuess = guess.message;
+  let theGuess = guess.message;  
   const wordToDraw: HTMLElement | null = document.getElementById('wordToDraw');
 
 
   if (chatList !== null) {
     if (wordToDraw !== null) {
-      if (theGuess.includes(wordToDraw.innerHTML)) {
+      theGuess = theGuess.toLowerCase();
+      let theWord = wordToDraw.innerHTML
+      theWord = theWord.toLowerCase();
+      if (theGuess.includes(theWord)) {
         chatList.appendChild(liCorrect);
       } else {
         chatList.appendChild(li);
