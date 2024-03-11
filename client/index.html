@@ -94,7 +94,6 @@
 
         <div class="test-buttons">
           <button id="testStartCountdownButton">Countdown</button>
-          <button id="right">right answer</button>
           <button id="click">click</button>
         </div>
       </section>
@@ -102,6 +101,7 @@
       <!--Game section-->
 
       <section id="gameSection" class="game-section hidden">
+        <button id="right">right answer</button>
         <div class="random-container">
           <!--Current "drawer"-->
           <div class="user-panel">
@@ -116,14 +116,15 @@
             <div class="icon-container">
               <img src="./assets/icons/word.svg" alt="word icon" width="30" height="30" />
             </div>
-            <span>Word</span>
+            <span id="wordToDraw">Word</span>
           </div>
           <div class="timer-panel">
             <!-- Timer section-->
             <div class="icon-container">
               <img src="./assets/icons/hourglass.svg" alt="clock icon" width="30" height="30" />
             </div>
-            <p class="timer">60</p>
+            <p id="countdownValue" class="timer">60</p>
+            <p id="countdownMessage"></p>
           </div>
         </div>
 
