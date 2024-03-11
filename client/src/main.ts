@@ -223,21 +223,24 @@ function updateGuessChat(guess: IUserMessageType) {
   li.append(userContainer, messageContainer);
   
   const liCorrect = document.createElement('li')
-  liCorrect.innerText = 'Correct!';
 
   let theGuess = guess.message;  
   const wordToDraw: HTMLElement | null = document.getElementById('wordToDraw');
-
 
   if (chatList !== null) {
     if (wordToDraw !== null) {
       theGuess = theGuess.toLowerCase();
       let theWord = wordToDraw.innerHTML
       theWord = theWord.toLowerCase();
+      const input = guessInput as HTMLInputElement;
       if (theGuess.includes(theWord)) {
+        messageContainer.textContent = 'Correct!';
+        liCorrect.append(userContainer, messageContainer);
         chatList.appendChild(liCorrect);
+        input.disabled = true;
       } else {
         chatList.appendChild(li);
+        input.disabled = false;
       }
       chatList.scrollTop = chatList.scrollHeight;
     }
