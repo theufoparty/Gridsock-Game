@@ -203,10 +203,11 @@ main {
   flex-direction: column;
   gap: 1em;
   flex: 1;
+  width: 100%;
 }
 
 .login-section {
-  margin-top: 35%;
+  margin-top: 10%;
   gap: 100px;
 }
 .login-section .pictonary {
@@ -370,41 +371,151 @@ main {
 .game-section {
   display: flex;
   flex-direction: column;
+  align-items: center;
   background: #f3f3f3;
   width: 100%;
   gap: 50px;
+  margin-top: 100px;
 }
-.game-section .frame {
-  background-color: lightgray;
-  border: solid rgb(12, 12, 12) 2px;
-  margin-top: 20px;
-  margin-bottom: 20px;
+.game-section .random-container {
+  margin-left: 50px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 40px;
 }
-.game-section .frame .canvas {
+.game-section .random-container div {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.game-section .main-section {
+  display: flex;
+  height: 500px;
+  gap: 60px;
+}
+.game-section .main-section article .frame {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  align-items: center;
+}
+.game-section .main-section article .frame .canvas-container {
+  border-radius: 43px;
+  box-shadow: 20px 20px 50px 0px #d2d2d2, -20px -20px 50px 0px #fff;
+  background: #f3f3f3;
   width: 600px;
-  height: 400px;
+  height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.game-section .main-section article .frame .canvas-container .canvas {
+  border: none;
+  border-radius: 43px;
+  width: 580px;
+  height: 480px;
   background-color: #dedcdc;
 }
-.game-section .guessing-container .game-chat-container {
-  background-color: lightgray;
-  margin-top: 10px;
-  padding: 10px;
+.game-section .main-section article .frame button {
+  box-shadow: 3px 3px 6px #d0d0d0, -3px -3px 6px #ffffff;
+  width: 200px;
 }
-.game-section .guessing-container .game-chat-container .game-chat-list {
-  margin-bottom: 20px;
-  max-height: 200px;
+.game-section .main-section .guessing-container .game-chat-container {
+  padding: 30px;
+  width: 300px;
+  height: 100%;
+  padding: 20px 25px;
+  flex-shrink: 0;
+  border-radius: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: #f3f3f3;
+  box-shadow: -10px 5px 50px 0px #d2d2d2, -20px -20px 50px 0px #fff;
+}
+.game-section .main-section .guessing-container .game-chat-container .guess-chat-panel {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+.game-section .main-section .guessing-container .game-chat-container .guess-chat-container {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 20px;
   overflow-y: auto;
+  gap: 15px;
+  width: 100%;
+  height: 400px;
+  background: #dedcdc;
+  border-radius: 16px;
+  box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.08), -5px -5px 20px 0px #fff;
 }
-.game-section .guessing-container .game-chat-container .game-chat-list li {
-  background-color: rgb(175, 173, 173);
-  margin: 10px;
-  height: 1.5rem;
-  border-radius: 10px;
-  padding: 5px;
+.game-section .main-section .guessing-container .game-chat-container .guess-chat-container li {
+  display: flex;
+  gap: 15px;
 }
-.game-section .guessing-container .game-chat-container .guess-input {
-  border-radius: 10px;
-  height: 1.5rem;
+.game-section .main-section .guessing-container .game-chat-container .guess-input-panel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.game-section .main-section .guessing-container .game-chat-container .guess-input-panel input {
+  outline: none;
+  border: none;
+  border-radius: 14px;
+  background-color: #f9f9f9;
+  height: 30px;
+  padding-left: 10px;
+  color: #545454;
+  box-shadow: 10px 10px 20px 0px rgba(0, 0, 0, 0.08) inset, -10px -10px 20px 0px #fff inset;
+}
+.game-section .main-section .guessing-container .game-chat-container .guess-input-panel input::-moz-placeholder {
+  opacity: 70%;
+}
+.game-section .main-section .guessing-container .game-chat-container .guess-input-panel input::placeholder {
+  opacity: 70%;
+}
+.game-section .main-section .score-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  /*       background: #2d2d2d; */
+  border-radius: 16px;
+  width: 260px;
+  padding: 20px;
+  background: #f3f3f3;
+  box-shadow: -10px 5px 50px 0px #d2d2d2, -20px -20px 50px 0px #fff;
+}
+.game-section .main-section .score-list .score-panel {
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+  gap: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid lightgray;
+}
+.game-section .main-section .score-list .player-highscore {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.game-section .main-section .score-list .player-highscore li {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 1.25rem;
+}
+.game-section .main-section .score-list .player-highscore li .player-number {
+  font-weight: #1edede;
+  font-family: "Lato", sans-serif;
+}
+.game-section .main-section .score-list .player-highscore li .colon {
+  font-family: "Lato", sans-serif;
+}
+.game-section .main-section .score-list .player-highscore li .points {
+  color: #12b7b6;
+  font-family: "Lato", sans-serif;
 }
 
 .icon-container {
@@ -452,12 +563,6 @@ input::placeholder {
 section h2 {
   font-size: 1.2em;
   text-transform: uppercase;
-}
-
-section ul li {
-  display: flex;
-  flex-direction: column;
-  gap: 1em;
 }
 
 .test-buttons {
