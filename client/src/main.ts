@@ -31,7 +31,7 @@ document.getElementById('right')?.addEventListener('click', guessedRightAnswer);
  */
 
 function fetchWordsFromServer() {
-  fetch('http://localhost:3000/words')
+  fetch('https://gridsock-game-uodix.ondigitalocean.app/words')
     .then(res => res.json())
     .then(data => {
       console.log(data);
