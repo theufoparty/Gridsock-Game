@@ -20,7 +20,9 @@ export function swapClassBetweenTwoElements(
  * @returns random color
  */
 export function getRandomColor() {
-  const maxNumberRGB = 0xffffff;
-  const getRandomColor = `#${Math.floor(Math.random() * maxNumberRGB).toString(16)}`;
+  const minNumberRGB = 0x00000;
+  const maxNumberRGB = 0xcccccc;
+  const range = maxNumberRGB - minNumberRGB;
+  const getRandomColor = `#${(Math.floor(Math.random() * range) + minNumberRGB).toString(16)}`;
   return getRandomColor;
 }
