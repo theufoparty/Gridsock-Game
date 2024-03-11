@@ -1,29 +1,432 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
 body {
-  font-family: var(--ff-sans-normal);
+  min-height: 100vh;
+  width: 100%;
+}
+
+body {
+  @include flex-column;
+  align-items: center;
+  font-family: $main-font;
+  background: $primary-background;
+  color: $gray-color;
 }
 
 header {
-  @include sticky-header;
-  text-align: center;
-  padding: 2em;
-  text-transform: uppercase;
-  gap: 1em;
-}
+  @include fixed-header;
+  width: 100%;
+  padding: 0 20px;
+  height: 70px;
 
-header p {
-  font-size: 1em;
-}
+  background-color: $primary-background;
+  .game-logo {
+    display: flex;
+    gap: 10px;
+    h1 {
+      font-size: 2rem;
+      color: $turquoise;
+    }
+  }
 
-h1 {
-  font-size: 2em;
+  div {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    .user-icon {
+      width: 50px;
+      height: 50px;
+      @include center-element;
+      border-radius: 42.5px;
+      background: $secondary-background;
+      box-shadow: $user-shadow;
+    }
+    p {
+      font-size: 1rem;
+    }
+  }
 }
 
 main {
-  @include center-element;
+  align-items: center;
   @include debug-outline;
   @include gap-column-1;
-  padding: 2em;
-  margin: 1em;
+  flex: 1;
+  width: 100%;
+}
+
+// ** LOGIN SECTION **
+
+.login-section {
+  margin-top: 10%;
+  gap: 100px;
+  .pictonary {
+    width: 300px;
+    @include flex-column;
+    align-items: center;
+    gap: 20px;
+    img {
+      width: 280px;
+      height: 100px;
+    }
+    p {
+      width: 250px;
+      text-align: center;
+      font-size: 0.875rem;
+      font-weight: 300;
+      span {
+        color: $turquoise;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .login-container {
+    @include flex-column;
+    gap: 20px;
+    .input-panel {
+      display: flex;
+      gap: 20px;
+      .login-input {
+        outline: none;
+        border: none;
+        height: 50px;
+        width: 250px;
+        padding-left: 20px;
+        border-radius: 42.5px;
+        background: $secondary-background;
+        box-shadow: $input-shadow;
+      }
+    }
+  }
+}
+
+// ** GAME LOBBY **
+
+.game-lobby-section {
+  margin-top: 100px;
+  @include flex-column;
+  align-items: center;
+  gap: 50px;
+  .lobby-container {
+    display: flex;
+    align-items: flex-end;
+    gap: 50px;
+    .game-lobby-list {
+      padding: 30px;
+      width: 400px;
+      height: 400px;
+      flex-shrink: 0;
+      border-radius: 43px;
+      @include flex-column;
+      gap: 15px;
+      background: $primary-background;
+      box-shadow: $lobby-list-shadow;
+      li {
+        div {
+          @include center-element;
+          justify-content: space-between;
+        }
+      }
+    }
+    .lobby-chat {
+      padding: 30px;
+      width: 300px;
+      height: 350px;
+      padding: 20px 25px;
+      flex-shrink: 0;
+      border-radius: 30px;
+      @include flex-column;
+      gap: 20px;
+      background: $primary-background;
+      box-shadow: $lobby-shadow;
+      .chat-panel {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+      }
+      .chat-container {
+        width: 100%;
+        height: 200px;
+        background: $chat-color;
+        border-radius: 16px;
+        box-shadow: $icon-shadow;
+      }
+      .chat-input-panel {
+        @include flex-between-center;
+        input {
+          outline: none;
+          border: none;
+          border-radius: 14px;
+          background-color: $secondary-background;
+          height: 30px;
+          padding-left: 10px;
+          color: $gray-color;
+          box-shadow: $input-shadow;
+          &::placeholder {
+            opacity: 70%;
+          }
+        }
+      }
+    }
+  }
+
+  .start-container {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+
+    .start-panel {
+      width: 400px;
+      padding: 20px;
+      border-radius: 15px;
+      background: $primary-background;
+      box-shadow: $small-container-shadow;
+      @include flex-between-center;
+      .player-ready-panel {
+        @include flex-column;
+        align-items: center;
+        gap: 30px;
+      }
+      .start-game-button {
+        font-size: 1.25rem;
+        width: 150px;
+      }
+    }
+
+    .rules {
+      display: flex;
+      width: 300px;
+      padding: 20px;
+      gap: 10px;
+      font-weight: 300;
+      border-radius: 15px;
+      background: $primary-background;
+      box-shadow: $small-container-shadow;
+      ul {
+        @include flex-column;
+        gap: 5px;
+      }
+    }
+  }
+}
+
+// ** GAME SECTION **
+
+.game-section {
+  @include flex-column;
+  align-items: center;
+  background: $primary-background;
+  width: 100%;
+  gap: 50px;
+  margin-top: 100px;
+  .random-container {
+    margin-left: 50px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    div {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+  }
+  .main-section {
+    display: flex;
+    height: 500px;
+    gap: 60px;
+
+    article {
+      .frame {
+        @include flex-column;
+        gap: 30px;
+        align-items: center;
+        .canvas-container {
+          border-radius: 43px;
+          box-shadow: $lobby-list-shadow;
+          background: $primary-background;
+          width: 600px;
+          height: 500px;
+          @include center-element;
+          .canvas {
+            border: none;
+            border-radius: 43px;
+            width: 580px;
+            height: 480px;
+            background-color: $chat-color;
+          }
+        }
+        button {
+          box-shadow: $dot-panel;
+          width: 200px;
+        }
+      }
+    }
+
+    .guessing-container {
+      .game-chat-container {
+        padding: 30px;
+        width: 300px;
+        height: 100%;
+        padding: 20px 25px;
+        flex-shrink: 0;
+        border-radius: 30px;
+        @include flex-column;
+        gap: 20px;
+        background: $primary-background;
+        box-shadow: $lobby-shadow;
+        .guess-chat-panel {
+          display: flex;
+          gap: 20px;
+          align-items: center;
+        }
+
+        .guess-chat-container {
+          @include flex-column;
+          padding: 10px 20px;
+          overflow-y: auto;
+          gap: 15px;
+          width: 100%;
+          height: 400px;
+          background: $chat-color;
+          border-radius: 16px;
+          box-shadow: $icon-shadow;
+          li {
+            display: flex;
+            gap: 15px;
+          }
+        }
+
+        .guess-input-panel {
+          @include flex-between-center;
+          input {
+            outline: none;
+            border: none;
+            border-radius: 14px;
+            background-color: $secondary-background;
+            height: 30px;
+            padding-left: 10px;
+            color: $gray-color;
+            box-shadow: $input-shadow;
+            &::placeholder {
+              opacity: 70%;
+            }
+          }
+        }
+      }
+    }
+    .score-list {
+      @include flex-column;
+      gap: 20px;
+      /*       background: #2d2d2d; */
+      border-radius: 16px;
+      width: 260px;
+      padding: 20px;
+      background: $primary-background;
+      box-shadow: $lobby-shadow;
+      .score-panel {
+        display: flex;
+        align-items: center;
+        font-size: 1.5rem;
+        gap: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid lightgray;
+      }
+      .player-highscore {
+        @include flex-column;
+        gap: 15px;
+        li {
+          display: flex;
+          align-items: center;
+          gap: 15px;
+          font-size: 1.25rem;
+          .player-number {
+            font-weight: $darker-turquoise;
+            font-family: $secondary-font;
+          }
+          .colon {
+            font-family: $secondary-font;
+          }
+          .points {
+            color: $turquoise;
+            font-family: $secondary-font;
+          }
+        }
+      }
+    }
+  }
+}
+
+// ** GENERAL STYLING **
+
+.icon-container {
+  @include center-element;
+  width: 45px;
+  height: 45px;
+  border-radius: 35.5px;
+  background: $secondary-background;
+  box-shadow: $icon-shadow;
+}
+
+.icon-hover:hover {
+  background-color: $icon-hover;
+}
+
+button {
+  border: none;
+  padding: 1em 2em;
+  border-radius: 15px;
+  background: $secondary-background;
+  box-shadow: $button-shadow;
+  border-radius: 16px;
+  text-transform: uppercase;
+  cursor: pointer;
+  color: $gray-color;
+  font-family: $main-font;
+
+  &:hover {
+    color: $turquoise;
+  }
+}
+
+input {
+  font-family: $main-font;
+  font-size: smaller;
+  &::placeholder {
+    opacity: 70%;
+  }
+}
+
+section h2 {
+  font-size: 1.2em;
+  text-transform: uppercase;
+}
+
+ul {
+  @include debug-outline;
+}
+
+.test-buttons {
+  position: absolute;
+  @include flex-column;
+  gap: 10px;
+  right: 50px;
+  top: 5%;
+}
+
+.ready {
+  width: 115px;
+  background-color: $turquoise;
+  color: $secondary-background;
+  box-shadow: inset 5px 5px 10px rgba(0, 76, 76, 0.3), inset -5px -5px 10px $darker-turquoise;
+  &:hover {
+    background: $ready-hover;
+    color: $secondary-background;
+  }
 }
 
 section {
@@ -32,66 +435,47 @@ section {
   @include gap-column-1;
 }
 
-ul {
-  @include debug-outline;
-}
-
-button {
-  background-color: $login-button-color;
-  color: white;
+.waiting {
   border: none;
   padding: 1em 2em;
+  border-radius: 15px;
+  background: $secondary-background;
+  box-shadow: $button-shadow;
   border-radius: 16px;
   text-transform: uppercase;
+  cursor: pointer;
+  color: $gray-color;
+  font-family: $main-font;
+  &:hover {
+    color: $turquoise;
+  }
 }
 
-section h2 {
-  font-size: 1.2em;
-  text-transform: uppercase;
-}
+// ** For player list panel / DOT Container **
 
-section ul li {
-  @include gap-column-1;
-}
-
-#gameSection {
+.player-panel {
   display: flex;
-  flex-direction: row;
-  background-color: $game-bg;
-  padding: 20px;
-}
-
-#frame {
-  background-color: $light-gray;
-  border: solid $canvas-border 2px;
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
-
-#guessingContainer {
-  #guessInstruction {
-    color: $alert-text;
-  }
-}
-
-#gameChatContainer{
-  background-color: $light-gray;
-  margin-top: 10px;
-  padding: 10px;
-  #chatList{
-    margin-bottom: 20px;
-    max-height: 200px; 
-    overflow-y: auto;
-    li {
-      background-color: $guess-bg;
-      margin: 10px;
-      height: 1.5rem;
-      border-radius: 10px;
-      padding: 5px;
+  align-items: center;
+  gap: 10px;
+  #dot-container {
+    height: 35px;
+    width: 35px;
+    @include center-element;
+    border-radius: 50%;
+    background: $secondary-background;
+    box-shadow: $dot-container;
+    .dot-panel {
+      @include center-element;
+      border-radius: 50%;
+      background: $secondary-background;
+      box-shadow: $dot-panel;
+      height: 25px;
+      width: 25px;
+      .list-dot {
+        height: 15px;
+        width: 15px;
+        border-radius: 50%;
+      }
     }
-  }
-  #guessInput {
-    border-radius: 10px;
-    height: 1.5rem;
   }
 }

@@ -166,8 +166,10 @@ io.on('connection', socket => {
   });
 
   socket.on('guess', arg => {
-    console.log('incoming guess', arg);
-    io.emit('guess', arg);
+    const userInUsers = users.find(user => user.username === arg.user);
+    if (userInUsers) {
+      io.emit('guess', { message: arg.message, user: arg.user, color: userInUsers.color });
+    }
   });
 
   // NEW ROUND
