@@ -55,12 +55,13 @@ main {
   @include debug-outline;
   @include gap-column-1;
   flex: 1;
+  width: 100%;
 }
 
 // ** LOGIN SECTION **
 
 .login-section {
-  margin-top: 35%;
+  margin-top: 10%;
   gap: 100px;
   .pictonary {
     width: 300px;
@@ -217,40 +218,144 @@ main {
 
 .game-section {
   @include flex-column;
+  align-items: center;
   background: $primary-background;
   width: 100%;
   gap: 50px;
-  .frame {
-    background-color: $light-gray;
-    border: solid $canvas-border 2px;
-    margin-top: 20px;
-    margin-bottom: 20px;
-    .canvas {
-      width: 600px;
-      height: 400px;
-      background-color: $chat-color;
+  margin-top: 100px;
+  .random-container {
+    margin-left: 50px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    div {
+      display: flex;
+      gap: 10px;
+      align-items: center;
     }
   }
-  .guessing-container {
-    .game-chat-container {
-      background-color: $light-gray;
-      margin-top: 10px;
-      padding: 10px;
-      .game-chat-list {
-        margin-bottom: 20px;
-        max-height: 200px;
-        overflow-y: auto;
-        li {
-          background-color: $guess-bg;
-          margin: 10px;
-          height: 1.5rem;
-          border-radius: 10px;
-          padding: 5px;
+  .main-section {
+    display: flex;
+    height: 500px;
+    gap: 60px;
+
+    article {
+      .frame {
+        @include flex-column;
+        gap: 30px;
+        align-items: center;
+        .canvas-container {
+          border-radius: 43px;
+          box-shadow: $lobby-list-shadow;
+          background: $primary-background;
+          width: 600px;
+          height: 500px;
+          @include center-element;
+          .canvas {
+            border: none;
+            border-radius: 43px;
+            width: 580px;
+            height: 480px;
+            background-color: $chat-color;
+          }
+        }
+        button {
+          box-shadow: $dot-panel;
+          width: 200px;
         }
       }
-      .guess-input {
-        border-radius: 10px;
-        height: 1.5rem;
+    }
+
+    .guessing-container {
+      .game-chat-container {
+        padding: 30px;
+        width: 300px;
+        height: 100%;
+        padding: 20px 25px;
+        flex-shrink: 0;
+        border-radius: 30px;
+        @include flex-column;
+        gap: 20px;
+        background: $primary-background;
+        box-shadow: $lobby-shadow;
+        .guess-chat-panel {
+          display: flex;
+          gap: 20px;
+          align-items: center;
+        }
+
+        .guess-chat-container {
+          @include flex-column;
+          padding: 10px 20px;
+          overflow-y: auto;
+          gap: 15px;
+          width: 100%;
+          height: 400px;
+          background: $chat-color;
+          border-radius: 16px;
+          box-shadow: $icon-shadow;
+          li {
+            display: flex;
+            gap: 15px;
+          }
+        }
+
+        .guess-input-panel {
+          @include flex-between-center;
+          input {
+            outline: none;
+            border: none;
+            border-radius: 14px;
+            background-color: $secondary-background;
+            height: 30px;
+            padding-left: 10px;
+            color: $gray-color;
+            box-shadow: $input-shadow;
+            &::placeholder {
+              opacity: 70%;
+            }
+          }
+        }
+      }
+    }
+    .score-list {
+      @include flex-column;
+      gap: 20px;
+      /*       background: #2d2d2d; */
+      border-radius: 16px;
+      width: 260px;
+      padding: 20px;
+      background: $primary-background;
+      box-shadow: $lobby-shadow;
+      .score-panel {
+        display: flex;
+        align-items: center;
+        font-size: 1.5rem;
+        gap: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid lightgray;
+      }
+      .player-highscore {
+        @include flex-column;
+        gap: 15px;
+        li {
+          display: flex;
+          align-items: center;
+          gap: 15px;
+          font-size: 1.25rem;
+          .player-number {
+            font-weight: $darker-turquoise;
+            font-family: $secondary-font;
+          }
+          .colon {
+            font-family: $secondary-font;
+          }
+          .points {
+            color: $turquoise;
+            font-family: $secondary-font;
+          }
+        }
       }
     }
   }
@@ -299,10 +404,6 @@ input {
 section h2 {
   font-size: 1.2em;
   text-transform: uppercase;
-}
-
-section ul li {
-  @include gap-column-1;
 }
 
 ul {
