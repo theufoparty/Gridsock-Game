@@ -158,14 +158,6 @@ function updateCountdownDisplay(countdown: number) {
   }
 }
 
-// Event listener for the Start Game button
-if (startGameButton) {
-  startGameButton.addEventListener('click', () => {
-    // Emit a startGame event to the server
-    socket.emit('startGame');
-  });
-}
-
 // Listen for countdown updates from the server
 socket.on('countdownUpdate', (countdown: number) => {
   updateCountdownDisplay(countdown);
@@ -279,10 +271,36 @@ function recieveSocketForUpdatedUserPoints() {
   });
 }
 
-function displayRandomUser(userThatIsDrawing: Element | null) {
-  socket.on('randomUser', user => {
-    if (!userThatIsDrawing) return;
-    userThatIsDrawing.textContent = user;
+/**
+ * Sets up a listener for the "newRound" event. Updates the user interface with the name
+ * of the user that is drawing in the new round. It also includes a TODO for adding logic to
+ * enable or disable drawing capabilities based on the current user's role.
+ * @param {Element | null} userThatIsDrawing - The DOM element where the current drawing user's name is displayed.
+ */
+function startNewRound(userThatIsDrawing: Element | null) {
+  socket.on('newRound', (nextUserName: string) => {
+    if (userThatIsDrawing) {
+      userThatIsDrawing.textContent = nextUserName;
+    }
+    // TODO: Add logic to ensure enable or disable the canvas
+    // depending on whether we're the new player or not
+  });
+}
+
+/**
+ * Sets up a listener for the "startGame" event. When a game starts, it changes the visibility of the
+ * game section and lobby section by toggling their classes, effectively showing the game section and
+ * hiding the game lobby section. This function is used to transition the user interface from the lobby
+ * to the active game state.
+ * @param {Element | null} gameSection - The DOM element representing the main game area, to be shown when the game starts.
+ * @param {Element | null} gameLobbySection - The DOM element representing the game lobby, to be hidden when the game starts.
+ */
+function startNewGame(gameSection: Element | null, gameLobbySection: Element | null) {
+  socket.on('startGame', () => {
+    if (gameSection && gameLobbySection) {
+      gameLobbySection.classList.add('hidden');
+      gameSection.classList.remove('hidden');
+    }
   });
 }
 
@@ -291,8 +309,9 @@ function initialFunctionsOnLoad() {
   recieveSocketUserStatus(gameLobbyList);
   recieveSocketPlayersReady(startGameButton, playersReadyContainer);
   recieveSocketForNewUser(startGameButton, playersReadyContainer);
-  displayRandomUser(userThatIsDrawing);
+  startNewRound(userThatIsDrawing);
   recieveSocketForUpdatedUserPoints();
+  startNewGame(gameSection, gameLobbySection);
 }
 
 document.addEventListener('DOMContentLoaded', initialFunctionsOnLoad);
@@ -301,11 +320,9 @@ gameLobbyList?.addEventListener('click', e => {
   handleClickOnButtons(e);
 });
 
-function StartGame() {
-  // add functions here when starting game, when done move to proper place in our code
-  // socket.emit('startGame', true); uncommenct later
-  // swapClassBetweenTwoElements(gameLobbySection, gameSection, 'hidden');
-}
+startGameButton?.addEventListener('click', () => {
+  socket.emit('startGame');
+});
 
 function guessedRightAnswer() {
   const userId = localStorage.getItem('userId');
@@ -314,8 +331,6 @@ function guessedRightAnswer() {
 
 // placeholder for point logic when guessing the right answer
 document.getElementById('right')?.addEventListener('click', guessedRightAnswer);
-
-startGameButton?.addEventListener('click', StartGame);
 
 // this is only a placeholder for current game logic
 document.getElementById('click')?.addEventListener('click', () => {
