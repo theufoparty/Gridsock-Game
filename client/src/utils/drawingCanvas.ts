@@ -16,8 +16,8 @@ function initializeDrawing(socket: Socket): void {
   const context = drawingCanvas.getContext('2d')!;
   let isPainting = false;
 
-  drawingCanvas.width = 600;
-  drawingCanvas.height = 300;
+  drawingCanvas.width = 580;
+  drawingCanvas.height = 480;
 
   function startDrawingPosition(event: MouseEvent): void {
     isPainting = true;
