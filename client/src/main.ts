@@ -42,13 +42,12 @@ function fetchWordsFromServer() {
     .catch(err => console.log('error', err));
 }
 
-//fetchWordsFromServer();
-
-let gameArray: any[] = [];
 
 /**
  * Pick random word and splice it from new array 
- */
+*/
+
+let gameArray: any[] = [];
 
 function randomWord() {
   if (!wordToDraw) return;
@@ -56,7 +55,6 @@ function randomWord() {
   let currentWord = gameArray[randomWordId];
   //console.log(gameArray.length + ' ' + randomWordId + ' ' + currentWord.id + currentWord.word);
   wordToDraw.innerText = currentWord.word;
-
   gameArray.splice(randomWordId, 1); //Splice from array
   //console.log('gameArray', gameArray);
 }
@@ -71,7 +69,6 @@ socket.on('words', words => {
     randomWord();
   }
 });
-
 
 
 /**
