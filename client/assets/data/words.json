@@ -1,5 +1,4 @@
-{
-  "words": [
+[
     { "id": 1, "word": "Elephant" },
     { "id": 2, "word": "Tiger" },
     { "id": 3, "word": "Giraffe" },
@@ -81,4 +80,3 @@
     { "id": 79, "word": "Sleeping" },
     { "id": 80, "word": "Watching" }
   ]
-}

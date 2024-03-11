@@ -10,9 +10,22 @@ MongoClient.connect(process.env.DB_URL).then(client => {
   app.locals.db = db;
 });
 
-app.get('/', (req, res) => {
-  res.send('works');
+const io = require('socket.io')(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST'],
+  },
 });
+
+app.use(cors());
+
+app.get('/', (req, res) => {
+  res.send('<h1>Welcome to our server!</h1>');
+});
+
+/**
+ * Endpoint for words-array fetched from client
+ */
 
 app.get('/words', (req, res) => {
   const db = req.app.locals.db;
@@ -21,22 +34,17 @@ app.get('/words', (req, res) => {
     .find()
     .toArray()
     .then(data => {
-      console.log('words:', data);
+      io.emit('words', data);
       res.json(data);
     });
 });
 
-const io = require('socket.io')(server, {
-  cors: {
-    origin: '*',
-    methods: ['GET', 'POST'],
-  },
-});
-
-const users = [];
+let users = [];
 let playersReady = 0;
 let usedIndexes = []; // keeps track of how many users have already drawn
 let countdown = 60; // Initial countdown value in seconds
+let currentUser = '';
+let countdownInterval = null;
 
 /**
  * Calculates in 5 seconds interval based on timeLeft how many points are recieved
@@ -75,10 +83,6 @@ function getRandomizedUserToDraw(users) {
   }
 }
 
-app.get('/', (req, res) => {
-  res.send('<h1>Welcome to our server!</h1>');
-});
-
 io.on('connection', socket => {
   socket.on('chat', arg => {
     console.log('incoming chat', arg);
@@ -105,6 +109,7 @@ io.on('connection', socket => {
 
   socket.emit('updateUserList', users);
 
+  // NEW USER
   // if player logs in, add a new user with their information to the users
   socket.on('newUser', user => {
     const newUser = { username: user.username, color: user.color, id: socket.id, isReady: false, points: 0 };
@@ -122,13 +127,6 @@ io.on('connection', socket => {
       user.points += getPointsAsNumberBasedOnTime(countdown);
       io.emit('updatedUserPoints', users);
     }
-  });
-
-  socket.on('startGame', gameState => {
-    if (!gameState) return;
-    const nameOnlyUsers = users.map(user => user.username);
-    const randomUser = getRandomizedUserToDraw(nameOnlyUsers);
-    io.emit('randomUser', randomUser);
   });
 
   // from the client ready / waiting status change the player status
@@ -169,28 +167,82 @@ io.on('connection', socket => {
 
   // receive guess from client and sends back to all clients
   socket.on('guess', arg => {
-    console.log('incoming guess', arg);
-    io.emit('guess', arg);
+    const userInUsers = users.find(user => user.username === arg.user);
+    if (userInUsers) {
+      io.emit('guess', { message: arg.message, user: arg.user, color: userInUsers.color });
+    }
   });
+
+  // NEW ROUND
+  /**
+   * Resets the game's countdown timer to its starting value.
+   */
+  function resetClock() {
+    countdown = 60;
+  }
+
+  /**
+   * Decreases the countdown timer every second. If the countdown reaches 0, it stops the timer
+   * and emits a "countdownFinished" event. Otherwise, it updates the countdown value and emits
+   * a "countdownUpdate" event to all connected clients.
+   */
+  function tick() {
+    if (countdown < 0) {
+      // If countdown reaches zero, clear the interval and emit a "countdownFinished" event
+      clearInterval(countdownInterval);
+      io.emit('countdownFinished'); // Notify clients that the countdown has finished
+    } else {
+      // Update the countdown value and emit a "countdownUpdate" event to all connected clients
+      io.emit('countdownUpdate', countdown); // Send the updated countdown value to clients
+      countdown--; // Decrement the countdown value by 1 second
+    }
+  }
+
+  /**
+   * Starts a new round with the specified user, resets the countdown timer, and schedules the tick function
+   * to be called every second. Emits a "newRound" event with the next user's name.
+   * @param {string} nextUserName - The username of the next user for the round.
+   */
+  function newRound(nextUserName) {
+    currentUser = nextUserName;
+    resetClock();
+    countdownInterval = setInterval(tick, 1000);
+    io.emit('newRound', nextUserName);
+    //getRandomWord();
+  }
+
+  // START GAME
+  /**
+   * Selects the next user to draw randomly from the list of users. It filters to use only the usernames
+   * for the selection process.
+   * @returns {string} The username of the selected next user.
+   */
+  function selectNextUser() {
+    const nameOnlyUsers = users.map(user => user.username);
+    const randomUser = getRandomizedUserToDraw(nameOnlyUsers);
+    return randomUser;
+  }
+
+  /**
+   * Resets the game state for a new game. This includes resetting all users' points to 0 and clearing
+   * any used indexes. It emits an "updateUserList" event with the updated list of users.
+   */
+  function resetGameState() {
+    usedIndexes = [];
+    users = users.map(user => ({
+      ...user,
+      points: 0,
+    }));
+    socket.emit('updateUserList', users);
+  }
 
   socket.on('startGame', () => {
-    countdown = 60;
-    // An interval to update the countdown every second
-    const countdownInterval = setInterval(() => {
-      if (countdown <= 0) {
-        // If countdown reaches zero, clear the interval and emit a "countdownFinished" event
-        clearInterval(countdownInterval);
-        io.emit('countdownFinished'); // Notify clients that the countdown has finished
-      } else {
-        // Update the countdown value and emit a "countdownUpdate" event to all connected clients
-        io.emit('countdownUpdate', countdown); // Send the updated countdown value to clients
-        countdown--; // Decrement the countdown value by 1 second
-      }
-    }, 1000); // Run the interval every 1000 milliseconds (1 second)
+    resetGameState();
+    const nextUserName = selectNextUser();
+    io.emit('startGame');
+    newRound(nextUserName);
   });
 });
-
-app.use(cors());
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {

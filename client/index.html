@@ -5,79 +5,167 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="src/styles/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
     <title>Gridsock Game</title>
   </head>
   <body>
     <header>
-      <h1>Game Name</h1>
-      <p id="usernameDisplay"></p>
+      <div class="game-logo">
+        <img src="./assets/icons/brush.svg" alt="paintbrush" width="40" height="40" />
+        <h1>Sketch It</h1>
+      </div>
+
       <div>
-        <!-- Timer section-->
-        <div>
-          <p>Time remaining: <span></span>&nbsp;s</p>
+        <div class="user-icon hidden" id="userIcon">
+          <img src="./assets/icons/user.svg" alt="user icon" height="30" width="30" />
         </div>
+        <p id="usernameDisplay"></p>
       </div>
     </header>
     <main>
-      <section id="loginSection">
-        <label for="loginInput">Username:</label>
-        <input id="loginInput" type="text" />
-        <button id="loginButton">Login</button>
+      <section id="loginSection" class="login-section">
+        <div class="pictonary">
+          <img src="./assets/images/pictonary.png" alt="pictonary" width="600" height="280" />
+          <p>Ready to <span>Sketch?</span> Jump in and unleash your <span>creativity!</span></p>
+        </div>
+
+        <div class="login-container">
+          <label for="loginInput">Pick a nickname</label>
+          <div class="input-panel">
+            <input id="loginInput" class="login-input" type="text" placeholder="Michelangelo" />
+            <button id="loginButton">Login</button>
+          </div>
+        </div>
       </section>
-      <!-- Test button to trigger countdown (temporary, remove in production) -->
-      <button id="testStartCountdownButton">Test Start Countdown</button>
-      <section id="gameLobbySection" class="hidden">
+
+      <section id="gameLobbySection" class="game-lobby-section hidden">
         <h2>Game Lobby</h2>
-        <ul id="gameLobbySectionUl">
-          <li>
-            <p>User</p>
-            <button>waiting</button>
-          </li>
-        </ul>
-        <div id="playersReady">0/5</div>
-        <button id="startGameButton" class="hidden">Start Game</button>
-      </section>
-      <button id="right">Guessed right answer</button>
-      <button id="click">click</button>
-      <section id="gameSection">
-        <!--Game section-->
-        <aside id="scoreList">
-          <!--Score container-->
-          <ul id="playerHighscore"></ul>
-        </aside>
-        <article>
-          <div>
-            <!--Current "drawer"-->
-            <p>
-              Now drawing: <span id="user">User <i></i></span>
-            </p>
-          </div>
-          <div id="frame">
-            <!--Drawing area-->
-            <canvas class="canvas" id="drawingCanvas"></canvas>
-            <button id="clearCanvasButton">Clear Canvas</button>
-          </div>
-          <div>
-            <!--Chosen word to draw-->
-            <p>Your word to draw is: <span id="theWord">fisk</span></p>
-          </div>
-        </article>
-        <aside id="guessingContainer">
-          <!--Guessing container-->
-          <div>
-            <p id="guessInstruction">Please, remember to spell the word correctly when guessing.</p>
-          </div>
-          <div id="gameChatContainer">
-            <ul id="chatList"></ul>
-            <!--Chat answers as viewed by user -->
-            <div>
-              <!--Chat input-->
-              <p>Write your guess here:</p>
-              <input type="text" id="guessInput" />
-              <button type="button" id="guessButton">Guess</button>
+        <div class="lobby-container">
+          <ul id="gameLobbySectionUl" class="game-lobby-list">
+            <li>
+              <p>User</p>
+              <button>waiting</button>
+            </li>
+          </ul>
+          <div id="lobbyChat" class="lobby-chat">
+            <div class="chat-panel">
+              <div class="icon-container">
+                <img src="./assets/icons/chat.svg" alt="chat logo" width="30" height="30" />
+              </div>
+              <h3>Team chat</h3>
+            </div>
+            <div class="chat-container"></div>
+            <div class="chat-input-panel">
+              <input type="text" placeholder="message" />
+              <button class="icon-container icon-hover">
+                <img src="./assets/icons/send.svg" alt="send button" width="30" height="30" />
+              </button>
             </div>
           </div>
-        </aside>
+        </div>
+        <div class="start-container">
+          <div class="start-panel">
+            <div class="player-ready-panel">
+              <div>Players ready</div>
+              <div id="playersReady">0/5</div>
+            </div>
+            <button id="startGameButton" class="start-game-button">Start</button>
+          </div>
+          <div class="rules">
+            <img src="./assets/icons/rules.svg" alt="rules icon" width="30" height="30" />
+            <ul class="rules-list" id="rulesList">
+              <li>Spell correctly</li>
+              <li>Take turns drawing</li>
+              <li>Points based on time</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="test-buttons">
+          <button id="testStartCountdownButton">Countdown</button>
+          <button id="click">click</button>
+        </div>
+      </section>
+
+      <!--Game section-->
+
+      <section id="gameSection" class="game-section hidden">
+        <button id="right">right answer</button>
+        <div class="random-container">
+          <!--Current "drawer"-->
+          <div class="user-panel">
+            <div class="icon-container">
+              <img src="./assets/icons/user.svg" alt="user icon" width="30" height="30" />
+            </div>
+
+            <span id="user">User <i></i></span>
+          </div>
+          <div class="word-panel">
+            <!--Chosen word to draw-->
+            <div class="icon-container">
+              <img src="./assets/icons/word.svg" alt="word icon" width="30" height="30" />
+            </div>
+            <span id="wordToDraw">Word</span>
+          </div>
+          <div class="timer-panel">
+            <!-- Timer section-->
+            <div class="icon-container">
+              <img src="./assets/icons/hourglass.svg" alt="clock icon" width="30" height="30" />
+            </div>
+            <p id="countdownValue" class="timer">60</p>
+            <p id="countdownMessage"></p>
+          </div>
+        </div>
+
+        <div class="main-section">
+          <aside id="guessingContainer" class="guessing-container">
+            <!--Guessing container-->
+            <div id="gameChatContainer" class="game-chat-container">
+              <div class="guess-chat-panel">
+                <div class="icon-container">
+                  <img src="./assets/icons/chat.svg" alt="guess chat logo" width="30" height="30" />
+                </div>
+                <h3>Guess Chat</h3>
+              </div>
+              <ul id="chatList" class="guess-chat-container"></ul>
+              <!--Chat answers as viewed by user -->
+              <div class="guess-input-panel">
+                <input type="text" id="guessInput" class="guess-input" placeholder="guess" />
+                <button class="icon-container icon-hover" id="guessButton">
+                  <img src="./assets/icons/send.svg" alt="guess button" width="30" height="30" />
+                </button>
+              </div>
+            </div>
+          </aside>
+          <article>
+            <div id="frame" class="frame">
+              <!--Drawing area-->
+              <div class="canvas-container">
+                <canvas class="canvas" id="drawingCanvas"></canvas>
+              </div>
+
+              <button id="clearCanvasButton">Clear Canvas</button>
+            </div>
+          </article>
+          <aside id="scoreList" class="score-list">
+            <div class="score-panel">
+              <img src="./assets/icons/score.svg" alt="star score icon" width="30" height="30" />
+              <p>Score</p>
+            </div>
+
+            <!--Score container-->
+            <ul id="playerHighscore" class="player-highscore"></ul>
+          </aside>
+        </div>
       </section>
     </main>
 
