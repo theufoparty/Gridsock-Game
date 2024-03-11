@@ -26,30 +26,53 @@ const wordToDraw: HTMLElement | null = document.getElementById('wordToDraw');
 // placeholder for point logic when guessing the right answer
 document.getElementById('right')?.addEventListener('click', guessedRightAnswer);
 
+// Remove later!!! - Placeholder to click new word (Logo img)
+
+const clickTest = document.querySelector('header img');
+console.log(clickTest);
+
+clickTest?.addEventListener('click', fetchWordsFromServer);
+
 /**
  * Fetch endpoint for wordarray
  */
 
 function fetchWordsFromServer() {
   fetch('http://localhost:3000/words')
-    .then(res => res.json())
-    .then(data => {
-      console.log(data);
-    })
-
     .catch(err => console.log('error', err));
 }
 
 //fetchWordsFromServer();
 
-socket.on('words', words => {
+let gameArray: any[] = [];
+
+/**
+ * Pick random word and splice it from new array 
+ */
+
+function randomWord() {
   if (!wordToDraw) return;
-  const wordArray = words[0].words;
-  const randomWordId = Math.floor(Math.random() * wordArray.length);
-  let currentWord = wordArray[randomWordId];
-  console.log(currentWord.word);
+  const randomWordId = Math.floor(Math.random() * gameArray.length);
+  let currentWord = gameArray[randomWordId];
+  //console.log(gameArray.length + ' ' + randomWordId + ' ' + currentWord.id + currentWord.word);
   wordToDraw.innerText = currentWord.word;
+
+  gameArray.splice(randomWordId, 1); //Splice from array
+  //console.log('gameArray', gameArray);
+}
+
+socket.on('words', words => {
+  const wordArray = words[0].words;
+  
+  if (gameArray.length === 0) {
+    gameArray = wordArray;
+    randomWord();
+  } else {
+    randomWord();
+  }
 });
+
+
 
 /**
  * Handles login for user
