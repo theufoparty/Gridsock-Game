@@ -1,5 +1,5 @@
 import './styles/style.css';
-import { IUserType } from './utils/types';
+import { IUserType, IUserMessageType } from './utils/types';
 import { swapClassBetweenTwoElements, getRandomColor } from './utils/helperfunctions';
 import { io } from 'socket.io-client';
 import { initializeDrawing } from './utils/drawingCanvas';
@@ -55,9 +55,27 @@ function emitUserInfoToServer(username: string) {
   socket.emit('newUser', { username: username, color: randomColor });
 }
 
-loginButton?.addEventListener('click', () => {
-  handleLoginOnClick(usernameInput, loginSection, gameLobbySection);
-});
+function createUserIcon(color: string) {
+  const userIcon = document.createElement('div');
+  userIcon.classList.add('list-dot');
+  userIcon.style.backgroundColor = color;
+  return userIcon;
+}
+
+function createUserText(username: string, color: string) {
+  const userText = document.createElement('p');
+  userText.textContent = username;
+  userText.style.color = color;
+  return userText;
+}
+
+function createReadyButton(id: string, isReady: boolean) {
+  const readyButton = document.createElement('button');
+  readyButton.id = id;
+  readyButton.innerText = isReady ? 'ready' : 'waiting';
+  isReady ? readyButton.classList.add('ready') : readyButton.classList.add('waiting');
+  return readyButton;
+}
 
 /**
  * Adds a user to the lobby list with a ready button. Each user's name is displayed
@@ -74,24 +92,18 @@ function appendUserToList(user: { username: string; color: string; id: string; i
   const { username, color, id, isReady } = user;
   const userElement = document.createElement('div');
   const userPanel = document.createElement('div');
-  const userText = document.createElement('p');
   const userIconContainer = document.createElement('div');
   const dotContainer = document.createElement('div');
   dotContainer.classList.add('dot-panel');
-  const userIcon = document.createElement('div');
+  const userIcon = createUserIcon(color);
+  const userText = createUserText(username, color);
+  const readyButton = createReadyButton(id, isReady);
   userIconContainer.id = 'dot-container';
   dotContainer.append(userIcon);
   userIconContainer.append(dotContainer);
   userPanel.classList.add('player-panel');
   userPanel.append(userIconContainer, userText);
-  userIcon.classList.add('list-dot');
-  userIcon.style.backgroundColor = color;
-  userText.innerText = username;
   userElement.style.color = color;
-  const readyButton = document.createElement('button');
-  readyButton.id = id;
-  readyButton.innerText = isReady ? 'ready' : 'waiting';
-  isReady ? readyButton.classList.add('ready') : readyButton.classList.add('waiting');
   userElement.append(userPanel, readyButton);
   const listItem = document.createElement('li');
   listItem.appendChild(userElement);
@@ -253,16 +265,42 @@ function recieveSocketPlayersReady(startGameButton: Element | null, playersReady
 function generatePlayerHighscore(users: IUserType[], playerHighscoreList: Element | null) {
   if (!playerHighscoreList) return;
   playerHighscoreList.innerHTML = '';
-  users.forEach(user => {
+  users.forEach((user, index) => {
     const { username, points } = user;
     const li = document.createElement('li');
-    const p = document.createElement('p');
-    const div = document.createElement('div');
-    p.textContent = username;
-    div.textContent = points.toString();
-    li.append(div, p);
+    const playerNumber = document.createElement('p');
+    const userNameContainer = document.createElement('p');
+    const colon = document.createElement('p');
+    const pointsContainer = document.createElement('div');
+    playerNumber.classList.add('player-number');
+    pointsContainer.classList.add('points');
+    colon.classList.add('colon');
+    playerNumber.textContent = (index + 1).toString();
+    colon.textContent = ':';
+    userNameContainer.textContent = username;
+    pointsContainer.textContent = points.toString();
+    li.append(playerNumber, pointsContainer, colon, userNameContainer);
     playerHighscoreList.append(li);
   });
+}
+
+/**
+ * Updates the chat where users write their guesses
+ */
+function updateGuessChat(guess: IUserMessageType) {
+  console.log(guess.color);
+  let li = document.createElement('li');
+  let userContainer = document.createElement('p');
+  let messageContainer = document.createElement('p');
+  userContainer.textContent = guess.user + ':';
+  userContainer.style.color = guess.color;
+  messageContainer.textContent = guess.message;
+  li.append(userContainer, messageContainer);
+  console.log(li);
+  if (chatList !== null) {
+    chatList.appendChild(li);
+    chatList.scrollTop = chatList.scrollHeight;
+  }
 }
 
 function recieveSocketForUpdatedUserPoints() {
@@ -279,6 +317,11 @@ function displayRandomUser(userThatIsDrawing: Element | null) {
     userThatIsDrawing.textContent = user;
   });
 }
+
+socket.on('guess', arg => {
+  console.log('guess!', arg);
+  updateGuessChat(arg);
+});
 
 function initialFunctionsOnLoad() {
   initializeUserList(gameLobbyList);
@@ -333,24 +376,9 @@ guessButton?.addEventListener('click', () => {
   }
 });
 
-socket.on('guess', arg => {
-  console.log('guess!', arg);
-  updateGuessChat(arg);
+loginButton?.addEventListener('click', () => {
+  handleLoginOnClick(usernameInput, loginSection, gameLobbySection);
 });
-
-/**
- * Updates the chat where users write their guesses
- */
-function updateGuessChat(guess: { user: string; message: string }) {
-  let li = document.createElement('li');
-  li.innerText = guess.user + ': ' + guess.message;
-  console.log(li);
-
-  if (chatList !== null) {
-    chatList.appendChild(li);
-    chatList.scrollTop = chatList.scrollHeight;
-  }
-}
 
 window.onload = () => {
   initializeDrawing(socket);
