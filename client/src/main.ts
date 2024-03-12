@@ -362,6 +362,7 @@ socket.on('countdownUpdate', (countdown: number) => {
 socket.on('countdownFinished', () => {
   if (countdownMessage) {
     countdownMessage.textContent = "Time's up!";
+    updateCountdownDisplay(0);
   }
 
   if (rightWordDisplay && currentWord) {

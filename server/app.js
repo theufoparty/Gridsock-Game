@@ -222,7 +222,7 @@ io.on('connection', socket => {
    * a "countdownUpdate" event to all connected clients.
    */
   function tick() {
-    if (countdown < 0) {
+    if (countdown <= 0) {
       clearInterval(countdownInterval);
       io.emit('countdownFinished');
       setTimeout(newRound, 5000); // Vänta 5 sekunder innan nästa runda startar.
