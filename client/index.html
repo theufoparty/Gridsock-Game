@@ -153,10 +153,44 @@
               <div class="canvas-container">
                 <canvas class="canvas" id="drawingCanvas"></canvas>
               </div>
-
-              <button id="clearCanvasButton">Clear Canvas</button>
+              <div class="canvas-bottom-panel">
+                <button id="clearCanvasButton">Clear Canvas</button>
+                <div class="draw-options" id="drawOptions">
+                  <ul>
+                    <div>
+                      <div>
+                        <li class="list-color black" id="drawColor"></li>
+                      </div>
+                    </div>
+                    <div>
+                      <div>
+                        <li class="list-color blue" id="drawColor"></li>
+                      </div>
+                    </div>
+                    <div>
+                      <div>
+                        <li class="list-color green" id="drawColor"></li>
+                      </div>
+                    </div>
+                    <div>
+                      <div>
+                        <li class="list-color orange" id="drawColor"></li>
+                      </div>
+                    </div>
+                    <div>
+                      <div>
+                        <li class="list-color red" id="drawColor"></li>
+                      </div>
+                    </div>
+                  </ul>
+                  <div class="draw-container">
+                    <img src="./assets/icons/color.svg" alt="palette" height="25" width="25" />
+                  </div>
+                </div>
+              </div>
             </div>
           </article>
+
           <aside id="scoreList" class="score-list">
             <div class="score-panel">
               <img src="./assets/icons/score.svg" alt="star score icon" width="30" height="30" />
@@ -173,6 +207,8 @@
       <!--End page section-->
       <!--<section id="endSection" class="end-section">-->
       <!--<div id="scoreBoard">
+      <section id="endSection" class="end-section hidden">
+        <div id="scoreBoard">
           <h3>Player Scores:</h3>
           Player scores will be populated in the list below from TS. TS-Developer might remove the 5 x li's if he/she so chooses-->
       <!-- <ul>

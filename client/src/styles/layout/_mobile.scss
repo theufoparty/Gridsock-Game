@@ -271,9 +271,61 @@ main {
             background-color: $chat-color;
           }
         }
-        button {
-          box-shadow: $dot-panel;
-          width: 200px;
+
+        .canvas-bottom-panel {
+          display: flex;
+          justify-content: space-between;
+          width: 100%;
+          padding: 0 20px;
+          button {
+            box-shadow: $dot-panel;
+            width: 160px;
+            height: 40px;
+          }
+          .draw-options {
+            height: 40px;
+            gap: 10px;
+            background-color: $primary-background;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            box-shadow: $lobby-shadow;
+            border-radius: 16px;
+
+            .draw-container {
+              width: 100%;
+            }
+
+            ul {
+              display: flex;
+              flex-direction: row;
+              gap: 10px;
+              div {
+                @include center-element;
+                border-radius: 50%;
+                background: $secondary-background;
+                box-shadow: $dot-panel;
+                height: 25px;
+                width: 25px;
+                div {
+                  @include center-element;
+                  border-radius: 50%;
+                  background: $secondary-background;
+                  box-shadow: $dot-panel;
+                  height: 25px;
+                  width: 25px;
+                  li {
+                    height: 15px;
+                    width: 15px;
+                    border-radius: 50%;
+                    &:hover {
+                      cursor: pointer;
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }
@@ -330,6 +382,7 @@ main {
         }
       }
     }
+
     .score-list {
       @include flex-column;
       gap: 20px;
@@ -509,4 +562,28 @@ section {
       }
     }
   }
+}
+
+.timer-panel {
+  width: 180px;
+}
+
+.blue {
+  background: blue;
+}
+
+.red {
+  background: red;
+}
+
+.orange {
+  background: orange;
+}
+
+.green {
+  background: green;
+}
+
+.black {
+  background: black;
 }

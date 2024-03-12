@@ -24,6 +24,23 @@ app.get('/', (req, res) => {
 });
 
 /**
+ * Function for picking random word and delete/splice it from array
+ */
+
+let gameArray = [];
+
+function getRandomWord() {
+  
+  const randomWordId = Math.floor(Math.random() * gameArray.length);
+  let currentWord = gameArray[randomWordId];
+  //console.log(gameArray.length + ' ' + randomWordId + ' ' + currentWord.id + currentWord.word);
+  gameArray.splice(randomWordId, 1); //Splice from array
+  //console.log('gameArray', gameArray);
+  let randomWord = currentWord.word; 
+  io.emit('words', randomWord);
+}
+
+/**
  * Endpoint for words-array fetched from client
  */
 
@@ -34,8 +51,14 @@ app.get('/words', (req, res) => {
     .find()
     .toArray()
     .then(data => {
-      io.emit('words', data);
       res.json(data);
+      const wordArray = data[0].words;  
+      if (gameArray.length === 0) {
+        gameArray = wordArray;
+        getRandomWord();
+      } else {
+        getRandomWord();
+      } 
     });
 });
 
@@ -87,6 +110,13 @@ io.on('connection', socket => {
   socket.on('chat', arg => {
     console.log('incoming chat', arg);
     io.emit('chat', arg);
+  });
+
+  // CHANGING CANVAS COLOR
+
+  socket.on('changeColor', color => {
+    console.log('color', color);
+    io.emit('changeColor', color);
   });
 
   // DRAWING
