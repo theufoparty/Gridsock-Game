@@ -299,12 +299,24 @@ main {
   gap: 20px;
   align-items: center;
 }
-.game-lobby-section .lobby-container .lobby-chat .chat-container {
+.game-lobby-section .lobby-container .lobby-chat .lobby-chat-container {
   width: 100%;
   height: 200px;
   background: #dedcdc;
   border-radius: 16px;
   box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.08), -5px -5px 20px 0px #fff;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 20px;
+  overflow-y: auto;
+  gap: 15px;
+}
+.game-lobby-section .lobby-container .lobby-chat .lobby-chat-container li {
+  display: flex;
+  gap: 15px;
+}
+.game-lobby-section .lobby-container .lobby-chat .lobby-chat-container li p {
+  font-weight: 500;
 }
 .game-lobby-section .lobby-container .lobby-chat .chat-input-panel {
   display: flex;
@@ -608,6 +620,26 @@ section {
 }
 .waiting:hover {
   color: #12b7b6;
+}
+
+.disabled {
+  background: #dedcdc;
+  opacity: 50%;
+}
+.disabled:hover {
+  color: #545454;
+  cursor: auto;
+}
+
+.active {
+  background: #12b7b6;
+  color: #f3f3f3;
+  box-shadow: 5px 5px 10px #a5a5a5, -5px -5px 10px #ffffff;
+}
+.active:hover {
+  cursor: pointer;
+  background: #1bdcdc;
+  color: #f3f3f3;
 }
 
 .player-panel {
