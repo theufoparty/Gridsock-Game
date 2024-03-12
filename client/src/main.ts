@@ -8,7 +8,8 @@ import {
 import { io } from 'socket.io-client';
 import { initializeDrawing } from './utils/drawingCanvas';
 
-const socket = io('http://localhost:3000'); // Digtial Ocean Address
+//const socket = io('https://gridsock-game-uodix.ondigitalocean.app/');
+const socket = io('http://localhost:3000/');
 
 const usernameInput = document.getElementById('loginInput');
 const loginButton = document.getElementById('loginButton');
@@ -34,29 +35,25 @@ const wordToDraw: HTMLElement | null = document.getElementById('wordToDraw');
 // placeholder for point logic when guessing the right answer
 document.getElementById('right')?.addEventListener('click', guessedRightAnswer);
 
+// Remove later!!! - Placeholder to click new word (Logo img)
+
+const clickTest = document.querySelector('header img');
+clickTest?.addEventListener('click', fetchWordsFromServer);
+
 /**
  * Fetch endpoint for wordarray
  */
 
 function fetchWordsFromServer() {
-  fetch('http://localhost:3000/words') // Digital Ocean
-    .then(res => res.json())
-    .then(data => {
-      console.log(data);
-    })
-
-    .catch(err => console.log('error', err));
+  fetch('http://localhost:3000/words').catch(err => console.log('error', err));
 }
 
-//fetchWordsFromServer();
+// Random word recieved from server
 
-socket.on('words', words => {
+socket.on('words', data => {
   if (!wordToDraw) return;
-  const wordArray = words[0].words;
-  const randomWordId = Math.floor(Math.random() * wordArray.length);
-  let currentWord = wordArray[randomWordId];
-  console.log(currentWord.word);
-  wordToDraw.innerText = currentWord.word;
+  console.log(data);
+  wordToDraw.innerText = data;
 });
 
 /**
@@ -231,11 +228,35 @@ function updateGuessChat(guess: IUserMessageType) {
   userContainer.style.color = guess.color;
   messageContainer.textContent = guess.message;
   li.append(userContainer, messageContainer);
-  console.log(li);
+
+  const liCorrect = document.createElement('li');
+
+  let theGuess = guess.message;
+  const wordToDraw: HTMLElement | null = document.getElementById('wordToDraw');
+
   if (chatList !== null) {
-    chatList.appendChild(li);
-    chatList.scrollTop = chatList.scrollHeight;
+    if (wordToDraw !== null) {
+      theGuess = theGuess.toLowerCase();
+      let theWord = wordToDraw.innerHTML;
+      theWord = theWord.toLowerCase();
+      const input = guessInput as HTMLInputElement;
+      if (theGuess.includes(theWord)) {
+        messageContainer.textContent = 'Correct!';
+        liCorrect.append(userContainer, messageContainer);
+        chatList.appendChild(liCorrect);
+        input.disabled = true;
+      } else {
+        chatList.appendChild(li);
+        input.disabled = false;
+      }
+      chatList.scrollTop = chatList.scrollHeight;
+    }
   }
+  const input = guessInput as HTMLInputElement;
+  if (input === null) {
+    return;
+  }
+  input.value = '';
 }
 
 function updateLobbyChat(guess: IUserMessageType, lobbyChatList: Element | null, lobbyChatInput: Element | null) {
