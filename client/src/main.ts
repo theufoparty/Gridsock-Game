@@ -8,7 +8,8 @@ import {
 import { io } from 'socket.io-client';
 import { initializeDrawing } from './utils/drawingCanvas';
 
-const socket = io('https://gridsock-game-uodix.ondigitalocean.app/');
+//const socket = io('https://gridsock-game-uodix.ondigitalocean.app/');
+const socket = io('http://localhost:3000/');
 
 const usernameInput = document.getElementById('loginInput');
 const loginButton = document.getElementById('loginButton');
@@ -33,30 +34,30 @@ const wordToDraw: HTMLElement | null = document.getElementById('wordToDraw');
 // placeholder for point logic when guessing the right answer
 document.getElementById('right')?.addEventListener('click', guessedRightAnswer);
 
+// Remove later!!! - Placeholder to click new word (Logo img)
+
+const clickTest = document.querySelector('header img');
+clickTest?.addEventListener('click', fetchWordsFromServer);
+
 /**
  * Fetch endpoint for wordarray
  */
 
 function fetchWordsFromServer() {
-  fetch('https://gridsock-game-uodix.ondigitalocean.app/words')
-    .then(res => res.json())
-    .then(data => {
-      console.log(data);
-    })
-
+  //fetch('https://gridsock-game-uodix.ondigitalocean.app/words')
+  fetch('http://localhost:3000/words')
+    
     .catch(err => console.log('error', err));
 }
 
-//fetchWordsFromServer();
+// Random word recieved from server
 
-socket.on('words', words => {
+socket.on('words', data => {
   if (!wordToDraw) return;
-  const wordArray = words[0].words;
-  const randomWordId = Math.floor(Math.random() * wordArray.length);
-  let currentWord = wordArray[randomWordId];
-  console.log(currentWord.word);
-  wordToDraw.innerText = currentWord.word;
+  console.log(data);
+  wordToDraw.innerText = data;
 });
+
 
 /**
  * Handles login for user
@@ -182,7 +183,7 @@ function updatePlayersReadyAndWhenFullDisplayStartGameButton(
   playersReadyContainer.textContent = `${players}/5`;
   // change to five later
   console.log(players);
-  if (players === 2) {
+  if (players === 1) {
     startGameButton?.removeAttribute('disabled');
     addFirstClassAndRemoveSecondClassToElement(startGameButton, 'active', 'disabled');
   } else {
