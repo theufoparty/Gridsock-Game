@@ -225,10 +225,7 @@ io.on('connection', socket => {
     if (countdown < 0) {
       clearInterval(countdownInterval);
       io.emit('countdownFinished');
-      setTimeout(() => {
-        const nextUserName = selectNextUser(); // Välj nästa användare som ska rita.
-        newRound(nextUserName);
-      }, 5000); // Vänta 5 sekunder innan nästa runda startar.
+      setTimeout(newRound, 5000); // Vänta 5 sekunder innan nästa runda startar.
     } else {
       io.emit('countdownUpdate', countdown);
       countdown--;
@@ -240,11 +237,16 @@ io.on('connection', socket => {
    * to be called every second. Emits a "newRound" event with the next user's name.
    * @param {string} nextUserName - The username of the next user for the round.
    */
-  function newRound(nextUserName) {
-    currentUser = nextUserName;
-    resetClock();
-    countdownInterval = setInterval(tick, 1000);
-    io.emit('newRound', nextUserName);
+  function newRound() {
+    // Check if game is over
+    if (usedIndexes.length === users.length) {
+      io.emit('endOfGame');
+    } else {
+      const currentUser = selectNextUser();
+      resetClock();
+      countdownInterval = setInterval(tick, 1000);
+      io.emit('newRound', currentUser);
+    }
   }
 
   // START GAME
@@ -274,9 +276,8 @@ io.on('connection', socket => {
 
   socket.on('startGame', () => {
     resetGameState();
-    const nextUserName = selectNextUser();
     io.emit('startGame');
-    newRound(nextUserName);
+    newRound();
   });
 });
 
