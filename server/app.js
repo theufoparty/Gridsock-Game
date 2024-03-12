@@ -165,10 +165,19 @@ io.on('connection', socket => {
     io.emit('updateUserList', users);
   });
 
+  // receive guess from client and sends back to all clients
   socket.on('guess', arg => {
     const userInUsers = users.find(user => user.username === arg.user);
     if (userInUsers) {
       io.emit('guess', { message: arg.message, user: arg.user, color: userInUsers.color });
+    }
+  });
+
+  socket.on('lobbyChat', arg => {
+    console.log(arg);
+    const userInUsers = users.find(user => user.username === arg.user);
+    if (userInUsers) {
+      io.emit('lobbyChat', { message: arg.message, user: arg.user, color: userInUsers.color });
     }
   });
 

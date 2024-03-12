@@ -34,3 +34,12 @@ export function getRandomColor() {
 
   return `#${hexR}${hexG}${hexB}`;
 }
+
+export function addFirstClassAndRemoveSecondClassToElement(
+  element: Element | null,
+  firstClassName: string,
+  secondClassName: string
+) {
+  element?.classList.add(firstClassName);
+  element?.classList.remove(secondClassName);
+}
