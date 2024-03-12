@@ -51,23 +51,26 @@ function fetchWordsFromServer() {
   fetch('http://localhost:3000/words').catch(err => console.error('error', err));
 }
 
+function getIsCurrentPlayer() {
+  const user = localStorage.getItem('user');
+  if (userThatIsDrawing === null) {
+    return false;
+  }
+  const userDrawing = userThatIsDrawing.textContent;
+  return user === userDrawing;
 }
 
 // Random word recieved from server
-
 socket.on('words', data => {
   if (!wordToDraw) return;
   console.log(data);
 
   // Only show the word to player who will draw
-  const user = localStorage.getItem('user');
-  if (userThatIsDrawing !== null) {
-    const userDrawing = userThatIsDrawing.textContent;
-    if (user === userDrawing) {
-      wordToDraw.innerText = data;
-    } else {
-      wordToDraw.innerText = 'Secret word';
-    }
+  const isCurrentPlayer = getIsCurrentPlayer();
+  if (isCurrentPlayer) {
+    wordToDraw.innerText = data;
+  } else {
+    wordToDraw.innerText = 'Secret word';
   }
 });
 
