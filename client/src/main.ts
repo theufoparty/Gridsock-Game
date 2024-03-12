@@ -441,6 +441,15 @@ function startNewRound(userThatIsDrawing: Element | null) {
   });
 }
 
+function endOfGame() {
+  socket.on('endOfGame', () => {
+    // TODO: Replace with displaying and populating end of game screen
+    // note: send "players data" from server so it's easier to loop through
+    // and display high score
+    document.getElementById('endOfGame')!.innerHTML = 'END OF GAME';
+  });
+}
+
 /**
  * Sets up a listener for the "startGame" event. When a game starts, it changes the visibility of the
  * game section and lobby section by toggling their classes, effectively showing the game section and
@@ -490,6 +499,7 @@ function initialFunctionsOnLoad() {
   recieveSocketForUpdatedUserPoints();
   startNewGame(gameSection, gameLobbySection);
   recieveDrawColorFromServer();
+  endOfGame();
 }
 
 document.addEventListener('DOMContentLoaded', initialFunctionsOnLoad);

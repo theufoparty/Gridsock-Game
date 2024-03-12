@@ -225,7 +225,7 @@ io.on('connection', socket => {
     if (countdown <= 0) {
       clearInterval(countdownInterval);
       io.emit('countdownFinished');
-      setTimeout(newRound, 5000); // Vänta 5 sekunder innan nästa runda startar.
+      setTimeout(newRound, 3000); // Vänta 3 sekunder innan nästa runda startar.
     } else {
       io.emit('countdownUpdate', countdown);
       countdown--;
