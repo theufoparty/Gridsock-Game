@@ -173,6 +173,14 @@ io.on('connection', socket => {
     }
   });
 
+  socket.on('lobbyChat', arg => {
+    console.log(arg);
+    const userInUsers = users.find(user => user.username === arg.user);
+    if (userInUsers) {
+      io.emit('lobbyChat', { message: arg.message, user: arg.user, color: userInUsers.color });
+    }
+  });
+
   // NEW ROUND
   /**
    * Resets the game's countdown timer to its starting value.
