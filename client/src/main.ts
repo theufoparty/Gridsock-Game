@@ -368,10 +368,6 @@ socket.on('countdownFinished', () => {
 
   if (rightWordDisplay && currentWord) {
     rightWordDisplay.textContent = `Right word was: ${currentWord}`;
-    setTimeout(() => {
-      rightWordDisplay.textContent = '';
-      socket.emit('checkRoundStatus');
-    }, 10000);
   }
 });
 
