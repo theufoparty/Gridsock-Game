@@ -41,7 +41,7 @@ document.getElementById('right')?.addEventListener('click', guessedRightAnswer);
  */
 
 function fetchWordsFromServer() {
-  fetch('https://gridsock-game-uodix.ondigitalocean.app/words')
+  fetch('http://localhost:3000/words')
     .then(res => res.json())
     .then(data => {
       console.log(data);
@@ -418,7 +418,10 @@ function startNewRound(userThatIsDrawing: Element | null) {
     }
     if (chatList) chatList.innerHTML = '';
     if (lobbyChatList) lobbyChatList.innerHTML = '';
-    fetchWordsFromServer();
+
+    //Development
+    if (countdownMessage) countdownMessage.innerHTML = '';
+    // fetchWordsFromServer();
     socket.emit('clearCanvas');
   });
 }
@@ -439,6 +442,16 @@ function startNewGame(gameSection: Element | null, gameLobbySection: Element | n
     }
   });
 }
+
+function handleRoundEnd() {
+  if (countdownMessage) {
+    countdownMessage.textContent = 'RUNDAN ÄR SLUT';
+  }
+}
+
+socket.on('countdownFinished', () => {
+  handleRoundEnd();
+});
 
 socket.on('guess', arg => {
   console.log('guess!', arg);

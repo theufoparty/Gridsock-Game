@@ -196,13 +196,15 @@ io.on('connection', socket => {
    */
   function tick() {
     if (countdown < 0) {
-      // If countdown reaches zero, clear the interval and emit a "countdownFinished" event
       clearInterval(countdownInterval);
-      io.emit('countdownFinished'); // Notify clients that the countdown has finished
+      io.emit('countdownFinished');
+      setTimeout(() => {
+        const nextUserName = selectNextUser(); // Välj nästa användare som ska rita.
+        newRound(nextUserName);
+      }, 5000); // Vänta 5 sekunder innan nästa runda startar.
     } else {
-      // Update the countdown value and emit a "countdownUpdate" event to all connected clients
-      io.emit('countdownUpdate', countdown); // Send the updated countdown value to clients
-      countdown--; // Decrement the countdown value by 1 second
+      io.emit('countdownUpdate', countdown);
+      countdown--;
     }
   }
 
