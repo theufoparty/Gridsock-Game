@@ -8,7 +8,7 @@ import {
 import { io } from 'socket.io-client';
 import { initializeDrawing } from './utils/drawingCanvas';
 
-const socket = io('https://gridsock-game-uodix.ondigitalocean.app/');
+const socket = io('http://localhost:3000'); // Digtial Ocean Address
 
 const usernameInput = document.getElementById('loginInput');
 const loginButton = document.getElementById('loginButton');
@@ -28,6 +28,7 @@ const userThatIsDrawing = document.getElementById('user');
 const gameSection = document.getElementById('gameSection');
 const playerHighscoreList = document.getElementById('playerHighscore');
 const userIcon = document.getElementById('userIcon');
+const drawPanel = document.getElementById('drawOptions');
 const wordToDraw: HTMLElement | null = document.getElementById('wordToDraw');
 
 // placeholder for point logic when guessing the right answer
@@ -38,7 +39,7 @@ document.getElementById('right')?.addEventListener('click', guessedRightAnswer);
  */
 
 function fetchWordsFromServer() {
-  fetch('https://gridsock-game-uodix.ondigitalocean.app/words')
+  fetch('http://localhost:3000/words') // Digital Ocean
     .then(res => res.json())
     .then(data => {
       console.log(data);
@@ -182,7 +183,7 @@ function updatePlayersReadyAndWhenFullDisplayStartGameButton(
   playersReadyContainer.textContent = `${players}/5`;
   // change to five later
   console.log(players);
-  if (players === 2) {
+  if (players === 1) {
     startGameButton?.removeAttribute('disabled');
     addFirstClassAndRemoveSecondClassToElement(startGameButton, 'active', 'disabled');
   } else {
@@ -255,21 +256,11 @@ function updateLobbyChat(guess: IUserMessageType, lobbyChatList: Element | null,
   }
 }
 
-/**
- * Emits user and input value to server for chat
- * @param {Element | null} chatInput
- * @param {string} socketName
- * @returns void;
- */
-function sendChatMessageToServer(chatInput: Element | null, socketName: string) {
-  if (!chatInput) return;
-  const input = chatInput as HTMLInputElement;
-  const chatUser = localStorage.getItem('user');
-
-  socket.emit(socketName, {
-    message: input.value,
-    user: chatUser,
-  });
+function handleClickOnColorButtons(e: Event) {
+  const target = e.target as HTMLElement;
+  if (target.tagName !== 'LI' || !target.classList.contains('list-color')) return;
+  const color = target.className.replace('list-color ', '');
+  socket.emit('changeColor', color);
 }
 
 // ---------------------- COUNTDOWN FUNCTIONS ---------------------- //
@@ -292,6 +283,23 @@ function guessedRightAnswer() {
 }
 
 // ---------------------- SOCKET FUNCTIONS ---------------------- //
+
+/**
+ * Emits user and input value to server for chat
+ * @param {Element | null} chatInput
+ * @param {string} socketName
+ * @returns void;
+ */
+function sendChatMessageToServer(chatInput: Element | null, socketName: string) {
+  if (!chatInput) return;
+  const input = chatInput as HTMLInputElement;
+  const chatUser = localStorage.getItem('user');
+
+  socket.emit(socketName, {
+    message: input.value,
+    user: chatUser,
+  });
+}
 
 /**
  * Initializes a listener for the 'updateUserList' event from the server. Upon receiving the event,
@@ -405,6 +413,19 @@ function startNewGame(gameSection: Element | null, gameLobbySection: Element | n
   });
 }
 
+/**
+ * Recieves change of color for drawing from server
+ * Sets the stroke to thi
+ */
+function recieveDrawColorFromServer() {
+  socket.on('changeColor', color => {
+    const drawingCanvas = document.getElementById('drawingCanvas') as HTMLCanvasElement;
+    const context = drawingCanvas.getContext('2d')!;
+    context.strokeStyle = color;
+    context.stroke();
+  });
+}
+
 socket.on('guess', arg => {
   console.log('guess!', arg);
   updateGuessChat(arg);
@@ -423,6 +444,7 @@ function initialFunctionsOnLoad() {
   startNewRound(userThatIsDrawing);
   recieveSocketForUpdatedUserPoints();
   startNewGame(gameSection, gameLobbySection);
+  recieveDrawColorFromServer();
 }
 
 document.addEventListener('DOMContentLoaded', initialFunctionsOnLoad);
@@ -458,6 +480,8 @@ lobbyChatButton?.addEventListener('click', () => {
 loginButton?.addEventListener('click', () => {
   handleLoginOnClick(usernameInput, loginSection, gameLobbySection);
 });
+
+drawPanel?.addEventListener('click', handleClickOnColorButtons);
 
 window.onload = () => {
   initializeDrawing(socket);
