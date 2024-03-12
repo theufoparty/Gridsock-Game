@@ -35,6 +35,7 @@ function initializeDrawing(socket: Socket): void {
   }
 
   function drawOnCanvas(x: number, y: number): void {
+    context.lineWidth = 3;
     context.lineTo(x, y);
     context.stroke();
     context.beginPath();

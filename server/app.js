@@ -112,6 +112,13 @@ io.on('connection', socket => {
     io.emit('chat', arg);
   });
 
+  // CHANGING CANVAS COLOR
+
+  socket.on('changeColor', color => {
+    console.log('color', color);
+    io.emit('changeColor', color);
+  });
+
   // DRAWING
 
   socket.on('drawing', data => {
