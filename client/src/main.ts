@@ -219,10 +219,12 @@ function generatePlayerHighscore(users: IUserType[], playerHighscoreList: Elemen
   });
 }
 
+
 /**
  * Updates the chat where users write their guesses
  */
 function updateGuessChat(guess: IUserMessageType) {
+
   let li = document.createElement('li');
   let userContainer = document.createElement('p');
   let messageContainer = document.createElement('p');
@@ -230,11 +232,35 @@ function updateGuessChat(guess: IUserMessageType) {
   userContainer.style.color = guess.color;
   messageContainer.textContent = guess.message;
   li.append(userContainer, messageContainer);
-  console.log(li);
+  
+  const liCorrect = document.createElement('li')
+
+  let theGuess = guess.message;  
+  const wordToDraw: HTMLElement | null = document.getElementById('wordToDraw');
+
   if (chatList !== null) {
-    chatList.appendChild(li);
-    chatList.scrollTop = chatList.scrollHeight;
+    if (wordToDraw !== null) {
+      theGuess = theGuess.toLowerCase();
+      let theWord = wordToDraw.innerHTML
+      theWord = theWord.toLowerCase();
+      const input = guessInput as HTMLInputElement;
+      if (theGuess.includes(theWord)) {
+        messageContainer.textContent = 'Correct!';
+        liCorrect.append(userContainer, messageContainer);
+        chatList.appendChild(liCorrect);
+        input.disabled = true;
+      } else {
+        chatList.appendChild(li);
+        input.disabled = false;
+      }
+      chatList.scrollTop = chatList.scrollHeight;
+    }
   }
+  const input = guessInput as HTMLInputElement;
+  if (input === null) {
+    return;
+  }
+  input.value = '';
 }
 
 function updateLobbyChat(guess: IUserMessageType, lobbyChatList: Element | null, lobbyChatInput: Element | null) {
@@ -458,6 +484,8 @@ lobbyChatButton?.addEventListener('click', () => {
 loginButton?.addEventListener('click', () => {
   handleLoginOnClick(usernameInput, loginSection, gameLobbySection);
 });
+
+
 
 window.onload = () => {
   initializeDrawing(socket);

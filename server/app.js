@@ -165,6 +165,7 @@ io.on('connection', socket => {
     io.emit('updateUserList', users);
   });
 
+  // receive guess from client and sends back to all clients
   socket.on('guess', arg => {
     const userInUsers = users.find(user => user.username === arg.user);
     if (userInUsers) {
