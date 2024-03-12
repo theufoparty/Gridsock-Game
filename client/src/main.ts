@@ -8,7 +8,8 @@ import {
 import { io } from 'socket.io-client';
 import { initializeDrawing } from './utils/drawingCanvas';
 
-const socket = io('https://gridsock-game-uodix.ondigitalocean.app/');
+const socket = io('http://localhost:3000');
+//const socket = io('https://gridsock-game-uodix.ondigitalocean.app/');
 
 const usernameInput = document.getElementById('loginInput');
 const loginButton = document.getElementById('loginButton');
@@ -38,7 +39,8 @@ document.getElementById('right')?.addEventListener('click', guessedRightAnswer);
  */
 
 function fetchWordsFromServer() {
-  fetch('https://gridsock-game-uodix.ondigitalocean.app/words')
+  //fetch('https://gridsock-game-uodix.ondigitalocean.app/words')
+  fetch('https://localhost:3000/words')
     .then(res => res.json())
     .then(data => {
       console.log(data);
@@ -55,6 +57,19 @@ socket.on('words', words => {
   const randomWordId = Math.floor(Math.random() * wordArray.length);
   let currentWord = wordArray[randomWordId];
   console.log(currentWord.word);
+
+  //
+  const user = localStorage.getItem('user');
+  if (userThatIsDrawing !== null) {
+    const userDrawing = userThatIsDrawing.textContent
+    if ( user === userDrawing) {
+      wordToDraw.innerText = currentWord.word;
+    } else {
+      wordToDraw.innerText = 'Secret word';
+    }
+  }  
+  //
+
   wordToDraw.innerText = currentWord.word;
 });
 
@@ -449,6 +464,12 @@ startGameButton?.addEventListener('click', () => {
 
 guessButton?.addEventListener('click', () => {
   sendChatMessageToServer(guessInput, 'guess');
+  const namn1 = localStorage.getItem('user');
+  console.log('den som gissar', namn1);
+  if (userThatIsDrawing !== null) {
+    const namn2 = userThatIsDrawing.textContent
+    console.log('den som ritar', namn2);
+  }
 });
 
 lobbyChatButton?.addEventListener('click', () => {
