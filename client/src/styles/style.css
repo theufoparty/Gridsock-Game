@@ -726,6 +726,10 @@ section {
   border-radius: 50%;
 }
 
+.timer-panel {
+  width: 180px;
+}
+
 .blue {
   background: blue;
 }
