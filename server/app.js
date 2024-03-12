@@ -30,14 +30,12 @@ app.get('/', (req, res) => {
 let gameArray = [];
 
 function getRandomWord() {
-  
   const randomWordId = Math.floor(Math.random() * gameArray.length);
   let currentWord = gameArray[randomWordId];
   //console.log(gameArray.length + ' ' + randomWordId + ' ' + currentWord.id + currentWord.word);
   gameArray.splice(randomWordId, 1); //Splice from array
   //console.log('gameArray', gameArray);
-  let randomWord = currentWord.word; 
-  io.emit('words', randomWord);
+  return currentWord.word;
 }
 
 /**
@@ -52,13 +50,12 @@ app.get('/words', (req, res) => {
     .toArray()
     .then(data => {
       res.json(data);
-      const wordArray = data[0].words;  
+      const wordArray = data[0].words;
       if (gameArray.length === 0) {
         gameArray = wordArray;
-        getRandomWord();
-      } else {
-        getRandomWord();
-      } 
+      }
+      const randomWord = getRandomWord();
+      io.emit('words', randomWord);
     });
 });
 
