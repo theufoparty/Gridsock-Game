@@ -61,6 +61,7 @@ function getIsCurrentPlayer() {
 }
 
 // Random word recieved from server
+
 socket.on('words', data => {
   if (!wordToDraw) return;
   console.log(data);
@@ -461,16 +462,6 @@ function startNewGame(gameSection: Element | null, gameLobbySection: Element | n
     }
   });
 }
-
-function handleRoundEnd() {
-  if (countdownMessage) {
-    countdownMessage.textContent = 'RUNDAN ÄR SLUT';
-  }
-}
-
-socket.on('countdownFinished', () => {
-  handleRoundEnd();
-});
 
 /**
  * Recieves change of color for drawing from server
