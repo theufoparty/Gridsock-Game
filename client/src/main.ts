@@ -55,7 +55,17 @@ function fetchWordsFromServer() {
 socket.on('words', data => {
   if (!wordToDraw) return;
   console.log(data);
-  wordToDraw.innerText = data;
+
+  // Only show the word to player who will draw
+	const user = localStorage.getItem('user');
+  if (userThatIsDrawing !== null) {
+	  const userDrawing = userThatIsDrawing.textContent
+	  if ( user === userDrawing) {
+	    wordToDraw.innerText = data;
+    } else {
+      wordToDraw.innerText = 'Secret word';
+	  }
+  }  
 });
 
 
@@ -183,7 +193,7 @@ function updatePlayersReadyAndWhenFullDisplayStartGameButton(
   playersReadyContainer.textContent = `${players}/5`;
   // change to five later
   console.log(players);
-  if (players === 1) {
+  if (players === 2) {
     startGameButton?.removeAttribute('disabled');
     addFirstClassAndRemoveSecondClassToElement(startGameButton, 'active', 'disabled');
   } else {
@@ -476,12 +486,6 @@ startGameButton?.addEventListener('click', () => {
 
 guessButton?.addEventListener('click', () => {
   sendChatMessageToServer(guessInput, 'guess');
-  const namn1 = localStorage.getItem('user');
-  console.log('den som gissar', namn1);
-  if (userThatIsDrawing !== null) {
-    const namn2 = userThatIsDrawing.textContent
-    console.log('den som ritar', namn2);
-  }
 });
 
 lobbyChatButton?.addEventListener('click', () => {
