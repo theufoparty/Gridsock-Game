@@ -62,14 +62,12 @@ function getIsCurrentPlayer() {
 
 // Random word recieved from server
 
-socket.on('words', data => {
+socket.on('words', newWord => {
   if (!wordToDraw) return;
-  console.log(data);
-
   // Only show the word to player who will draw
   const isCurrentPlayer = getIsCurrentPlayer();
   if (isCurrentPlayer) {
-    wordToDraw.innerText = data;
+    wordToDraw.innerText = newWord;
   } else {
     wordToDraw.innerText = 'Secret word';
   }
