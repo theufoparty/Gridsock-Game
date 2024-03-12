@@ -8,7 +8,8 @@ import {
 import { io } from 'socket.io-client';
 import { initializeDrawing } from './utils/drawingCanvas';
 
-const socket = io('https://gridsock-game-uodix.ondigitalocean.app/');
+//const socket = io('https://gridsock-game-uodix.ondigitalocean.app/');
+const socket = io('http://localhost:3000/');
 
 const usernameInput = document.getElementById('loginInput');
 const loginButton = document.getElementById('loginButton');
@@ -36,8 +37,6 @@ document.getElementById('right')?.addEventListener('click', guessedRightAnswer);
 // Remove later!!! - Placeholder to click new word (Logo img)
 
 const clickTest = document.querySelector('header img');
-console.log(clickTest);
-
 clickTest?.addEventListener('click', fetchWordsFromServer);
 
 /**
@@ -45,41 +44,18 @@ clickTest?.addEventListener('click', fetchWordsFromServer);
  */
 
 function fetchWordsFromServer() {
-  fetch('https://gridsock-game-uodix.ondigitalocean.app/words')
-    .then(res => res.json())
-    .then(data => {
-      console.log(data);
-    })
-
+  //fetch('https://gridsock-game-uodix.ondigitalocean.app/words')
+  fetch('http://localhost:3000/words')
+    
     .catch(err => console.log('error', err));
 }
 
+// Random word recieved from server
 
-/**
- * Pick random word and splice it from new array 
-*/
-
-let gameArray: any[] = [];
-
-function randomWord() {
+socket.on('words', data => {
   if (!wordToDraw) return;
-  const randomWordId = Math.floor(Math.random() * gameArray.length);
-  let currentWord = gameArray[randomWordId];
-  //console.log(gameArray.length + ' ' + randomWordId + ' ' + currentWord.id + currentWord.word);
-  wordToDraw.innerText = currentWord.word;
-  gameArray.splice(randomWordId, 1); //Splice from array
-  //console.log('gameArray', gameArray);
-}
-
-socket.on('words', words => {
-  const wordArray = words[0].words;
-  
-  if (gameArray.length === 0) {
-    gameArray = wordArray;
-    randomWord();
-  } else {
-    randomWord();
-  }
+  console.log(data);
+  wordToDraw.innerText = data;
 });
 
 
@@ -207,7 +183,7 @@ function updatePlayersReadyAndWhenFullDisplayStartGameButton(
   playersReadyContainer.textContent = `${players}/5`;
   // change to five later
   console.log(players);
-  if (players === 2) {
+  if (players === 1) {
     startGameButton?.removeAttribute('disabled');
     addFirstClassAndRemoveSecondClassToElement(startGameButton, 'active', 'disabled');
   } else {
