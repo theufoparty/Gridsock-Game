@@ -48,13 +48,9 @@ clickTest?.addEventListener('click', fetchWordsFromServer);
  */
 
 function fetchWordsFromServer() {
-  fetch('http://localhost:3000/words')
-    .then(res => res.json())
-    .then(data => {
-      console.log(data);
-    })
+  fetch('http://localhost:3000/words').catch(err => console.error('error', err));
+}
 
-    .catch(err => console.log('error', err));
 }
 
 // Random word recieved from server
@@ -441,7 +437,7 @@ function startNewRound(userThatIsDrawing: Element | null) {
 
     //Development
     if (countdownMessage) countdownMessage.innerHTML = '';
-    // fetchWordsFromServer();
+    fetchWordsFromServer();
     socket.emit('clearCanvas');
   });
 }
