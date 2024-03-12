@@ -216,7 +216,6 @@ io.on('connection', socket => {
     resetClock();
     countdownInterval = setInterval(tick, 1000);
     io.emit('newRound', nextUserName);
-    //getRandomWord();
   }
 
   // START GAME
