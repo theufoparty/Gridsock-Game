@@ -55,15 +55,15 @@ socket.on('words', data => {
   console.log(data);
 
   // Only show the word to player who will draw
-	const user = localStorage.getItem('user');
+  const user = localStorage.getItem('user');
   if (userThatIsDrawing !== null) {
-	  const userDrawing = userThatIsDrawing.textContent
-	  if ( user === userDrawing) {
-	    wordToDraw.innerText = data;
+    const userDrawing = userThatIsDrawing.textContent;
+    if (user === userDrawing) {
+      wordToDraw.innerText = data;
     } else {
       wordToDraw.innerText = 'Secret word';
-	  }
-  }  
+    }
+  }
 });
 
 /**
@@ -243,29 +243,27 @@ function updateGuessChat(guess: IUserMessageType) {
 
   let theGuess = guess.message;
   const wordToDraw: HTMLElement | null = document.getElementById('wordToDraw');
-
-  if (chatList !== null) {
-    if (wordToDraw !== null) {
-      theGuess = theGuess.toLowerCase();
-      let theWord = wordToDraw.innerHTML;
-      theWord = theWord.toLowerCase();
-      const input = guessInput as HTMLInputElement;
-      if (theGuess.includes(theWord)) {
-        messageContainer.textContent = 'Correct!';
-        liCorrect.append(userContainer, messageContainer);
-        chatList.appendChild(liCorrect);
-        input.disabled = true;
-      } else {
-        chatList.appendChild(li);
-        input.disabled = false;
-      }
-      chatList.scrollTop = chatList.scrollHeight;
-    }
-  }
   const input = guessInput as HTMLInputElement;
-  if (input === null) {
-    return;
+
+  if (chatList && wordToDraw && input && guess.message.trim().length > 0) {
+    theGuess = theGuess.toLowerCase();
+    let theWord = wordToDraw.innerHTML;
+    const secretWord = 'Secret Word';
+    theWord = theWord.toLowerCase();
+    const input = guessInput as HTMLInputElement;
+    // if the guess includes the right word but not the secret word sets it to correct
+    if (theGuess.includes(theWord) && !theGuess.includes(secretWord.toLowerCase())) {
+      messageContainer.textContent = 'Correct!';
+      liCorrect.append(userContainer, messageContainer);
+      chatList.appendChild(liCorrect);
+      input.disabled = true;
+    } else {
+      chatList.appendChild(li);
+      input.disabled = false;
+    }
+    chatList.scrollTop = chatList.scrollHeight;
   }
+
   input.value = '';
 }
 
@@ -277,11 +275,12 @@ function updateLobbyChat(guess: IUserMessageType, lobbyChatList: Element | null,
   userContainer.style.color = guess.color;
   messageContainer.textContent = guess.message;
   li.append(userContainer, messageContainer);
-  if (lobbyChatList) {
+  const input = lobbyChatInput as HTMLInputElement;
+  if (lobbyChatList && guess.message.trim().length > 0) {
     lobbyChatList.appendChild(li);
     lobbyChatList.scrollTop = lobbyChatList.scrollHeight;
   }
-  const input = lobbyChatInput as HTMLInputElement;
+
   if (input) {
     input.value = '';
   }
@@ -446,7 +445,7 @@ function startNewGame(gameSection: Element | null, gameLobbySection: Element | n
 
 /**
  * Recieves change of color for drawing from server
- * Sets the stroke to thi
+ * Sets the stroke to the recieved color
  */
 function recieveDrawColorFromServer() {
   socket.on('changeColor', color => {
@@ -483,17 +482,6 @@ document.addEventListener('DOMContentLoaded', initialFunctionsOnLoad);
 gameLobbyList?.addEventListener('click', e => {
   handleClickOnButtons(e);
 });
-
-/* function StartGame() {
-  // add functions here when starting game, when done move to proper place in our code
-  // socket.emit('startGame', true); uncommenct later
-  // swapClassBetweenTwoElements(gameLobbySection, gameSection, 'hidden');
-  socket.emit('startGame');
-  swapClassBetweenTwoElements(gameLobbySection, gameSection, 'hidden');
-  
-}
-
-startGameButton?.addEventListener('click', StartGame); */
 
 startGameButton?.addEventListener('click', () => {
   socket.emit('startGame');
