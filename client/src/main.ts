@@ -68,9 +68,13 @@ socket.on('words', newWord => {
   const isCurrentPlayer = getIsCurrentPlayer();
   if (isCurrentPlayer) {
     wordToDraw.innerText = newWord;
+    wordToDraw.classList.remove('hidden');
   } else {
-    wordToDraw.innerText = 'Secret word';
+    wordToDraw.innerText = newWord;
+    wordToDraw.classList.add('hidden');
   }
+  currentWord = newWord;
+  console.log(currentWord);
 });
 
 /**
@@ -247,6 +251,8 @@ function updateGuessChat(guess: IUserMessageType) {
   li.append(userContainer, messageContainer);
 
   const liCorrect = document.createElement('li');
+  let theGuesser = guess.user;
+  const chatUser = localStorage.getItem('user');
 
   let theGuess = guess.message;
   const wordToDraw: HTMLElement | null = document.getElementById('wordToDraw');
@@ -263,7 +269,13 @@ function updateGuessChat(guess: IUserMessageType) {
       messageContainer.textContent = 'Correct!';
       liCorrect.append(userContainer, messageContainer);
       chatList.appendChild(liCorrect);
-      input.disabled = true;
+      if (theGuess.includes(theWord) && theGuesser.includes(chatUser!)) {
+        const btn = guessButton as HTMLInputElement;
+        if (btn !== null) {
+          btn.disabled = true;
+        }
+        input.disabled = true;
+      }
     } else {
       chatList.appendChild(li);
       input.disabled = false;
@@ -513,6 +525,9 @@ startGameButton?.addEventListener('click', () => {
 });
 
 guessButton?.addEventListener('click', () => {
+  if (guessInput === null) {
+    return;
+  }
   sendChatMessageToServer(guessInput, 'guess');
 });
 
