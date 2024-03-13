@@ -30,14 +30,12 @@ app.get('/', (req, res) => {
 let gameArray = [];
 
 function getRandomWord() {
-  
   const randomWordId = Math.floor(Math.random() * gameArray.length);
   let currentWord = gameArray[randomWordId];
   //console.log(gameArray.length + ' ' + randomWordId + ' ' + currentWord.id + currentWord.word);
   gameArray.splice(randomWordId, 1); //Splice from array
   //console.log('gameArray', gameArray);
-  let randomWord = currentWord.word; 
-  io.emit('words', randomWord);
+  return currentWord.word;
 }
 
 /**
@@ -52,13 +50,12 @@ app.get('/words', (req, res) => {
     .toArray()
     .then(data => {
       res.json(data);
-      const wordArray = data[0].words;  
+      const wordArray = data[0].words;
       if (gameArray.length === 0) {
         gameArray = wordArray;
-        getRandomWord();
-      } else {
-        getRandomWord();
-      } 
+      }
+      const randomWord = getRandomWord();
+      io.emit('words', randomWord);
     });
 });
 
@@ -225,14 +222,13 @@ io.on('connection', socket => {
    * a "countdownUpdate" event to all connected clients.
    */
   function tick() {
-    if (countdown < 0) {
-      // If countdown reaches zero, clear the interval and emit a "countdownFinished" event
+    if (countdown <= 0) {
       clearInterval(countdownInterval);
-      io.emit('countdownFinished'); // Notify clients that the countdown has finished
+      io.emit('countdownFinished');
+      setTimeout(newRound, 3000); // Vänta 3 sekunder innan nästa runda startar.
     } else {
-      // Update the countdown value and emit a "countdownUpdate" event to all connected clients
-      io.emit('countdownUpdate', countdown); // Send the updated countdown value to clients
-      countdown--; // Decrement the countdown value by 1 second
+      io.emit('countdownUpdate', countdown);
+      countdown--;
     }
   }
 
@@ -241,12 +237,16 @@ io.on('connection', socket => {
    * to be called every second. Emits a "newRound" event with the next user's name.
    * @param {string} nextUserName - The username of the next user for the round.
    */
-  function newRound(nextUserName) {
-    currentUser = nextUserName;
-    resetClock();
-    countdownInterval = setInterval(tick, 1000);
-    io.emit('newRound', nextUserName);
-    //getRandomWord();
+  function newRound() {
+    // Check if game is over
+    if (usedIndexes.length === users.length) {
+      io.emit('endOfGame');
+    } else {
+      const currentUser = selectNextUser();
+      resetClock();
+      countdownInterval = setInterval(tick, 1000);
+      io.emit('newRound', currentUser);
+    }
   }
 
   // START GAME
@@ -276,9 +276,8 @@ io.on('connection', socket => {
 
   socket.on('startGame', () => {
     resetGameState();
-    const nextUserName = selectNextUser();
     io.emit('startGame');
-    newRound(nextUserName);
+    newRound();
   });
 });
 
