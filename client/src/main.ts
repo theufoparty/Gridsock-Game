@@ -33,6 +33,8 @@ const drawPanel = document.getElementById('drawOptions');
 const wordToDraw: HTMLElement | null = document.getElementById('wordToDraw');
 const rightWordDisplay = document.getElementById('rightWordDisplay');
 const countdownMessage = document.getElementById('countdownMessage');
+const endSection = document.getElementById('endSection');
+const scoreBoardList = document.querySelector('#scoreBoard ul');
 let currentWord = '';
 
 // placeholder for point logic when guessing the right answer
@@ -455,7 +457,6 @@ function endOfGame() {
   socket.on('endOfGame', (users: IUserType[]) => {
     console.log('Received users:', users);
     const sortedUsers = [...users].sort((a, b) => b.points - a.points);
-    const scoreBoardList = document.querySelector('#scoreBoard ul');
     if (scoreBoardList) {
       scoreBoardList.innerHTML = '';
       sortedUsers.forEach((user, index) => {
@@ -466,7 +467,6 @@ function endOfGame() {
     }
 
     gameSection?.classList.add('hidden');
-    const endSection = document.getElementById('endSection');
     endSection?.classList.remove('hidden');
   });
 }
