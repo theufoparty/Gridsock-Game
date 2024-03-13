@@ -71,6 +71,8 @@ socket.on('words', newWord => {
   } else {
     wordToDraw.innerText = 'Secret word';
   }
+  currentWord = newWord;
+  console.log(currentWord);  
 });
 
 /**
