@@ -240,7 +240,7 @@ io.on('connection', socket => {
   function newRound() {
     // Check if game is over
     if (usedIndexes.length === users.length) {
-      io.emit('endOfGame');
+      io.emit('endOfGame', users);
     } else {
       const currentUser = selectNextUser();
       resetClock();

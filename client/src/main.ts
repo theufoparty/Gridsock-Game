@@ -274,7 +274,6 @@ function updateGuessChat(guess: IUserMessageType) {
         }
         input.disabled = true;
       }
-      
     } else {
       chatList.appendChild(li);
       input.disabled = false;
@@ -453,11 +452,22 @@ function startNewRound(userThatIsDrawing: Element | null) {
 }
 
 function endOfGame() {
-  socket.on('endOfGame', () => {
-    // TODO: Replace with displaying and populating end of game screen
-    // note: send "players data" from server so it's easier to loop through
-    // and display high score
-    document.getElementById('endOfGame')!.innerHTML = 'END OF GAME';
+  socket.on('endOfGame', (users: IUserType[]) => {
+    console.log('Received users:', users);
+    const sortedUsers = [...users].sort((a, b) => b.points - a.points);
+    const scoreBoardList = document.querySelector('#scoreBoard ul');
+    if (scoreBoardList) {
+      scoreBoardList.innerHTML = '';
+      sortedUsers.forEach((user, index) => {
+        const li = document.createElement('li');
+        li.innerHTML = `<span>${index + 1}</span><span>${user.username}</span><span>${user.points}p</span>`;
+        scoreBoardList.appendChild(li);
+      });
+    }
+
+    gameSection?.classList.add('hidden');
+    const endSection = document.getElementById('endSection');
+    endSection?.classList.remove('hidden');
   });
 }
 
@@ -525,7 +535,7 @@ startGameButton?.addEventListener('click', () => {
 
 guessButton?.addEventListener('click', () => {
   if (guessInput === null) {
-    return
+    return;
   }
   sendChatMessageToServer(guessInput, 'guess');
 });
