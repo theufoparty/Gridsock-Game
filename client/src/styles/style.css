@@ -429,9 +429,78 @@ main {
   height: 480px;
   background-color: #dedcdc;
 }
-.game-section .main-section article .frame button {
+.game-section .main-section article .frame .canvas-bottom-panel {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 20px;
+}
+.game-section .main-section article .frame .canvas-bottom-panel button {
   box-shadow: 3px 3px 6px #d0d0d0, -3px -3px 6px #ffffff;
-  width: 200px;
+  width: 160px;
+  height: 40px;
+}
+.game-section .main-section article .frame .canvas-bottom-panel .erase-panel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.game-section .main-section article .frame .canvas-bottom-panel .erase-panel #drawButton,
+.game-section .main-section article .frame .canvas-bottom-panel .erase-panel #eraseButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 45px;
+  border-radius: 35.5px;
+  background: #f9f9f9;
+  box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.08), -5px -5px 20px 0px #fff;
+}
+.game-section .main-section article .frame .canvas-bottom-panel .draw-options {
+  height: 40px;
+  gap: 10px;
+  background-color: #f3f3f3;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  box-shadow: -10px 5px 50px 0px #d2d2d2, -20px -20px 50px 0px #fff;
+  border-radius: 16px;
+}
+.game-section .main-section article .frame .canvas-bottom-panel .draw-options .draw-container {
+  width: 100%;
+}
+.game-section .main-section article .frame .canvas-bottom-panel .draw-options ul {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+.game-section .main-section article .frame .canvas-bottom-panel .draw-options ul div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #f9f9f9;
+  box-shadow: 3px 3px 6px #d0d0d0, -3px -3px 6px #ffffff;
+  height: 25px;
+  width: 25px;
+}
+.game-section .main-section article .frame .canvas-bottom-panel .draw-options ul div div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #f9f9f9;
+  box-shadow: 3px 3px 6px #d0d0d0, -3px -3px 6px #ffffff;
+  height: 25px;
+  width: 25px;
+}
+.game-section .main-section article .frame .canvas-bottom-panel .draw-options ul div div li {
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+}
+.game-section .main-section article .frame .canvas-bottom-panel .draw-options ul div div li:hover {
+  cursor: pointer;
 }
 .game-section .main-section .guessing-container .game-chat-container {
   padding: 30px;
@@ -671,6 +740,56 @@ section {
   height: 15px;
   width: 15px;
   border-radius: 50%;
+}
+
+.timer-panel {
+  width: 180px;
+}
+
+.blue {
+  background: blue;
+}
+
+.red {
+  background: red;
+}
+
+.orange {
+  background: orange;
+}
+
+.green {
+  background: green;
+}
+
+.black {
+  background: black;
+}
+
+.selected {
+  background: #12b7b6 !important;
+  padding: 0px !important;
+  color: #f9f9f9 !important;
+  box-shadow: inset 5px 5px 10px rgba(0, 76, 76, 0.3), inset -5px -5px 10px #1edede !important;
+}
+.selected svg {
+  color: #f9f9f9 !important;
+  pointer-events: none;
+}
+.selected:hover {
+  background: #1bdcdc !important;
+  color: #f9f9f9 !important;
+}
+
+.inactive {
+  padding: 0px !important;
+}
+.inactive svg {
+  color: #12b7b6 !important;
+  pointer-events: none;
+}
+.inactive:hover {
+  background: #f1eeee !important;
 }
 
 .hidden {

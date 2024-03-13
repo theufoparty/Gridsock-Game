@@ -43,3 +43,15 @@ export function addFirstClassAndRemoveSecondClassToElement(
   element?.classList.add(firstClassName);
   element?.classList.remove(secondClassName);
 }
+
+export function removeAndAddNewClassOnTwoElements(
+  elementOne: Element | null,
+  elementTwo: Element | null,
+  classNameOne: string,
+  classNameTwo: string
+) {
+  elementOne?.classList.add(classNameOne);
+  elementOne?.classList.remove(classNameTwo);
+  elementTwo?.classList.add(classNameTwo);
+  elementTwo?.classList.remove(classNameOne);
+}
