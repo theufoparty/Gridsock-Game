@@ -63,7 +63,8 @@ socket.on('words', data => {
 	  if ( user === userDrawing) {
 	    wordToDraw.innerText = data;
     } else {
-      wordToDraw.innerText = 'Secret word';
+      wordToDraw.innerText = data;
+      wordToDraw.classList.add('hidden');
 	  }
   }  
 });
@@ -236,6 +237,9 @@ function generatePlayerHighscore(users: IUserType[], playerHighscoreList: Elemen
  */
 function updateGuessChat(guess: IUserMessageType) {
 
+  console.log("guess!", guess, "guess.message!", guess.message);
+  
+
   let li = document.createElement('li');
   let userContainer = document.createElement('p');
   let messageContainer = document.createElement('p');
@@ -244,8 +248,13 @@ function updateGuessChat(guess: IUserMessageType) {
   messageContainer.textContent = guess.message;
   li.append(userContainer, messageContainer);
   
-  const liCorrect = document.createElement('li')
+  const liCorrect = document.createElement('li');
+  ////////
 
+  //
+  let theGuesser = guess.user;
+  const chatUser = localStorage.getItem('user');
+  //
   let theGuess = guess.message;  
   const wordToDraw: HTMLElement | null = document.getElementById('wordToDraw');
 
@@ -254,15 +263,28 @@ function updateGuessChat(guess: IUserMessageType) {
       theGuess = theGuess.toLowerCase();
       let theWord = wordToDraw.innerHTML
       theWord = theWord.toLowerCase();
+      console.log('the word', theWord);
+      console.log('the guess', theGuess);
+      console.log(theGuess.includes(theWord));
+      
       const input = guessInput as HTMLInputElement;
       if (theGuess.includes(theWord)) {
+        
+        
         messageContainer.textContent = 'Correct!';
         liCorrect.append(userContainer, messageContainer);
         chatList.appendChild(liCorrect);
-        input.disabled = true;
+        console.log("li correct", liCorrect);
+        //input.disabled = true;
+        if (theGuess.includes(theWord) && theGuesser.includes(chatUser!)) {
+          const btn = guessButton as HTMLInputElement;
+          if (btn !== null) {
+            btn.disabled = true;
+          }
+          input.disabled = true;
+        } 
       } else {
         chatList.appendChild(li);
-        input.disabled = false;
       }
       chatList.scrollTop = chatList.scrollHeight;
     }
@@ -485,6 +507,9 @@ startGameButton?.addEventListener('click', () => {
 });
 
 guessButton?.addEventListener('click', () => {
+  if (guessInput === null) {
+    return
+  }
   sendChatMessageToServer(guessInput, 'guess');
 });
 
