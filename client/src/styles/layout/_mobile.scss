@@ -247,7 +247,7 @@ main {
   }
   .main-section {
     display: flex;
-    height: 500px;
+    //height: 500px;
     gap: 60px;
 
     article {
@@ -428,16 +428,61 @@ main {
 
 .end-section {
   .score-board {
-    border-radius: 16px;
-    width: 260px;
-    padding: 20px;
-    background: $primary-background;
-    box-shadow: $lobby-shadow;
-    min-height: 500px;
+    h3 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+    ul {
+      border-radius: 16px;
+      width: 500px;
+      padding: 20px;
+      background: $primary-background;
+      box-shadow: $lobby-shadow;
+      min-height: 200px;
+      margin-bottom: 40px;
+      li {
+        text-align: center;
+        padding: 7px;
+        font-size: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+      }
+      li:nth-child(odd) {
+        background-color: $light-gray;
+      }
+      li:nth-child(even) {
+        background-color: $primary-background;
+      }
+      li:first-child span:nth-child(2) {
+        position: relative;
+      }
+      li:first-child span:nth-child(2)::after,
+      li:first-child span:nth-child(2)::before {
+        content: url(./assets/icons/score.svg);
+        position: absolute;
+        padding: 0 10px;
+        top: -13px;
+        animation: pulse 1s infinite ease-out;
+      }
+      @keyframes pulse {
+        to {
+          transform: scale(1.4);
+          opacity: 0;
+        }
+      }
+      li:first-child span:nth-child(2)::before {
+        left: -68px;
+      }
+    }
   }
 }
 
 // ** GENERAL STYLING **
+
+aside {
+  height: 500px;
+}
 
 .icon-container {
   @include center-element;
