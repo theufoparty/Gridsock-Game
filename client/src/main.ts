@@ -37,6 +37,8 @@ const countdownMessage = document.getElementById('countdownMessage');
 const questionMark = document.getElementById('question');
 const nextRoundTimer = document.getElementById('nextRoundTimer');
 const lightbox = document.getElementById('lightbox');
+const endSection = document.getElementById('endSection');
+const scoreBoardList = document.querySelector('#scoreBoard ul');
 let currentWord = '';
 let nextRoundInterval: number;
 
@@ -479,14 +481,22 @@ function startNewRound(userThatIsDrawing: Element | null) {
 }
 
 function endOfGame() {
-  socket.on('endOfGame', () => {
-    // TODO: Replace with displaying and populating end of game screen
-    // note: send "players data" from server so it's easier to loop through
-    // and display high score
-    document.getElementById('endOfGame')!.innerHTML = 'END OF GAME';
-    if (!nextRoundTimer) return;
+  socket.on('endOfGame', (users: IUserType[]) => {
     displayOrHideTwoElements(nextRoundTimer, lightbox, false);
     clearInterval(nextRoundInterval);
+    console.log('Received users:', users);
+    const sortedUsers = [...users].sort((a, b) => b.points - a.points);
+    if (scoreBoardList) {
+      scoreBoardList.innerHTML = '';
+      sortedUsers.forEach((user, index) => {
+        const li = document.createElement('li');
+        li.innerHTML = `<span>${index + 1}</span><span>${user.username}</span><span>${user.points}p</span>`;
+        scoreBoardList.appendChild(li);
+      });
+    }
+
+    gameSection?.classList.add('hidden');
+    endSection?.classList.remove('hidden');
   });
 }
 
