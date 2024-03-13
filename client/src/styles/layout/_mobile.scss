@@ -448,8 +448,11 @@ main {
         display: flex;
         justify-content: space-between;
       }
+      li span:nth-child(3) {
+        color: $turquoise;
+      }
       li:nth-child(odd) {
-        background-color: $light-gray;
+        background-color: $secondary-background;
       }
       li:nth-child(even) {
         background-color: $primary-background;
