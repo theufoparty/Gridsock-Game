@@ -251,14 +251,16 @@ function updateGuessChat(guess: IUserMessageType) {
   li.append(userContainer, messageContainer);
 
   const liCorrect = document.createElement('li');
+
   let theGuesser = guess.user;
   const chatUser = localStorage.getItem('user');
+  const isGuesser = theGuesser === chatUser;
+  const isCurrentPlayer = getIsCurrentPlayer();
 
   let theGuess = guess.message;
   const wordToDraw: HTMLElement | null = document.getElementById('wordToDraw');
-  const input = guessInput as HTMLInputElement;
 
-  if (chatList && wordToDraw && input && guess.message.trim().length > 0) {
+  if (chatList && wordToDraw && guessInput && guess.message.trim().length > 0) {
     theGuess = theGuess.toLowerCase();
     let theWord = wordToDraw.innerHTML;
     const secretWord = 'Secret Word';
@@ -268,11 +270,14 @@ function updateGuessChat(guess: IUserMessageType) {
       messageContainer.textContent = 'Correct!';
       liCorrect.append(userContainer, messageContainer);
       chatList.appendChild(liCorrect);
-      if (theGuess.includes(theWord) && theGuesser.includes(chatUser!)) {
+      if (isGuesser) {
         if (guessButton !== null) {
           guessButton.disabled = true;
         }
         guessInput.disabled = true;
+        if (!isCurrentPlayer) {
+          guessedRightAnswer();
+        }
       }
     } else {
       chatList.appendChild(li);
