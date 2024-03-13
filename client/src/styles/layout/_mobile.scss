@@ -279,6 +279,20 @@ main {
             width: 160px;
             height: 40px;
           }
+          .erase-panel {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            #drawButton,
+            #eraseButton {
+              @include center-element;
+              width: 45px;
+              height: 45px;
+              border-radius: 35.5px;
+              background: $secondary-background;
+              box-shadow: $icon-shadow;
+            }
+          }
           .draw-options {
             height: 40px;
             gap: 10px;
@@ -646,4 +660,31 @@ section {
 
 .black {
   background: black;
+}
+
+.selected {
+  background: $turquoise !important;
+  padding: 0px !important;
+  color: $secondary-background !important;
+  box-shadow: inset 5px 5px 10px rgba(0, 76, 76, 0.3), inset -5px -5px 10px $darker-turquoise !important;
+  svg {
+    color: $secondary-background !important;
+    pointer-events: none;
+  }
+  &:hover {
+    background: $ready-hover !important;
+    color: $secondary-background !important;
+  }
+}
+
+.inactive {
+  padding: 0px !important;
+
+  svg {
+    color: $turquoise !important;
+    pointer-events: none;
+  }
+  &:hover {
+    background: $icon-hover !important;
+  }
 }
