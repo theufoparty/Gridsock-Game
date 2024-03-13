@@ -31,6 +31,9 @@ const playerHighscoreList = document.getElementById('playerHighscore');
 const userIcon = document.getElementById('userIcon');
 const drawPanel = document.getElementById('drawOptions');
 const wordToDraw: HTMLElement | null = document.getElementById('wordToDraw');
+const rightWordDisplay = document.getElementById('rightWordDisplay');
+const countdownMessage = document.getElementById('countdownMessage');
+let currentWord = '';
 
 // placeholder for point logic when guessing the right answer
 document.getElementById('right')?.addEventListener('click', guessedRightAnswer);
@@ -45,24 +48,28 @@ clickTest?.addEventListener('click', fetchWordsFromServer);
  */
 
 function fetchWordsFromServer() {
-  fetch('http://localhost:3000/words').catch(err => console.log('error', err));
+  fetch('http://localhost:3000/words').catch(err => console.error('error', err));
+}
+
+function getIsCurrentPlayer() {
+  const user = localStorage.getItem('user');
+  if (userThatIsDrawing === null) {
+    return false;
+  }
+  const userDrawing = userThatIsDrawing.textContent;
+  return user === userDrawing;
 }
 
 // Random word recieved from server
 
-socket.on('words', data => {
+socket.on('words', newWord => {
   if (!wordToDraw) return;
-  console.log(data);
-
   // Only show the word to player who will draw
-  const user = localStorage.getItem('user');
-  if (userThatIsDrawing !== null) {
-    const userDrawing = userThatIsDrawing.textContent;
-    if (user === userDrawing) {
-      wordToDraw.innerText = data;
-    } else {
-      wordToDraw.innerText = 'Secret word';
-    }
+  const isCurrentPlayer = getIsCurrentPlayer();
+  if (isCurrentPlayer) {
+    wordToDraw.innerText = newWord;
+  } else {
+    wordToDraw.innerText = 'Secret word';
   }
 });
 
@@ -353,10 +360,13 @@ socket.on('countdownUpdate', (countdown: number) => {
 
 // Listen for countdown finished event from the server
 socket.on('countdownFinished', () => {
-  // Display a message when the countdown finishes
-  const countdownMessage = document.getElementById('countdownMessage');
   if (countdownMessage) {
     countdownMessage.textContent = "Time's up!";
+    updateCountdownDisplay(0);
+  }
+
+  if (rightWordDisplay && currentWord) {
+    rightWordDisplay.textContent = `Right word was: ${currentWord}`;
   }
 });
 
@@ -421,8 +431,22 @@ function startNewRound(userThatIsDrawing: Element | null) {
     if (userThatIsDrawing) {
       userThatIsDrawing.textContent = nextUserName;
     }
-    // TODO: Add logic to ensure enable or disable the canvas
-    // depending on whether we're the new player or not
+    if (chatList) chatList.innerHTML = '';
+    if (lobbyChatList) lobbyChatList.innerHTML = '';
+
+    //Development
+    if (countdownMessage) countdownMessage.innerHTML = '';
+    fetchWordsFromServer();
+    socket.emit('clearCanvas');
+  });
+}
+
+function endOfGame() {
+  socket.on('endOfGame', () => {
+    // TODO: Replace with displaying and populating end of game screen
+    // note: send "players data" from server so it's easier to loop through
+    // and display high score
+    document.getElementById('endOfGame')!.innerHTML = 'END OF GAME';
   });
 }
 
@@ -475,6 +499,7 @@ function initialFunctionsOnLoad() {
   recieveSocketForUpdatedUserPoints();
   startNewGame(gameSection, gameLobbySection);
   recieveDrawColorFromServer();
+  endOfGame();
 }
 
 document.addEventListener('DOMContentLoaded', initialFunctionsOnLoad);
@@ -485,7 +510,6 @@ gameLobbyList?.addEventListener('click', e => {
 
 startGameButton?.addEventListener('click', () => {
   socket.emit('startGame');
-  fetchWordsFromServer(); // Random word
 });
 
 guessButton?.addEventListener('click', () => {
