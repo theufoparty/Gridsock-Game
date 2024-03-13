@@ -232,7 +232,7 @@ main {
   align-items: center;
   background: $primary-background;
   width: 100%;
-  gap: 50px;
+  justify-content: space-around;
   .random-container {
     margin-left: 50px;
     width: 100%;
@@ -247,9 +247,7 @@ main {
   }
   .main-section {
     display: flex;
-    //height: 500px;
     gap: 60px;
-
     article {
       .frame {
         @include flex-column;
