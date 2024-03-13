@@ -55,3 +55,13 @@ export function removeAndAddNewClassOnTwoElements(
   elementTwo?.classList.add(classNameTwo);
   elementTwo?.classList.remove(classNameOne);
 }
+
+export function displayOrHideTwoElements(elementOne: Element | null, elementTwo: Element | null, state: boolean) {
+  if (state) {
+    elementOne?.classList.remove('hidden');
+    elementTwo?.classList.remove('hidden');
+  } else {
+    elementOne?.classList.add('hidden');
+    elementTwo?.classList.add('hidden');
+  }
+}
