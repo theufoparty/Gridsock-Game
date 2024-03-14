@@ -475,20 +475,22 @@ main {
       }
       li:first-child span:nth-child(2)::after,
       li:first-child span:nth-child(2)::before {
-        content: url(./assets/icons/score.svg);
+        content: url(../../../assets/images/star.png);
         position: absolute;
         padding: 0 10px;
-        top: -13px;
-        animation: pulse 1s infinite ease-out;
+        top: -40px;
+        left: 55px;
+        transform: scale(0.8);
+        animation: pulse 1.2s infinite ease-in-out;
       }
       @keyframes pulse {
         to {
-          transform: scale(1.4);
+          transform: scale(0.4);
           opacity: 0;
         }
       }
       li:first-child span:nth-child(2)::before {
-        left: -68px;
+        left: -90px;
       }
     }
   }
