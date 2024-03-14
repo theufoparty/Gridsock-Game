@@ -66,8 +66,8 @@
             <ul id="lobbyChatList" class="lobby-chat-container"></ul>
             <div class="chat-input-panel">
               <input type="text" id="lobbyChatInput" placeholder="message" />
-              <button class="icon-container icon-hover">
-                <img src="./assets/icons/send.svg" id="lobbyChatButton" alt="send button" width="30" height="30" />
+              <button class="icon-container icon-hover" id="lobbyChatButton">
+                <img src="./assets/icons/send.svg" alt="send button" width="30" height="30" />
               </button>
             </div>
           </div>
@@ -89,11 +89,6 @@
             </ul>
           </div>
         </div>
-
-        <div class="test-buttons">
-          <button id="testStartCountdownButton">Countdown</button>
-          <button id="click">click</button>
-        </div>
       </section>
 
       <!--Game section-->
@@ -104,7 +99,7 @@
           <!--Current "drawer"-->
           <div class="user-panel">
             <div class="icon-container">
-              <img src="./assets/icons/user.svg" alt="user icon" width="30" height="30" />
+              <img src="./assets/icons/color.svg" alt="user icon" width="30" height="30" />
             </div>
 
             <span id="user">User <i></i></span>
@@ -114,7 +109,15 @@
             <div class="icon-container">
               <img src="./assets/icons/word.svg" alt="word icon" width="30" height="30" />
             </div>
-            <span id="wordToDraw">Word</span>
+            <span id="wordToDraw"></span>
+            <img
+              src="./assets/icons/question.svg"
+              id="question"
+              class="hidden"
+              alt="question mark"
+              width="30"
+              height="30"
+            />
           </div>
           <div class="timer-panel">
             <!-- Timer section-->
@@ -125,6 +128,9 @@
             <p id="countdownMessage"></p>
           </div>
         </div>
+
+        <div id="lightbox" class="lightbox hidden"></div>
+        <div id="nextRoundTimer" class="next-round-timer hidden">3</div>
 
         <div class="main-section">
           <aside id="guessingContainer" class="guessing-container">
@@ -238,33 +244,31 @@
       </section>
 
       <!--End page section-->
-      <!--<section id="endSection" class="end-section">-->
-      <!--<div id="scoreBoard">
       <section id="endSection" class="end-section hidden">
-        <div id="scoreBoard">
+        <div id="scoreBoard" class="score-board">
           <h3>Player Scores:</h3>
-          Player scores will be populated in the list below from TS. TS-Developer might remove the 5 x li's if he/she so chooses-->
-      <!-- <ul>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
+          <!--Player scores will be populated in the list below from TS. TS-Developer might remove the 5 x li's if he/she so chooses-->
+          <ul>
+            <li><span>1</span><span>Winner</span><span>500p</span></li>
+            <li><span>2</span><span>Dummy</span><span>400p</span></li>
+            <li><span>3</span><span>Dummy</span><span>300p</span></li>
+            <li><span>4</span><span>Dummy</span><span>200p</span></li>
+            <li><span>5</span><span>Dummy</span><span>100p</span></li>
           </ul>
         </div>
         <button id="backToLobbyBtn">Back To Lobby</button>
-        <div id="imageAndWordContainers">
+        <!-- <div id="imageAndWordContainers">
           <h3>From recent session:</h3>
           <div id="imagesContainer">
             <p>Image 1:</p>
-           Images will be populated from TS-->
-      <!-- </div>
+            Images will be populated from TS
+          </div>
           <div id="wordsContainer">
             <p>Word 1:</p>
-            Words will be populated from TS-->
-      <!-- </div>
-        </div>
-      </section>-->
+            Words will be populated from TS
+          </div>
+        </div> -->
+      </section>
     </main>
 
     <script type="module" src="src/main.ts"></script>

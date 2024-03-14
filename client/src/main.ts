@@ -4,6 +4,7 @@ import {
   swapClassBetweenTwoElements,
   getRandomColor,
   addFirstClassAndRemoveSecondClassToElement,
+  displayOrHideTwoElements,
 } from './utils/helperfunctions';
 import { io } from 'socket.io-client';
 import { initializeDrawing } from './utils/drawingCanvas';
@@ -33,7 +34,13 @@ const drawPanel = document.getElementById('drawOptions');
 const wordToDraw: HTMLElement | null = document.getElementById('wordToDraw');
 const rightWordDisplay = document.getElementById('rightWordDisplay');
 const countdownMessage = document.getElementById('countdownMessage');
+const questionMark = document.getElementById('question');
+const nextRoundTimer = document.getElementById('nextRoundTimer');
+const lightbox = document.getElementById('lightbox');
+const endSection = document.getElementById('endSection');
+const scoreBoardList = document.querySelector('#scoreBoard ul');
 let currentWord = '';
+let nextRoundInterval: number;
 
 // placeholder for point logic when guessing the right answer
 document.getElementById('right')?.addEventListener('click', guessedRightAnswer);
@@ -69,12 +76,14 @@ socket.on('words', newWord => {
   if (isCurrentPlayer) {
     wordToDraw.innerText = newWord;
     wordToDraw.classList.remove('hidden');
+    questionMark?.classList.add('hidden');
   } else {
     wordToDraw.innerText = newWord;
     wordToDraw.classList.add('hidden');
+    questionMark?.classList.remove('hidden');
   }
   currentWord = newWord;
-  console.log(currentWord);
+  console.log(currentWord);  
 });
 
 /**
@@ -371,10 +380,27 @@ socket.on('countdownUpdate', (countdown: number) => {
 });
 
 // Listen for countdown finished event from the server
-socket.on('countdownFinished', () => {
-  if (countdownMessage) {
-    countdownMessage.textContent = "Time's up!";
-    updateCountdownDisplay(0);
+socket.on('countdownFinished', isItLastRound => {
+  let countdown = 3;
+
+  if (!countdownMessage || !nextRoundTimer) return;
+  countdownMessage.textContent = "Time's up!";
+  updateCountdownDisplay(0);
+  if (isItLastRound) {
+    nextRoundTimer.textContent = '';
+    displayOrHideTwoElements(nextRoundTimer, lightbox, false);
+  } else {
+    nextRoundInterval = setInterval(() => {
+      displayOrHideTwoElements(nextRoundTimer, lightbox, true);
+      if (countdown > 0) {
+        nextRoundTimer.textContent = countdown.toString();
+        countdown -= 1;
+      } else {
+        clearInterval(nextRoundInterval);
+        nextRoundTimer.textContent = 'Next round!';
+      }
+      console.log('countdown', countdown);
+    }, 1000);
   }
 
   if (rightWordDisplay && currentWord) {
@@ -445,7 +471,9 @@ function startNewRound(userThatIsDrawing: Element | null) {
     }
     if (chatList) chatList.innerHTML = '';
     if (lobbyChatList) lobbyChatList.innerHTML = '';
-
+    if (!nextRoundTimer) return;
+    displayOrHideTwoElements(nextRoundTimer, lightbox, false);
+    clearInterval(nextRoundInterval);
     //Development
     if (countdownMessage) countdownMessage.innerHTML = '';
     fetchWordsFromServer();
@@ -454,11 +482,22 @@ function startNewRound(userThatIsDrawing: Element | null) {
 }
 
 function endOfGame() {
-  socket.on('endOfGame', () => {
-    // TODO: Replace with displaying and populating end of game screen
-    // note: send "players data" from server so it's easier to loop through
-    // and display high score
-    document.getElementById('endOfGame')!.innerHTML = 'END OF GAME';
+  socket.on('endOfGame', (users: IUserType[]) => {
+    displayOrHideTwoElements(nextRoundTimer, lightbox, false);
+    clearInterval(nextRoundInterval);
+    console.log('Received users:', users);
+    const sortedUsers = [...users].sort((a, b) => b.points - a.points);
+    if (scoreBoardList) {
+      scoreBoardList.innerHTML = '';
+      sortedUsers.forEach((user, index) => {
+        const li = document.createElement('li');
+        li.innerHTML = `<span>${index + 1}</span><span>${user.username}</span><span>${user.points}p</span>`;
+        scoreBoardList.appendChild(li);
+      });
+    }
+
+    gameSection?.classList.add('hidden');
+    endSection?.classList.remove('hidden');
   });
 }
 

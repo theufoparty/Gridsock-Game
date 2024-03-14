@@ -28,6 +28,7 @@ app.get('/', (req, res) => {
  */
 
 let gameArray = [];
+let isItLastRound = false;
 
 function getRandomWord() {
   const randomWordId = Math.floor(Math.random() * gameArray.length);
@@ -112,7 +113,6 @@ io.on('connection', socket => {
   // CHANGING CANVAS COLOR
 
   socket.on('changeColor', color => {
-    console.log('color', color);
     io.emit('changeColor', color);
   });
 
@@ -201,7 +201,6 @@ io.on('connection', socket => {
   });
 
   socket.on('lobbyChat', arg => {
-    console.log(arg);
     const userInUsers = users.find(user => user.username === arg.user);
     if (userInUsers) {
       io.emit('lobbyChat', { message: arg.message, user: arg.user, color: userInUsers.color });
@@ -223,9 +222,14 @@ io.on('connection', socket => {
    */
   function tick() {
     if (countdown <= 0) {
+      if (usedIndexes.length === users.length) {
+        isItLastRound = true;
+      } else {
+        isItLastRound = false;
+      }
       clearInterval(countdownInterval);
-      io.emit('countdownFinished');
-      setTimeout(newRound, 3000); // Vänta 3 sekunder innan nästa runda startar.
+      io.emit('countdownFinished', isItLastRound);
+      setTimeout(newRound, 5000); // Vänta 3 sekunder innan nästa runda startar.
     } else {
       io.emit('countdownUpdate', countdown);
       countdown--;
@@ -240,10 +244,11 @@ io.on('connection', socket => {
   function newRound() {
     // Check if game is over
     if (usedIndexes.length === users.length) {
-      io.emit('endOfGame');
+      io.emit('endOfGame', users);
     } else {
       const currentUser = selectNextUser();
       resetClock();
+      clearInterval(countdownInterval);
       countdownInterval = setInterval(tick, 1000);
       io.emit('newRound', currentUser);
     }
