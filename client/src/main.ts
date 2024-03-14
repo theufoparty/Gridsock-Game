@@ -41,6 +41,7 @@ const endSection = document.getElementById('endSection');
 const scoreBoardList = document.querySelector('#scoreBoard ul');
 let currentWord = '';
 let nextRoundInterval: number;
+const backToLobbyBtn = document.getElementById('backToLobbyBtn');
 
 // placeholder for point logic when guessing the right answer
 document.getElementById('right')?.addEventListener('click', guessedRightAnswer);
@@ -112,6 +113,26 @@ function handleLoginOnClick(input: Element | null, loginSection: Element | null,
     swapClassBetweenTwoElements(loginSection, gameLobbySection, 'hidden');
   }
 }
+
+/************************************** */
+
+backToLobbyBtn?.addEventListener('click', (e) => {
+  socket.emit('backToLobby');
+  handleClickOnButtons(e);
+});
+
+/* function backToLobby() {
+  swapClassBetweenTwoElements(endSection, gameLobbySection, 'hidden');
+} */
+
+socket.on('backToLobby', () => {
+  console.log('backToLobby');
+  swapClassBetweenTwoElements(endSection, gameLobbySection, 'hidden');
+  
+
+})
+
+/************************************* */
 
 function emitUserInfoToServer(username: string) {
   const randomColor = getRandomColor();
