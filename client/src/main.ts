@@ -9,8 +9,8 @@ import {
 import { io } from 'socket.io-client';
 import { initializeDrawing } from './utils/drawingCanvas';
 
-// const socket = io('https://gridsock-game-uodix.ondigitalocean.app/');
-const socket = io('http://localhost:3000/');
+const socket = io('https://gridsock-game-uodix.ondigitalocean.app/');
+// const socket = io('http://localhost:3000/');
 
 const usernameInput = document.getElementById('loginInput');
 const loginButton = document.getElementById('loginButton');
@@ -23,9 +23,9 @@ const usernameDisplay = document.getElementById('usernameDisplay');
 const guessButton = document.getElementById('guessButton') as HTMLInputElement;
 const guessInput = document.getElementById('guessInput') as HTMLInputElement;
 const chatList = document.getElementById('chatList');
-const lobbyChatInput = document.getElementById('lobbyChatInput');
+const lobbyChatInput = document.getElementById('lobbyChatInput') as HTMLInputElement;
 const lobbyChatList = document.getElementById('lobbyChatList');
-const lobbyChatButton = document.getElementById('lobbyChatButton');
+const lobbyChatButton = document.getElementById('lobbyChatButton') as HTMLInputElement;
 const userThatIsDrawing = document.getElementById('user');
 const gameSection = document.getElementById('gameSection');
 const playerHighscoreList = document.getElementById('playerHighscore');
@@ -56,7 +56,8 @@ clickTest?.addEventListener('click', fetchWordsFromServer);
  */
 
 function fetchWordsFromServer() {
-  fetch('http://localhost:3000/words/').catch(err => console.error('error', err));
+  fetch('https://gridsock-game-uodix.ondigitalocean.app/words/').catch(err => console.error('error', err));
+  // fetch('http://localhost:3000/words/').catch(err => console.error('error', err));
 }
 
 function getIsCurrentPlayer() {
@@ -232,7 +233,7 @@ function updatePlayersReadyAndWhenFullDisplayStartGameButton(
   playersReadyContainer.textContent = `${players}/5`;
   // change to five later
   console.log(players);
-  if (players === 2) {
+  if (players === 5) {
     startGameButton?.removeAttribute('disabled');
     addFirstClassAndRemoveSecondClassToElement(startGameButton, 'active', 'disabled');
   } else {
@@ -316,8 +317,6 @@ function updateGuessChat(guess: IUserMessageType) {
     }
     chatList.scrollTop = chatList.scrollHeight;
   }
-
-  guessInput.value = '';
 }
 
 function updateLobbyChat(guess: IUserMessageType, lobbyChatList: Element | null, lobbyChatInput: Element | null) {
@@ -328,14 +327,9 @@ function updateLobbyChat(guess: IUserMessageType, lobbyChatList: Element | null,
   userContainer.style.color = guess.color;
   messageContainer.textContent = guess.message;
   li.append(userContainer, messageContainer);
-  const input = lobbyChatInput as HTMLInputElement;
   if (lobbyChatList && guess.message.trim().length > 0) {
     lobbyChatList.appendChild(li);
     lobbyChatList.scrollTop = lobbyChatList.scrollHeight;
-  }
-
-  if (input) {
-    input.value = '';
   }
 }
 
@@ -519,6 +513,9 @@ function startNewRound(userThatIsDrawing: Element | null) {
     clearInterval(nextRoundInterval);
     //Development
     if (countdownMessage) countdownMessage.innerHTML = '';
+    if (rightWordDisplay) {
+      rightWordDisplay.textContent = '';
+    }
     fetchWordsFromServer();
     socket.emit('clearCanvas');
   });
@@ -608,27 +605,32 @@ startGameButton?.addEventListener('click', () => {
 });
 
 guessButton?.addEventListener('click', () => {
-  if (guessInput === null) {
-    return;
+  if (guessInput) {
+    sendChatMessageToServer(guessInput, 'guess');
+    guessInput.value = '';
   }
-  sendChatMessageToServer(guessInput, 'guess');
 });
 
 guessInput?.addEventListener('keydown', function (e) {
   if (e.key === 'Enter') {
     e.preventDefault();
     sendChatMessageToServer(guessInput, 'guess');
+    guessInput.value = '';
   }
 });
 
 lobbyChatButton?.addEventListener('click', () => {
-  sendChatMessageToServer(lobbyChatInput, 'lobbyChat');
+  if (lobbyChatInput) {
+    sendChatMessageToServer(lobbyChatInput, 'lobbyChat');
+    lobbyChatInput.value = ''; // Töm inputfältet direkt efter skicka
+  }
 });
 
 lobbyChatInput?.addEventListener('keydown', function (e) {
   if (e.key === 'Enter') {
-    e.preventDefault(); // Prevent the default action
+    e.preventDefault();
     sendChatMessageToServer(lobbyChatInput, 'lobbyChat');
+    lobbyChatInput.value = ''; // Töm inputfältet direkt efter skicka
   }
 });
 
