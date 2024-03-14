@@ -319,7 +319,7 @@ function updateGuessChat(guess: IUserMessageType) {
   }
 }
 
-function updateLobbyChat(guess: IUserMessageType, lobbyChatList: Element | null, lobbyChatInput: Element | null) {
+function updateLobbyChat(guess: IUserMessageType, lobbyChatList: Element | null) {
   let li = document.createElement('li');
   let userContainer = document.createElement('p');
   let messageContainer = document.createElement('p');
@@ -578,7 +578,7 @@ socket.on('guess', arg => {
 
 socket.on('lobbyChat', arg => {
   console.log('chat:', arg);
-  updateLobbyChat(arg, lobbyChatList, lobbyChatInput);
+  updateLobbyChat(arg, lobbyChatList);
 });
 
 function initialFunctionsOnLoad() {
