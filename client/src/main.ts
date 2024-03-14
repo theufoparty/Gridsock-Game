@@ -9,8 +9,8 @@ import {
 import { io } from 'socket.io-client';
 import { initializeDrawing } from './utils/drawingCanvas';
 
-const socket = io('https://gridsock-game-uodix.ondigitalocean.app/');
-//const socket = io('http://localhost:3000/');
+// const socket = io('https://gridsock-game-uodix.ondigitalocean.app/');
+const socket = io('http://localhost:3000/');
 
 const usernameInput = document.getElementById('loginInput');
 const loginButton = document.getElementById('loginButton');
@@ -56,7 +56,7 @@ clickTest?.addEventListener('click', fetchWordsFromServer);
  */
 
 function fetchWordsFromServer() {
-  fetch('https://gridsock-game-uodix.ondigitalocean.app/words/').catch(err => console.error('error', err));
+  fetch('http://localhost:3000/words/').catch(err => console.error('error', err));
 }
 
 function getIsCurrentPlayer() {
@@ -107,6 +107,7 @@ function handleLoginOnClick(input: Element | null, loginSection: Element | null)
   } else {
     localStorage.setItem('user', inputValue);
     emitUserInfoToServer(inputValue);
+    (input as HTMLInputElement).value = '';
   }
 }
 
@@ -114,7 +115,7 @@ backToLobbyBtn?.addEventListener('click', () => {
   socket.emit('backToLobby');
 });
 
-socket.on('backToLobby', (users) => {
+socket.on('backToLobby', users => {
   console.log('backToLobby');
   swapClassBetweenTwoElements(endSection, gameLobbySection, 'hidden');
   const resetButtons = document.querySelectorAll('#gameLobbySectionUl button');
@@ -130,11 +131,10 @@ socket.on('backToLobby', (users) => {
       btn.classList.remove('ready');
       btn.classList.add('waiting');
     }
-  })
+  });
 
   console.log(resetButtons);
-
-})
+});
 
 function emitUserInfoToServer(username: string) {
   const randomColor = getRandomColor();
@@ -232,7 +232,7 @@ function updatePlayersReadyAndWhenFullDisplayStartGameButton(
   playersReadyContainer.textContent = `${players}/5`;
   // change to five later
   console.log(players);
-  if (players === 5) {
+  if (players === 2) {
     startGameButton?.removeAttribute('disabled');
     addFirstClassAndRemoveSecondClassToElement(startGameButton, 'active', 'disabled');
   } else {
@@ -389,6 +389,7 @@ function sendChatMessageToServer(chatInput: Element | null, socketName: string) 
     message: input.value,
     user: chatUser,
   });
+  input.value = '';
 }
 
 /**
@@ -613,8 +614,22 @@ guessButton?.addEventListener('click', () => {
   sendChatMessageToServer(guessInput, 'guess');
 });
 
+guessInput?.addEventListener('keydown', function (e) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    sendChatMessageToServer(guessInput, 'guess');
+  }
+});
+
 lobbyChatButton?.addEventListener('click', () => {
   sendChatMessageToServer(lobbyChatInput, 'lobbyChat');
+});
+
+lobbyChatInput?.addEventListener('keydown', function (e) {
+  if (e.key === 'Enter') {
+    e.preventDefault(); // Prevent the default action
+    sendChatMessageToServer(lobbyChatInput, 'lobbyChat');
+  }
 });
 
 loginButton?.addEventListener('click', () => {
