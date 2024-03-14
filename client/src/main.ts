@@ -9,8 +9,8 @@ import {
 import { io } from 'socket.io-client';
 import { initializeDrawing } from './utils/drawingCanvas';
 
-//const socket = io('https://gridsock-game-uodix.ondigitalocean.app/');
-const socket = io('http://localhost:3000/');
+const socket = io('https://gridsock-game-uodix.ondigitalocean.app/');
+//const socket = io('http://localhost:3000/');
 
 const usernameInput = document.getElementById('loginInput');
 const loginButton = document.getElementById('loginButton');
@@ -41,6 +41,7 @@ const endSection = document.getElementById('endSection');
 const scoreBoardList = document.querySelector('#scoreBoard ul');
 let currentWord = '';
 let nextRoundInterval: number;
+const backToLobbyBtn = document.getElementById('backToLobbyBtn');
 
 // placeholder for point logic when guessing the right answer
 document.getElementById('right')?.addEventListener('click', guessedRightAnswer);
@@ -55,7 +56,7 @@ clickTest?.addEventListener('click', fetchWordsFromServer);
  */
 
 function fetchWordsFromServer() {
-  fetch('http://localhost:3000/words').catch(err => console.error('error', err));
+  fetch('https://gridsock-game-uodix.ondigitalocean.app/words/').catch(err => console.error('error', err));
 }
 
 function getIsCurrentPlayer() {
@@ -108,6 +109,32 @@ function handleLoginOnClick(input: Element | null, loginSection: Element | null)
     emitUserInfoToServer(inputValue);
   }
 }
+
+backToLobbyBtn?.addEventListener('click', () => {
+  socket.emit('backToLobby');
+});
+
+socket.on('backToLobby', (users) => {
+  console.log('backToLobby');
+  swapClassBetweenTwoElements(endSection, gameLobbySection, 'hidden');
+  const resetButtons = document.querySelectorAll('#gameLobbySectionUl button');
+
+  resetButtons.forEach((btn, index) => {
+    const user = users[index];
+    if (user.isReady) {
+      btn.textContent = 'ready';
+      btn.classList.add('ready');
+      btn.classList.remove('waiting');
+    } else {
+      btn.textContent = 'waiting';
+      btn.classList.remove('ready');
+      btn.classList.add('waiting');
+    }
+  })
+
+  console.log(resetButtons);
+
+})
 
 function emitUserInfoToServer(username: string) {
   const randomColor = getRandomColor();

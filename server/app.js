@@ -290,7 +290,21 @@ io.on('connection', socket => {
     io.emit('startGame');
     newRound();
   });
+
+  socket.on('backToLobby', () => {
+    console.log('backtolobby');
+
+    users.map(user => {
+      console.log('hej');
+      user.isReady = false;
+    });
+
+    io.emit('backToLobby', users);
+    console.log(users);
+  });
 });
+
+// Back to lobby
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
