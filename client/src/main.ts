@@ -9,8 +9,8 @@ import {
 import { io } from 'socket.io-client';
 import { initializeDrawing } from './utils/drawingCanvas';
 
-// const socket = io('https://gridsock-game-uodix.ondigitalocean.app/');
-const socket = io('http://localhost:3000/');
+const socket = io('https://gridsock-game-uodix.ondigitalocean.app/');
+// const socket = io('http://localhost:3000/');
 
 const usernameInput = document.getElementById('loginInput');
 const loginButton = document.getElementById('loginButton');
@@ -56,8 +56,8 @@ clickTest?.addEventListener('click', fetchWordsFromServer);
  */
 
 function fetchWordsFromServer() {
-  // fetch('https://gridsock-game-uodix.ondigitalocean.app/words/').catch(err => console.error('error', err));
-  fetch('http://localhost:3000/words/').catch(err => console.error('error', err));
+  fetch('https://gridsock-game-uodix.ondigitalocean.app/words/').catch(err => console.error('error', err));
+  // fetch('http://localhost:3000/words/').catch(err => console.error('error', err));
 }
 
 function getIsCurrentPlayer() {
@@ -233,7 +233,7 @@ function updatePlayersReadyAndWhenFullDisplayStartGameButton(
   playersReadyContainer.textContent = `${players}/5`;
   // change to five later
   console.log(players);
-  if (players === 2) {
+  if (players === 5) {
     startGameButton?.removeAttribute('disabled');
     addFirstClassAndRemoveSecondClassToElement(startGameButton, 'active', 'disabled');
   } else {
