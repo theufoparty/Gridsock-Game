@@ -10,7 +10,6 @@ import { io } from 'socket.io-client';
 import { initializeDrawing } from './utils/drawingCanvas';
 
 const socket = io('https://gridsock-game-uodix.ondigitalocean.app/');
-// const socket = io('http://localhost:3000/');
 
 const usernameInput = document.getElementById('loginInput');
 const loginButton = document.getElementById('loginButton');
@@ -43,21 +42,12 @@ let currentWord = '';
 let nextRoundInterval: number;
 const backToLobbyBtn = document.getElementById('backToLobbyBtn');
 
-// placeholder for point logic when guessing the right answer
-document.getElementById('right')?.addEventListener('click', guessedRightAnswer);
-
-// Remove later!!! - Placeholder to click new word (Logo img)
-
-const clickTest = document.querySelector('header img');
-clickTest?.addEventListener('click', fetchWordsFromServer);
-
 /**
  * Fetch endpoint for wordarray
  */
 
 function fetchWordsFromServer() {
   fetch('https://gridsock-game-uodix.ondigitalocean.app/words/').catch(err => console.error('error', err));
-  // fetch('http://localhost:3000/words/').catch(err => console.error('error', err));
 }
 
 function getIsCurrentPlayer() {
@@ -85,7 +75,6 @@ socket.on('words', newWord => {
     questionMark?.classList.remove('hidden');
   }
   currentWord = newWord;
-  console.log(currentWord);
 });
 
 /**
@@ -117,7 +106,6 @@ backToLobbyBtn?.addEventListener('click', () => {
 });
 
 socket.on('backToLobby', users => {
-  console.log('backToLobby');
   swapClassBetweenTwoElements(endSection, gameLobbySection, 'hidden');
   const resetButtons = document.querySelectorAll('#gameLobbySectionUl button');
 
@@ -133,8 +121,6 @@ socket.on('backToLobby', users => {
       btn.classList.add('waiting');
     }
   });
-
-  console.log(resetButtons);
 });
 
 function emitUserInfoToServer(username: string) {
@@ -231,8 +217,6 @@ function updatePlayersReadyAndWhenFullDisplayStartGameButton(
 ) {
   if (!playersReadyContainer) return;
   playersReadyContainer.textContent = `${players}/5`;
-  // change to five later
-  console.log(players);
   if (players === 5) {
     startGameButton?.removeAttribute('disabled');
     addFirstClassAndRemoveSecondClassToElement(startGameButton, 'active', 'disabled');
@@ -364,7 +348,6 @@ function guessedRightAnswer() {
 function receiveSocketGameFull() {
   socket.on('gameFull', message => {
     alert(message);
-    console.log('game is Full');
   });
 }
 
@@ -426,7 +409,6 @@ socket.on('countdownFinished', isItLastRound => {
         clearInterval(nextRoundInterval);
         nextRoundTimer.textContent = 'Next round!';
       }
-      console.log('countdown', countdown);
     }, 1000);
   }
 
@@ -444,7 +426,6 @@ socket.on('countdownFinished', isItLastRound => {
  */
 function recieveSocketForNewUser(startGameButton: Element | null, playersReadyContainer: Element | null) {
   socket.on('newUser', usersInfo => {
-    console.log('newUser');
     const { userId, playersReady } = usersInfo;
     localStorage.setItem('userId', userId);
     if (usernameDisplay) {
@@ -465,7 +446,6 @@ function recieveSocketUserStatus(gameLobbyList: Element | null) {
     if (!gameLobbyList) return;
     const buttons = gameLobbyList.querySelectorAll('button');
     const { statusId, statusText, statusClass } = status;
-    console.log(statusClass);
     buttons.forEach(button => {
       if (button.id !== statusId) return;
       button.textContent = statusText;
@@ -486,7 +466,6 @@ function recieveSocketPlayersReady(startGameButton: Element | null, playersReady
 
 function recieveSocketForUpdatedUserPoints() {
   socket.on('updatedUserPoints', users => {
-    // here implement some kind of logic for guessing right in chat
     generatePlayerHighscore(users, playerHighscoreList);
   });
 }
@@ -525,7 +504,6 @@ function endOfGame() {
   socket.on('endOfGame', (users: IUserType[]) => {
     displayOrHideTwoElements(nextRoundTimer, lightbox, false);
     clearInterval(nextRoundInterval);
-    console.log('Received users:', users);
     const sortedUsers = [...users].sort((a, b) => b.points - a.points);
     if (scoreBoardList) {
       scoreBoardList.innerHTML = '';
@@ -572,12 +550,10 @@ function recieveDrawColorFromServer() {
 }
 
 socket.on('guess', arg => {
-  console.log('guess!', arg);
   updateGuessChat(arg);
 });
 
 socket.on('lobbyChat', arg => {
-  console.log('chat:', arg);
   updateLobbyChat(arg, lobbyChatList);
 });
 
@@ -622,7 +598,7 @@ guessInput?.addEventListener('keydown', function (e) {
 lobbyChatButton?.addEventListener('click', () => {
   if (lobbyChatInput) {
     sendChatMessageToServer(lobbyChatInput, 'lobbyChat');
-    lobbyChatInput.value = ''; // Töm inputfältet direkt efter skicka
+    lobbyChatInput.value = ''; // Empty inputfield after send
   }
 });
 
@@ -630,7 +606,7 @@ lobbyChatInput?.addEventListener('keydown', function (e) {
   if (e.key === 'Enter') {
     e.preventDefault();
     sendChatMessageToServer(lobbyChatInput, 'lobbyChat');
-    lobbyChatInput.value = ''; // Töm inputfältet direkt efter skicka
+    lobbyChatInput.value = ''; // Empty inputfield after send
   }
 });
 

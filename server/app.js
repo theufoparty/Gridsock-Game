@@ -33,9 +33,7 @@ let isItLastRound = false;
 function getRandomWord() {
   const randomWordId = Math.floor(Math.random() * gameArray.length);
   let currentWord = gameArray[randomWordId];
-  //console.log(gameArray.length + ' ' + randomWordId + ' ' + currentWord.id + currentWord.word);
   gameArray.splice(randomWordId, 1); //Splice from array
-  //console.log('gameArray', gameArray);
   return currentWord.word;
 }
 
@@ -106,7 +104,6 @@ function getRandomizedUserToDraw(users) {
 
 io.on('connection', socket => {
   socket.on('chat', arg => {
-    console.log('incoming chat', arg);
     io.emit('chat', arg);
   });
 
@@ -141,13 +138,11 @@ io.on('connection', socket => {
   socket.on('newUser', user => {
     if (users.length >= 5) {
       socket.emit('gameFull', 'Sorry, the game is full');
-      console.log('game is full');
     } else {
       const newUser = { username: user.username, color: user.color, id: socket.id, isReady: false, points: 0 };
       users.push(newUser);
       io.emit('updateUserList', users);
       socket.emit('newUser', { userId: socket.id, playersReady });
-      console.log('adding new user');
     }
   });
 
@@ -235,7 +230,7 @@ io.on('connection', socket => {
       }
       clearInterval(countdownInterval);
       io.emit('countdownFinished', isItLastRound);
-      setTimeout(newRound, 5000); // Vänta 3 sekunder innan nästa runda startar.
+      setTimeout(newRound, 5000); // Wait 3 seconds before the next round starts.
     } else {
       io.emit('countdownUpdate', countdown);
       countdown--;
@@ -292,15 +287,11 @@ io.on('connection', socket => {
   });
 
   socket.on('backToLobby', () => {
-    console.log('backtolobby');
-
     users.map(user => {
-      console.log('hej');
       user.isReady = false;
     });
 
     io.emit('backToLobby', users);
-    console.log(users);
   });
 });
 
