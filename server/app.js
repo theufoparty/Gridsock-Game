@@ -63,7 +63,7 @@ app.get('/words', (req, res) => {
 let users = [];
 let playersReady = 0;
 let usedIndexes = []; // keeps track of how many users have already drawn
-let countdown = 10; // Initial countdown value in seconds
+let countdown = 60; // Initial countdown value in seconds
 let currentUser = '';
 let countdownInterval = null;
 
@@ -212,7 +212,7 @@ io.on('connection', socket => {
    * Resets the game's countdown timer to its starting value.
    */
   function resetClock() {
-    countdown = 10;
+    countdown = 60;
   }
 
   /**
@@ -286,15 +286,19 @@ io.on('connection', socket => {
   });
 
   socket.on('backToLobby', () => {
-    io.emit('backToLobby');
     console.log('backtolobby');
-  });
 
+    users.map(user => {
+      console.log('hej');
+      user.isReady = false;
+    });
+
+    io.emit('backToLobby', users);
+    console.log(users);
+  });
 });
 
 // Back to lobby
-
-
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
