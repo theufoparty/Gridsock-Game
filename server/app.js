@@ -139,10 +139,16 @@ io.on('connection', socket => {
   // NEW USER
   // if player logs in, add a new user with their information to the users
   socket.on('newUser', user => {
-    const newUser = { username: user.username, color: user.color, id: socket.id, isReady: false, points: 0 };
-    users.push(newUser);
-    io.emit('updateUserList', users);
-    socket.emit('newUser', { userId: socket.id, playersReady });
+    if (users.length >= 5) {
+      socket.emit('gameFull', 'Sorry, the game is full');
+      console.log('game is full');
+    } else {
+      const newUser = { username: user.username, color: user.color, id: socket.id, isReady: false, points: 0 };
+      users.push(newUser);
+      io.emit('updateUserList', users);
+      socket.emit('newUser', { userId: socket.id, playersReady });
+      console.log('adding new user');
+    }
   });
 
   // gets stored id from client, if user exists update user points based on time
