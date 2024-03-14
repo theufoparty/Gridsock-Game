@@ -83,7 +83,7 @@ socket.on('words', newWord => {
     questionMark?.classList.remove('hidden');
   }
   currentWord = newWord;
-  console.log(currentWord);  
+  console.log(currentWord);
 });
 
 /**
@@ -95,7 +95,7 @@ socket.on('words', newWord => {
  * @param {Element | null} loginSection
  * @returns void
  */
-function handleLoginOnClick(input: Element | null, loginSection: Element | null, gameLobbySection: Element | null) {
+function handleLoginOnClick(input: Element | null, loginSection: Element | null) {
   if (!input || !loginSection) {
     return;
   }
@@ -106,11 +106,6 @@ function handleLoginOnClick(input: Element | null, loginSection: Element | null,
   } else {
     localStorage.setItem('user', inputValue);
     emitUserInfoToServer(inputValue);
-    if (usernameDisplay) {
-      usernameDisplay.textContent = inputValue;
-    }
-    userIcon?.classList.remove('hidden');
-    swapClassBetweenTwoElements(loginSection, gameLobbySection, 'hidden');
   }
 }
 
@@ -210,7 +205,7 @@ function updatePlayersReadyAndWhenFullDisplayStartGameButton(
   playersReadyContainer.textContent = `${players}/5`;
   // change to five later
   console.log(players);
-  if (players > 0) {
+  if (players === 5) {
     startGameButton?.removeAttribute('disabled');
     addFirstClassAndRemoveSecondClassToElement(startGameButton, 'active', 'disabled');
   } else {
@@ -345,6 +340,13 @@ function guessedRightAnswer() {
 
 // ---------------------- SOCKET FUNCTIONS ---------------------- //
 
+function receiveSocketGameFull() {
+  socket.on('gameFull', message => {
+    alert(message);
+    console.log('game is Full');
+  });
+}
+
 /**
  * Emits user and input value to server for chat
  * @param {Element | null} chatInput
@@ -420,8 +422,14 @@ socket.on('countdownFinished', isItLastRound => {
  */
 function recieveSocketForNewUser(startGameButton: Element | null, playersReadyContainer: Element | null) {
   socket.on('newUser', usersInfo => {
+    console.log('newUser');
     const { userId, playersReady } = usersInfo;
     localStorage.setItem('userId', userId);
+    if (usernameDisplay) {
+      usernameDisplay.textContent = localStorage.getItem('user');
+    }
+    swapClassBetweenTwoElements(loginSection, gameLobbySection, 'hidden');
+    userIcon?.classList.remove('hidden');
     updatePlayersReadyAndWhenFullDisplayStartGameButton(startGameButton, playersReadyContainer, playersReady);
   });
 }
@@ -557,6 +565,7 @@ function initialFunctionsOnLoad() {
   recieveSocketForUpdatedUserPoints();
   startNewGame(gameSection, gameLobbySection);
   recieveDrawColorFromServer();
+  receiveSocketGameFull();
   endOfGame();
 }
 
@@ -582,7 +591,7 @@ lobbyChatButton?.addEventListener('click', () => {
 });
 
 loginButton?.addEventListener('click', () => {
-  handleLoginOnClick(usernameInput, loginSection, gameLobbySection);
+  handleLoginOnClick(usernameInput, loginSection);
 });
 
 drawPanel?.addEventListener('click', handleClickOnColorButtons);
