@@ -82,7 +82,8 @@ socket.on('words', newWord => {
     wordToDraw.classList.add('hidden');
     questionMark?.classList.remove('hidden');
   }
-  console.log('word:', newWord);
+  currentWord = newWord;
+  console.log(currentWord);  
 });
 
 /**
