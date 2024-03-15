@@ -2,6 +2,22 @@
 
 ## Screenshots
 
+### Login
+
+<img src="https://github.com/RalfiSlask/GridSock-Game/assets/112242026/a9badb1b-bec7-4a5b-b372-24b0803e5a3d" height="250" width="500" alt="Login">
+
+### Lobby
+
+<img src="https://github.com/RalfiSlask/GridSock-Game/assets/112242026/3318f466-0370-48cc-97c9-5c22eb49ff45" width="506" height="286" alt="Lobby">
+
+### Game
+
+<img src="https://github.com/RalfiSlask/GridSock-Game/assets/112242026/4554b449-bf50-4f01-ac90-34c7d8a270f9" width="506" height="344" alt="Game">
+
+### End Screen
+
+<img src="https://github.com/RalfiSlask/GridSock-Game/assets/112242026/119d2e63-b410-4734-aecd-8b326ca8cf30" width="506" height="400" alt="End Screen">
+
 ## Tech Stack
 
 ### Frontend
